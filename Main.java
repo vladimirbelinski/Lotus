@@ -6,7 +6,7 @@ Authors: Acácia dos Campos da Terra- terra.acacia@gmail.com
          Vladimir Belinski - vlbelinski@gmail.com
 Version: 1.0
 Copyright: Your copyleft.
-Description: Main class of Lotus, a programming language based on java.
+Description: Main class of Lotus, a programming language based on Java.
 ==================================================================================================
 */
 
