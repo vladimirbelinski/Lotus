@@ -13,7 +13,8 @@ class Lotus {
         s.close();
 
         for (int i = 0; i < in.size(); i++) {
-            System.out.println(in.get(i));
+            System.out.println("main: " + Interpreter.solve(in.get(i)));
+            //System.out.println(in.get(i));
         }
     }
 }

@@ -17,7 +17,7 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
-	static void getFirstNumber(String s) {
+	static void getFirstNumber(String s, int index) {
 		int max = s.length();
 		int i = 0, j = 0;
 
@@ -29,10 +29,11 @@ class Interpreter {
 			j++;
 		} j--;
 
-		System.out.println(i + " " + j);
-		System.out.println(s.substring(i, j));
+		System.out.println();
+		System.out.println("i: " + i + ", j: " + j);
+		System.out.println("subs: " + s.substring(i, j));
 		s = s.replace(s.substring(i, j), "");
-		System.out.println(s);
+		System.out.println("s: " + s);
 	}
 
 	static String getPrevNumber(String s, int index) {
@@ -42,39 +43,108 @@ class Interpreter {
 			i--;
 		}
 		j = i - 1;
+
 		while (j >= 0 && s.substring(j, i).matches("\\d+|\\.")) {
 			j--;
-		} j++;
-
-		System.out.println(j + " " + i);
-		System.out.println(">> " + s.substring(j, i));
-		s = s.replace(s.substring(j, i), "");
-		System.out.println("** " + s);
+		}
+		j++;
 
 		return s.substring(j, i);
 	}
 
-	static double solveExp(String exp) {
-		int i;
-		double answ = 0.0;
+	static String solve(String exp) {
+		int i = 0, offset = 0;
+
+		System.out.println("param exp: " + exp);
+
 		String tokens = infixToPostfix(exp);
-		String num1 = new String("");
-		String num2 = new String("");
 
-		System.out.println("original: " + tokens);
+		System.out.println(">> tokens: " + tokens);
 
-		i = 0;
-		while (!tokens.substring(i, i + 1).matches(opRegex)) {
-			i++;
+		String t[] = tokens.split(" ");
+		String front[], back[];
+		String num1, op, num2;
+		String answ = new String("0");
+
+		while (t.length > 1) {
+			System.out.println();
+			System.out.println("t:");
+			printSV(t);
+			System.out.println();
+
+			//i = 0;
+			while (!t[i].matches(opRegex)) {
+				i++;
+			}
+
+			op = t[i];
+			num2 = t[i - 1];
+			if (i > 1) num1 = t[i - 2];
+			else num1 = "";
+			System.out.println("num1: " + num1);
+			System.out.println("op: " + op);
+			System.out.println("num2: " + num2);
+			System.out.println("> i: " + i);
+
+			if (i == 1) t = Arrays.copyOfRange(t, i, t.length);
+			else {
+				if (num1.equals("")) offset = i - 1;
+				else offset = i - 2;
+				front = Arrays.copyOfRange(t, 0, offset);
+				back = Arrays.copyOfRange(t, i, t.length);
+				t = merge(front, back);
+			}
+
+			if (num1.equals("")) i -= 1;
+			else i -= 2;
+
+			answ = calculate(num1, num2, op);
+			t[i] = answ;
+		}
+		return answ;
+	}
+
+	private static String calculate(String v1, String v2, String op) {
+		Double d1;
+		Double d2 = Double.parseDouble(v2);
+		Double answ;
+
+		if (v1 != "") {
+			d1 = Double.parseDouble(v1);
+		}
+		//else if (op.equals("+")) return v2;
+		//else if (op.equals("-")) return op + v2;
+		else return v2;
+
+		switch (op) {
+			case "^": answ = Math.pow(d1, d2); break;
+			case "*": answ = d1 * d2; break;
+			case "/": answ = d1 / d2; break;
+			case "+": answ = d1 + d2; break;
+			case "-": answ = d1 - d2; break;
+			default: answ = 0.0; break;
+		}
+		//System.out.println("calc answ: " + answ);
+		return answ.toString();
+	}
+
+	static String[] merge(String[] front, String[] back) {
+		String[] ret = new String[front.length + back.length];
+		int i = 0;
+		for (String s: front) {
+			ret[i++] = s;
+		}
+		for (String s: back) {
+			ret[i++] = s;
 		}
 
-		num1 = getPrevNumber(tokens, i);
+		return ret;
+	}
 
-		//getFirstNumber(tokens);
-
-		System.out.println(num1);
-
-		return answ;
+	static void printSV(String[] str) {
+		for (String s: str) {
+			System.out.print("[" + s + "]");
+		} System.out.println();
 	}
 
 	static String infixToPostfix(String infix) {
@@ -122,26 +192,46 @@ class Interpreter {
         return sb.toString();
     }
 
-    public static String[] splitExp(String in) {
+	public static String[] splitExp(String in) {
+		int i = 0;
         String num = new String("");
         ArrayList<String> tokens = new ArrayList<String>();
 
-        String[] splaught = in.split("");
-        for (String s: splaught) {
-            if (s.matches(fpRegex) || s.matches("\\.")) {
-                num += s;
-            }
-            else if (!s.matches(opRegex) && !s.matches(fpRegex) && !num.equals("")) {
-                tokens.add(num);
-                num = "";
-            }
-            else if (s.matches(opRegex)) {
-                if (!num.equals("")) {
-                    tokens.add(num);
-                    num = "";
-                }
-                tokens.add(s);
-            }
+        String[] spl = in.split("");
+        for (i = 0; i < spl.length; i++) {
+			System.out.println("~ spl[i]: " + spl[i]);
+			if (num.equals("") && spl[i].equals("-")) {
+				if (i < spl.length - 1 && spl[i + 1].matches("[0-9]") &&
+					!spl[i + 1].matches("[()]"))
+				{
+					System.out.println("-num");
+					num += spl[i] + spl[i + 1];
+					i++;
+				}
+			}
+			else if (spl[i].matches("[0-9]") || spl[i].matches("\\.")) {
+				System.out.println("num");
+				num += spl[i];
+			}
+			else if (spl[i].matches(opRegex)) {
+	            if (!num.equals("")) {
+					System.out.println("!num");
+	                tokens.add(num);
+	                num = "";
+					tokens.add(spl[i]);
+	            }
+				else if (spl[i].equals("-") && i < spl.length - 1 &&
+					spl[i + 1].matches("[0-9]"))
+				{
+					System.out.println("op -num");
+					num += spl[i] + spl[i + 1];
+					i++;
+				}
+	            else {
+					System.out.println("op");
+					tokens.add(spl[i]);
+				}
+	        }
         }
         if (!num.equals("")) {
             tokens.add(num);
@@ -149,6 +239,9 @@ class Interpreter {
 
         String[] t = new String[tokens.size()];
         tokens.toArray(t);
+
+		System.out.println("tokens:");
+		printSV(t);
 
         return t;
 
