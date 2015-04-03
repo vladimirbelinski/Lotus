@@ -52,19 +52,19 @@ class Main {
         System.out.println("------------");
         System.out.println("main: " + Interpreter.solve("3--4"));
         System.out.println("------------");
-        System.out.println("main: " + Interpreter.solve("-1+5 - 5 + 4 *-2"));
+        System.out.println("main: " + Interpreter.solve("-1+5 - 5 + 4 *-2")); // -9
         System.out.println("------------");
-        System.out.println("main: " + Interpreter.solve("3 ^ -2"));
+        System.out.println("main: " + Interpreter.solve("3 ^ -2")); // 0.11111...
         System.out.println("------------");
-        System.out.println("main: " + Interpreter.solve("+ 2 ^ - 4 + -0 / + 5"));
+        System.out.println("main: " + Interpreter.solve("+ 2 ^ - 4 + -0 / + 5")); // 0.0625
         System.out.println("------------");
-        System.out.println("main: " + Interpreter.solve("- 3 ^ - 3 + - 0"));
+        System.out.println("main: " + Interpreter.solve("- 3 ^ - 3 + - 0")); // -0.037...
         System.out.println("------------");
         System.out.println("main: " + Interpreter.solve("-(3 + 2)"));
         System.out.println("------------");
-        System.out.println("main: " + Interpreter.solve("- 5 * - 2+ -(3 + 2)"));
+        System.out.println("main: " + Interpreter.solve("- 5 * - 2+ -(3 + 2)")); // 5
         System.out.println("------------");
-        System.out.println("main: " + Interpreter.solve("-10 + -(-3 + - 2)"));
+        System.out.println("main: " + Interpreter.solve("-10 + -(-3 + - 2)")); // -5
         System.out.println("------------");
     }
 }

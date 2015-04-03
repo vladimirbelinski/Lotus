@@ -29,11 +29,11 @@ class Interpreter {
 			j++;
 		} j--;
 
-		System.out.println();
-		System.out.println("i: " + i + ", j: " + j);
-		System.out.println("subs: " + s.substring(i, j));
+		//System.out.println();
+		//System.out.println("i: " + i + ", j: " + j);
+		//System.out.println("subs: " + s.substring(i, j));
 		s = s.replace(s.substring(i, j), "");
-		System.out.println("s: " + s);
+		//System.out.println("s: " + s);
 	}
 
 	static String getPrevNumber(String s, int index) {
@@ -55,11 +55,11 @@ class Interpreter {
 	static String solve(String exp) {
 		int i = 0, offset = 0;
 
-		System.out.println("param exp: " + exp);
+		//System.out.println("param exp: " + exp);
 
 		String tokens = infixToPostfix(exp);
 
-		System.out.println(">> tokens: " + tokens);
+		//System.out.println(">> tokens: " + tokens);
 
 		String t[] = tokens.split(" ");
 		String front[], back[];
@@ -67,10 +67,10 @@ class Interpreter {
 		String answ = new String("0");
 
 		while (t.length > 1) {
-			System.out.println();
-			System.out.println("t:");
+			//System.out.println();
+			//System.out.println("t:");
 			printSV(t);
-			System.out.println();
+			//System.out.println();
 
 			//i = 0;
 			while (!t[i].matches(opRegex)) {
@@ -81,10 +81,10 @@ class Interpreter {
 			num2 = t[i - 1];
 			if (i > 1) num1 = t[i - 2];
 			else num1 = "";
-			System.out.println("num1: " + num1);
-			System.out.println("op: " + op);
-			System.out.println("num2: " + num2);
-			System.out.println("> i: " + i);
+			//System.out.println("num1: " + num1);
+			//System.out.println("op: " + op);
+			//System.out.println("num2: " + num2);
+			//System.out.println("> i: " + i);
 
 			if (i == 1) t = Arrays.copyOfRange(t, i, t.length);
 			else {
@@ -113,7 +113,7 @@ class Interpreter {
 			d1 = Double.parseDouble(v1);
 		}
 		//else if (op.equals("+")) return v2;
-		//else if (op.equals("-")) return op + v2;
+		else if (op.equals("-")) return op + v2;
 		else return v2;
 
 		switch (op) {
@@ -124,7 +124,7 @@ class Interpreter {
 			case "-": answ = d1 - d2; break;
 			default: answ = 0.0; break;
 		}
-		//System.out.println("calc answ: " + answ);
+		////System.out.println("calc answ: " + answ);
 		return answ.toString();
 	}
 
@@ -143,8 +143,8 @@ class Interpreter {
 
 	static void printSV(String[] str) {
 		for (String s: str) {
-			System.out.print("[" + s + "]");
-		} System.out.println();
+			//System.out.print("[" + s + "]");
+		} //System.out.println();
 	}
 
 	static String infixToPostfix(String infix) {
@@ -193,29 +193,34 @@ class Interpreter {
     }
 
 	public static String[] splitExp(String in) {
-		int i = 0;
+		int i = 0, sign = 0;
         String num = new String("");
         ArrayList<String> tokens = new ArrayList<String>();
 
         String[] spl = in.split("");
         for (i = 0; i < spl.length; i++) {
-			System.out.println("~ spl[i]: " + spl[i]);
-			if (num.equals("") && spl[i].equals("-")) {
-				if (i < spl.length - 1 && spl[i + 1].matches("[0-9]") &&
-					!spl[i + 1].matches("[()]"))
-				{
-					System.out.println("-num");
-					num += spl[i] + spl[i + 1];
+			//System.out.println("~ spl[i]: " + spl[i]);
+			if (num.equals("") && spl[i].matches("[+-]")) {
+				/*i < spl.length - 1 && */
+				sign = i;
+				while (spl[i + 1].equals(" ")) i++;
+				if (spl[i + 1].matches("[0-9]") && !spl[i + 1].matches("[()]")) {
+					//System.out.println("-num");
+					num += spl[sign] + spl[i + 1];
 					i++;
+				}
+				else if (spl[i + 1].equals("(")) {
+					//System.out.println("op1");
+					tokens.add(spl[i]);
 				}
 			}
 			else if (spl[i].matches("[0-9]") || spl[i].matches("\\.")) {
-				System.out.println("num");
+				//System.out.println("num");
 				num += spl[i];
 			}
 			else if (spl[i].matches(opRegex)) {
 	            if (!num.equals("")) {
-					System.out.println("!num");
+					//System.out.println("!num");
 	                tokens.add(num);
 	                num = "";
 					tokens.add(spl[i]);
@@ -223,12 +228,12 @@ class Interpreter {
 				else if (spl[i].equals("-") && i < spl.length - 1 &&
 					spl[i + 1].matches("[0-9]"))
 				{
-					System.out.println("op -num");
+					//System.out.println("op -num");
 					num += spl[i] + spl[i + 1];
 					i++;
 				}
 	            else {
-					System.out.println("op");
+					//System.out.println("op2");
 					tokens.add(spl[i]);
 				}
 	        }
@@ -240,13 +245,13 @@ class Interpreter {
         String[] t = new String[tokens.size()];
         tokens.toArray(t);
 
-		System.out.println("tokens:");
+		//System.out.println("tokens:");
 		printSV(t);
 
         return t;
 
         /*for (String t: tokens) {
-            System.out.println(t);
+            //System.out.println(t);
         }*/
     }
 
