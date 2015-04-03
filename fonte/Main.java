@@ -86,17 +86,17 @@ class Main {
         System.out.println("shoud be: -5");
         System.out.println("main: " + Interpreter.solve("-       (   3 +2  )"));
         System.out.println("------------");
-        System.out.println("shoud be: 1.0");
-        System.out.println("main: " + Interpreter.solve(".5 * 2"));
+        System.out.println("shoud be: -1.0");
+        System.out.println("main: " + Interpreter.solve("-.5 * 2"));
         System.out.println("------------");
-        System.out.println("shoud be: 2.0");
-        System.out.println("main: " + Interpreter.solve("1. * 2"));
+        System.out.println("shoud be: -2.0");
+        System.out.println("main: " + Interpreter.solve("-1. * 2"));
         System.out.println("------------");
-        System.out.println("shoud be: 2.0");
-        System.out.println("main: " + Interpreter.solve("   1 . *2  "));
+        System.out.println("shoud be: -2.0");
+        System.out.println("main: " + Interpreter.solve("-   1 . *2  "));
         System.out.println("------------");
-        System.out.println("shoud be: 1.0");
-        System.out.println("main: " + Interpreter.solve(".   5*2"));
+        System.out.println("shoud be: -1.0");
+        System.out.println("main: " + Interpreter.solve("-.   5*2"));
         System.out.println("------------");
     }
 }

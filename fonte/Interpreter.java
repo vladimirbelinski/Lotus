@@ -17,29 +17,6 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
-	static String getPrevNumber(String s, int index) {
-		int i = index, j = 0;
-
-		/* go backwards while I'm not looking at a digit or
-		 * decimal point. I stop in the last digit of a valid number
-		 */
-		while (i > 0 && !s.substring(i - 1, i).matches("\\d|\\.")) {
-			i--;
-		}
-		j = i - 1;
-
-		/* go backwards while I'm looking at a digit or decimal
-		 * point. I stop in an invalid spot, so I gotta advance 1 position
-		 */
-		while (j >= 0 && s.substring(j, i).matches("\\d+|\\.")) {
-			j--;
-		}
-		j++;
-
-		// return the string in that interval. It's a valid number :)
-		return s.substring(j, i);
-	}
-
 	static String solve(String exp) {
 		int i = 0, offset = 0;
 		String tokens = infixToPostfix(exp);
@@ -220,7 +197,7 @@ class Interpreter {
 				while (spl[i + 1].equals(" ")) i++;
 
 				// If I found a digit, then it's not an operation
-				if (spl[i + 1].matches("[0-9]")) {
+				if (spl[i + 1].matches("[0-9]") || spl[i + 1].equals(".")) {
 					num += spl[sign] + spl[i + 1];
 					i++;
 				}
@@ -230,7 +207,7 @@ class Interpreter {
 				}
 			}
 			// else, if its a digit or a decimal point
-			else if (spl[i].matches("[0-9]") || spl[i].matches("\\.")) {
+			else if (spl[i].matches("[0-9]") || spl[i].equals(".")) {
 				num += spl[i];
 			}
 			// finally, if its a char that represents an operation
