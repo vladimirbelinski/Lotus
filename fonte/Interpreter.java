@@ -20,16 +20,23 @@ class Interpreter {
 	static String getPrevNumber(String s, int index) {
 		int i = index, j = 0;
 
+		/* go backwards while I'm not looking at a digit or
+		 * decimal point. I stop in the last digit of a valid number
+		 */
 		while (i > 0 && !s.substring(i - 1, i).matches("\\d|\\.")) {
 			i--;
 		}
 		j = i - 1;
 
+		/* go backwards while I'm looking at a digit or decimal
+		 * point. I stop in an invalid spot, so I gotta advance 1 position
+		 */
 		while (j >= 0 && s.substring(j, i).matches("\\d+|\\.")) {
 			j--;
 		}
 		j++;
 
+		// return the string in that interval. It's a valid number :)
 		return s.substring(j, i);
 	}
 
@@ -42,16 +49,39 @@ class Interpreter {
 		String answ = new String("0");
 
 		while (t.length > 1) {
+			// advance until you don't find an operation to perform
 			while (!t[i].matches(opRegex)) {
 				i++;
 			}
 
+			// then, the operation char is at i's position in the array
 			op = t[i];
+			// as it's postfix, the 2nd operand is right before op
 			num2 = t[i - 1];
+			/* now, if i > 1, then 1st operand is certainly 2 positions
+			 * before op. Else, it doesn't exist lol
+			 */
 			if (i > 1) num1 = t[i - 2];
 			else num1 = "";
+
+			/* As I am overwriting my token vector, I gotta
+			 * copy the parts that I'm not currently working with.
+			 * if i == 1, then I operated on it's initial part
+			 * and I just need to copy the rest of it
+			 */
 			if (i == 1) t = Arrays.copyOfRange(t, i, t.length);
 			else {
+				/* If i != 1, I am working somewhere in the middle
+				 * of the vector, so I gotta copy the first (frontside)
+				 * and the second (backside) parts, with the result
+				 * of the current operation in between. Then, if my
+				 * first operand doesn't exist, I gotta copy the first
+				 * part until this position (i) - 1. If it exists,
+				 * until this position - 2. This way I discard
+				 * the spots where the current operands were located
+				 * and I leave one spot for the result of this operation
+				 * in the middle of the new vector :)
+				 */
 				if (num1.equals("")) offset = i - 1;
 				else offset = i - 2;
 				front = Arrays.copyOfRange(t, 0, offset);
@@ -59,6 +89,9 @@ class Interpreter {
 				t = merge(front, back);
 			}
 
+			/* calculating where the result will be put
+			 * same logic as the else above
+			 */
 			if (num1.equals("")) i -= 1;
 			else i -= 2;
 
@@ -73,10 +106,17 @@ class Interpreter {
 		Double d2 = Double.parseDouble(v2);
 		Double answ;
 
+		/* Gotta check if the first operand exists
+		 * or parseDouble() freaks out hehe
+		 */
 		if (v1 != "") {
 			d1 = Double.parseDouble(v1);
 		}
-		//else if (op.equals("+")) return v2;
+		/* If it doesn't and the operation is a '-'
+		 * simply return -v2 (it's a number sign).
+		 * Else, return v2 to prevent a crash in
+		 * the operations below
+		 */
 		else if (op.equals("-")) return op + v2;
 		else return v2;
 
@@ -88,12 +128,14 @@ class Interpreter {
 			case "-": answ = d1 - d2; break;
 			default: answ = 0.0; break;
 		}
-		return answ.toString();
+
+		return answ.toString(); // strings everywhere >_<
 	}
 
 	static String[] merge(String[] front, String[] back) {
-		String[] ret = new String[front.length + back.length];
 		int i = 0;
+		String[] ret = new String[front.length + back.length];
+
 		for (String s: front) {
 			ret[i++] = s;
 		}
@@ -104,6 +146,10 @@ class Interpreter {
 		return ret;
 	}
 
+	/* Dijkstra's Shunting Yard algorithm. Taken from Rosetta Code
+	 * It needs an expression with everything separated by spaces
+	 * and that's why it calls the splitExp() monster method ;x
+	 */
 	static String infixToPostfix(String infix) {
         final String ops = "-+/*^";
         StringBuilder sb = new StringBuilder();
@@ -227,7 +273,7 @@ class Interpreter {
         t = new String[tokens.size()];
         tokens.toArray(t);
 
-        return t;
+		return t;
     }
 
 	static final String opRegex = "\\^|\\*|\\/|\\+|\\-|\\(|\\)";
