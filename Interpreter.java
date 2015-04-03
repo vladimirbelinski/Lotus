@@ -17,25 +17,6 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
-	static void getFirstNumber(String s, int index) {
-		int max = s.length();
-		int i = 0, j = 0;
-
-		while (!s.substring(i, i + 1).matches("\\d|\\.")) {
-			i++;
-		}
-		j = i + 1;
-		while (i < max && s.substring(i, j).matches("\\d+|\\.")) {
-			j++;
-		} j--;
-
-		//System.out.println();
-		//System.out.println("i: " + i + ", j: " + j);
-		//System.out.println("subs: " + s.substring(i, j));
-		s = s.replace(s.substring(i, j), "");
-		//System.out.println("s: " + s);
-	}
-
 	static String getPrevNumber(String s, int index) {
 		int i = index, j = 0;
 
@@ -54,25 +35,13 @@ class Interpreter {
 
 	static String solve(String exp) {
 		int i = 0, offset = 0;
-
-		//System.out.println("param exp: " + exp);
-
 		String tokens = infixToPostfix(exp);
-
-		//System.out.println(">> tokens: " + tokens);
-
 		String t[] = tokens.split(" ");
 		String front[], back[];
 		String num1, op, num2;
 		String answ = new String("0");
 
 		while (t.length > 1) {
-			//System.out.println();
-			//System.out.println("t:");
-			printSV(t);
-			//System.out.println();
-
-			//i = 0;
 			while (!t[i].matches(opRegex)) {
 				i++;
 			}
@@ -81,11 +50,6 @@ class Interpreter {
 			num2 = t[i - 1];
 			if (i > 1) num1 = t[i - 2];
 			else num1 = "";
-			//System.out.println("num1: " + num1);
-			//System.out.println("op: " + op);
-			//System.out.println("num2: " + num2);
-			//System.out.println("> i: " + i);
-
 			if (i == 1) t = Arrays.copyOfRange(t, i, t.length);
 			else {
 				if (num1.equals("")) offset = i - 1;
@@ -124,7 +88,6 @@ class Interpreter {
 			case "-": answ = d1 - d2; break;
 			default: answ = 0.0; break;
 		}
-		////System.out.println("calc answ: " + answ);
 		return answ.toString();
 	}
 
@@ -139,12 +102,6 @@ class Interpreter {
 		}
 
 		return ret;
-	}
-
-	static void printSV(String[] str) {
-		for (String s: str) {
-			//System.out.print("[" + s + "]");
-		} //System.out.println();
 	}
 
 	static String infixToPostfix(String infix) {
@@ -192,67 +149,85 @@ class Interpreter {
         return sb.toString();
     }
 
+	/* This is the method that gets a random infix expression
+	 * and splits it in the tokens that compose it. This is
+	 * called by the infixToPostfix() method, because it needs
+	 * an expression that has everything separated by spaces
+	 */
 	public static String[] splitExp(String in) {
 		int i = 0, sign = 0;
+		String[] t;
         String num = new String("");
         ArrayList<String> tokens = new ArrayList<String>();
 
         String[] spl = in.split("");
         for (i = 0; i < spl.length; i++) {
-			//System.out.println("~ spl[i]: " + spl[i]);
+			/* If I found a +/- sign and I didn't previously find
+			 * a number, I gotta check if its an operation
+			 * or is owned by a number
+			 */
 			if (num.equals("") && spl[i].matches("[+-]")) {
-				/*i < spl.length - 1 && */
+				// to save the current i, as the while will go forward
+				// and I need this position inside those ifs
 				sign = i;
+
 				while (spl[i + 1].equals(" ")) i++;
-				if (spl[i + 1].matches("[0-9]") && !spl[i + 1].matches("[()]")) {
-					//System.out.println("-num");
+
+				// If I found a digit, then it's not an operation
+				if (spl[i + 1].matches("[0-9]")) {
 					num += spl[sign] + spl[i + 1];
 					i++;
 				}
+				// If I found a '(', it's an operation...
 				else if (spl[i + 1].equals("(")) {
-					//System.out.println("op1");
-					tokens.add(spl[i]);
+					tokens.add(spl[sign]);
 				}
 			}
+			// else, if its a digit or a decimal point
 			else if (spl[i].matches("[0-9]") || spl[i].matches("\\.")) {
-				//System.out.println("num");
 				num += spl[i];
 			}
+			// finally, if its a char that represents an operation
 			else if (spl[i].matches(opRegex)) {
+				/* If my number is not empty, then I know that
+				 * at THIS point, the code is done building it
+				 * and I gotta add it to the list of tokens
+				 */
 	            if (!num.equals("")) {
-					//System.out.println("!num");
 	                tokens.add(num);
 	                num = "";
 					tokens.add(spl[i]);
 	            }
+				/* else, if this char is a '-', I gotta check if
+				 * it's indeed an operation or it's a number sign
+				 */
 				else if (spl[i].equals("-") && i < spl.length - 1 &&
-					spl[i + 1].matches("[0-9]"))
+						spl[i + 1].matches("[0-9]"))
 				{
-					//System.out.println("op -num");
 					num += spl[i] + spl[i + 1];
 					i++;
 				}
+				// if it enters here, it's a normal operation char
 	            else {
-					//System.out.println("op2");
 					tokens.add(spl[i]);
 				}
 	        }
         }
+		/* I gotta check if I left the for loop with a number
+		 * in 'num' string, because I would only add it in the
+		 * next iteration, but I have already quit the loop
+		 */
         if (!num.equals("")) {
             tokens.add(num);
         }
 
-        String[] t = new String[tokens.size()];
+		/* transform the built list in a normal array of strings
+		 * so that infixToPostfix() can use it
+		 */
+        t = new String[tokens.size()];
         tokens.toArray(t);
 
-		//System.out.println("tokens:");
-		printSV(t);
-
         return t;
-
-        /*for (String t: tokens) {
-            //System.out.println(t);
-        }*/
     }
 
 	static final String opRegex = "\\^|\\*|\\/|\\+|\\-|\\(|\\)";
