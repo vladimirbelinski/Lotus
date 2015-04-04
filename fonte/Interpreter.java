@@ -79,6 +79,7 @@ class Interpreter {
 	}
 
 	private static String calculate(String v1, String v2, String op) {
+		boolean intOpns = true;
 		Variable opn1, opn2;
 		String answ;
 
@@ -87,10 +88,8 @@ class Interpreter {
 		}
 		else {
 			opn2 = new Variable<Double>(Double.parseDouble(v2));
+			intOpns = false;
 		}
-		//Double opn1;
-		//Double opn2 = Double.parseDouble(v2);
-		//Double answ;
 
 		/* Gotta check if the first operand exists
 		 * or parseDouble() freaks out hehe
@@ -101,8 +100,8 @@ class Interpreter {
 			}
 			else {
 				opn1 = new Variable<Double>(Double.parseDouble(v1));
+				intOpns = false;
 			}
-			//opn1 = Double.parseDouble(v1);
 		}
 		/* If it doesn't and the operation is a '-'
 		 * simply return -v2 (it's a number sign).
@@ -113,41 +112,53 @@ class Interpreter {
 		else return v2;
 
 		switch (op) {
+			/* pow() returns double. I will implement
+			 * a binary exponentiation later...
+			 */
 			case "^":
 				answ = String.valueOf(Math.pow(opn1.toDouble(), opn2.toDouble()));
 				break;
+
 			case "*":
-				if (opn1.value instanceof Double || opn2.value instanceof Double) {
-					answ = String.valueOf(opn1.toDouble() * opn2.toDouble());
-				}
-				else {
-					answ = String.valueOf(opn1.toInteger() * opn2.toInteger());
-				}
+				if (intOpns) answ = String.valueOf(opn1.toInt() * opn2.toInt());
+				else answ = String.valueOf(opn1.toDouble() * opn2.toDouble());
 				break;
+
 			case "/":
-				if (opn1.value instanceof Double || opn2.value instanceof Double) {
-					answ = String.valueOf(opn1.toDouble() / opn2.toDouble());
+				/* if opn2 is not zero, then I can properly divide...
+				 * I think this regex works as it should, identifying
+				 * integer zeroes and floating point zeroes, but needs
+				 * more testing (or a different, better way lol)
+				 */
+				if (!opn2.toString().matches("0+(\\.)?0*")) {
+					if (intOpns) {
+						answ = String.valueOf(opn1.toInt() / opn2.toInt());
+					}
+					else {
+						answ = String.valueOf(opn1.toDouble() / opn2.toDouble());
+					}
+				}
+				else answ = "undefined";
+				break;
+
+			case "+":
+				if (intOpns) {
+					answ = String.valueOf(opn1.toInt() + opn2.toInt());
 				}
 				else {
-					answ = String.valueOf(opn1.toInteger() / opn2.toInteger());
-				}
-				break;
-			case "+":
-				if (opn1.value instanceof Double || opn2.value instanceof Double) {
 					answ = String.valueOf(opn1.toDouble() + opn2.toDouble());
 				}
-				else {
-					answ = String.valueOf(opn1.toInteger() + opn2.toInteger());
-				}
 				break;
+
 			case "-":
-				if (opn1.value instanceof Double || opn2.value instanceof Double) {
+				if (intOpns) {
+					answ = String.valueOf(opn1.toInt() - opn2.toInt());
+				}
+				else {
 					answ = String.valueOf(opn1.toDouble() - opn2.toDouble());
 				}
-				else {
-					answ = String.valueOf(opn1.toInteger() - opn2.toInteger());
-				}
 				break;
+
 			default:
 				answ = "0";
 				break;
