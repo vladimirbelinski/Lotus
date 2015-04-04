@@ -17,9 +17,9 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
-	static String solve(String exp) {
+	public String solve(String exp) {
 		int i = 0, offset = 0;
-		String tokens = infixToPostfix(exp);
+		String tokens = this.infixToPostfix(exp);
 		String t[] = tokens.split(" ");
 		String front[], back[];
 		String num1, op, num2;
@@ -63,7 +63,7 @@ class Interpreter {
 				else offset = i - 2;
 				front = Arrays.copyOfRange(t, 0, offset);
 				back = Arrays.copyOfRange(t, i, t.length);
-				t = merge(front, back);
+				t = this.merge(front, back);
 			}
 
 			/* calculating where the result will be put
@@ -72,13 +72,13 @@ class Interpreter {
 			if (num1.equals("")) i -= 1;
 			else i -= 2;
 
-			answ = calculate(num1, num2, op);
+			answ = this.calculate(num1, num2, op);
 			t[i] = answ;
 		}
 		return answ;
 	}
 
-	private static String calculate(String v1, String v2, String op) {
+	private String calculate(String v1, String v2, String op) {
 		boolean intOpns = true;
 		Variable opn1, opn2;
 		String answ;
@@ -167,7 +167,7 @@ class Interpreter {
 		return answ;
 	}
 
-	static String[] merge(String[] front, String[] back) {
+	private String[] merge(String[] front, String[] back) {
 		int i = 0;
 		String[] ret = new String[front.length + back.length];
 
@@ -185,11 +185,11 @@ class Interpreter {
 	 * It needs an expression with everything separated by spaces
 	 * and that's why it calls the splitExp() monster method ;x
 	 */
-	static String infixToPostfix(String infix) {
+	private String infixToPostfix(String infix) {
         final String ops = "-+/*^";
         StringBuilder sb = new StringBuilder();
         Stack<Integer> s = new Stack<>();
-        String[] tokens = splitExp(infix);
+        String[] tokens = this.splitExp(infix);
 
         for (String token: tokens) {
             char c = token.charAt(0);
@@ -235,7 +235,7 @@ class Interpreter {
 	 * called by the infixToPostfix() method, because it needs
 	 * an expression that has everything separated by spaces
 	 */
-	public static String[] splitExp(String in) {
+	private String[] splitExp(String in) {
 		int i = 0, sign = 0;
 		String[] t;
         String num = new String("");
