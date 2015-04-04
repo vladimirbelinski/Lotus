@@ -18,30 +18,45 @@ import java.io.*;
 
 class Lotus {
     public static void main(String[] args) throws Exception {
-        int max;
         File f;
-        Scanner s;
+        Scanner sc;
+        int max, ind = 0;
         Interpreter lotus = new Interpreter();
-        ArrayList<String> in = new ArrayList<String>();
+        boolean hasParam = true, validParam = true;
+        ArrayList<String> input = new ArrayList<String>();
 
         if (args.length > 0) {
-            f = new File(args[0]);
-            s = new Scanner(f);
-
-            while (s.hasNext()) {
-                in.add(s.nextLine());
-            }
-            s.close();
-
-            max = in.size();
-            for (int i = 0; i < max; i++) {
-                System.out.println(in.get(i));
-                System.out.println("= " + lotus.solve(in.get(i)));
-                if (i < max - 1) System.out.println();
+            for (ind = 0; ind < args.length; ind++) {
+                if (args[ind].matches(".+\\.lt")) {
+                    validParam = true;
+                    break;
+                }
+                else validParam = false;
             }
         }
         else {
             System.out.println("No input file detected.");
+            hasParam = false;
+        }
+
+        if (hasParam && validParam) {
+            f = new File(args[ind]);
+            sc = new Scanner(f);
+
+            while (sc.hasNext()) {
+                input.add(sc.nextLine());
+            }
+            sc.close();
+
+            max = input.size();
+            for (int i = 0; i < max; i++) {
+                System.out.println(input.get(i));
+                System.out.println("= " + lotus.solve(input.get(i)));
+                if (i < max - 1) System.out.println();
+            }
+        }
+        else if (!validParam) {
+            System.out.println("Invalid input file.");
         }
         /**********************************************************************/
         Variable g, d, tni;
@@ -50,7 +65,7 @@ class Lotus {
         tni = new Variable<Integer>(11);
 
         System.out.println("---------------------------------------");
-        // Gotta be sure that s is a String to do that casting!
+        // Gotta be sure that it's a String to do that casting!
         System.out.println(((String)g.value).substring(0, 1));
         // or:
         System.out.println(g.toString().substring(0, 1));
