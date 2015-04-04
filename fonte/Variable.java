@@ -5,7 +5,7 @@ class Variable<T> {
         this.value = value;
     }
 
-    public Double toDouble() {
+    public double toDouble() {
         if (this.value instanceof Double) {
             return ((Double)this.value).doubleValue();
         }
@@ -15,7 +15,7 @@ class Variable<T> {
         else return 0.0;
     }
 
-    public Integer toInteger() {
+    public int toInt() {
         if (this.value instanceof Double) {
             return ((Double)this.value).intValue();
         }
@@ -26,6 +26,6 @@ class Variable<T> {
     }
 
     public String toString() {
-        return (String)this.value;
+        return String.valueOf(this.value);
     }
 }
