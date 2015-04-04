@@ -11,7 +11,7 @@ class Interpreter {
 		this.vars.put(n, v);
 	}
 
-	public Variable var(String n) {
+	public Variable getVar(String n) {
 		return this.vars.get(n);
 	}
 
