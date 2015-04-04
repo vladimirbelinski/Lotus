@@ -13,26 +13,6 @@ Description: Main class of Lotus, a programming language based on Java.
 class Main {
     public static void main (String[] args){
         Interpreter i = new Interpreter();
-        //String intType = "Integer";
-        //String doubleType = "double";
-        //String stringType = "String";
-        String var1 = "myInt";
-        String var2 = "myDouble";
-        String var3 = "myString";
-        //Variable<String, Integer> ger = new Variable<String, Integer>(intType, 7);
-        //Variable<String, Double> d = new Variable<String, Double>(doubleType, 11.0);
-        //Variable<String, String> str = new Variable<String, String>(stringType, "Oie");
-
-        Variable ger = new Variable(7.2);
-        Variable d = new Variable(11.0);
-
-        i.newVar(var1, ger);
-        i.newVar(var2, d);
-        //i.newVar(var3, str);
-
-        System.out.println(i.var(var1).type() + " " + i.var(var1).value);
-        System.out.println(i.var(var2).type() + " " + i.var(var2).value);
-        //System.out.println(i.var(var3).type() + " " + i.var(var3).value);
 
         System.out.println("------------");
         System.out.println("should be: -100");

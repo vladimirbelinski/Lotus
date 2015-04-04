@@ -79,15 +79,30 @@ class Interpreter {
 	}
 
 	private static String calculate(String v1, String v2, String op) {
-		Double d1;
-		Double d2 = Double.parseDouble(v2);
-		Double answ;
+		Variable opn1, opn2;
+		String answ;
+
+		if (v2.matches("[+-]?[0-9]+")) {
+			opn2 = new Variable<Integer>(Integer.parseInt(v2));
+		}
+		else {
+			opn2 = new Variable<Double>(Double.parseDouble(v2));
+		}
+		//Double opn1;
+		//Double opn2 = Double.parseDouble(v2);
+		//Double answ;
 
 		/* Gotta check if the first operand exists
 		 * or parseDouble() freaks out hehe
 		 */
 		if (v1 != "") {
-			d1 = Double.parseDouble(v1);
+			if (v1.matches("[+-]?[0-9]+")) {
+				opn1 = new Variable<Integer>(Integer.parseInt(v1));
+			}
+			else {
+				opn1 = new Variable<Double>(Double.parseDouble(v1));
+			}
+			//opn1 = Double.parseDouble(v1);
 		}
 		/* If it doesn't and the operation is a '-'
 		 * simply return -v2 (it's a number sign).
@@ -98,15 +113,47 @@ class Interpreter {
 		else return v2;
 
 		switch (op) {
-			case "^": answ = Math.pow(d1, d2); break;
-			case "*": answ = d1 * d2; break;
-			case "/": answ = d1 / d2; break;
-			case "+": answ = d1 + d2; break;
-			case "-": answ = d1 - d2; break;
-			default: answ = 0.0; break;
+			case "^":
+				answ = String.valueOf(Math.pow(opn1.toDouble(), opn2.toDouble()));
+				break;
+			case "*":
+				if (opn1.value instanceof Double || opn2.value instanceof Double) {
+					answ = String.valueOf(opn1.toDouble() * opn2.toDouble());
+				}
+				else {
+					answ = String.valueOf(opn1.toInteger() * opn2.toInteger());
+				}
+				break;
+			case "/":
+				if (opn1.value instanceof Double || opn2.value instanceof Double) {
+					answ = String.valueOf(opn1.toDouble() / opn2.toDouble());
+				}
+				else {
+					answ = String.valueOf(opn1.toInteger() / opn2.toInteger());
+				}
+				break;
+			case "+":
+				if (opn1.value instanceof Double || opn2.value instanceof Double) {
+					answ = String.valueOf(opn1.toDouble() + opn2.toDouble());
+				}
+				else {
+					answ = String.valueOf(opn1.toInteger() + opn2.toInteger());
+				}
+				break;
+			case "-":
+				if (opn1.value instanceof Double || opn2.value instanceof Double) {
+					answ = String.valueOf(opn1.toDouble() - opn2.toDouble());
+				}
+				else {
+					answ = String.valueOf(opn1.toInteger() - opn2.toInteger());
+				}
+				break;
+			default:
+				answ = "0";
+				break;
 		}
 
-		return answ.toString(); // strings everywhere >_<
+		return answ;
 	}
 
 	static String[] merge(String[] front, String[] back) {
