@@ -78,5 +78,19 @@ class Main {
         System.out.println("shoud be: -1.0");
         System.out.println("main: " + Interpreter.solve("-.   5*2"));
         System.out.println("------------");
+
+        Variable g, d, tni;
+        g = new Variable<String>("Gabriel");
+        d = new Variable<Double>(7.0);
+        tni = new Variable<Integer>(11);
+
+        // Gotta be sure that s is a String to do that casting!
+        System.out.println(((String)g.value).substring(0, 1));
+        // or:
+        System.out.println(g.toString().substring(0, 1));
+
+        System.out.println(g);
+        System.out.println(d);
+        System.out.println(tni);
     }
 }
