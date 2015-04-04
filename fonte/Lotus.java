@@ -48,6 +48,7 @@ class Lotus {
         System.out.println(g.toString().substring(0, 1));
 
         System.out.println(g);
+        System.out.println(g.type());
         System.out.println(d);
         System.out.println(tni);
     }

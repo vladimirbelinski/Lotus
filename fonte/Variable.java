@@ -5,6 +5,10 @@ class Variable<T> {
         this.value = value;
     }
 
+    public Class type() {
+        return this.value.getClass();
+    }
+
     public double toDouble() {
         if (this.value instanceof Double) {
             return ((Double)this.value).doubleValue();
