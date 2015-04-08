@@ -16,7 +16,7 @@ class Interpreter {
 	}
 
 	/* ---------------------------------------------------------------------- */
-	
+
 	public void interpret(String line) {
 		String[] t = line.split(" ");
 		if (t[0].matches("\\-{2}.*")) {
@@ -144,6 +144,7 @@ class Interpreter {
 		String answ;
 
 		if (v2.matches("[+-]?[0-9]+")) {
+			// ? (+ or - are optional); + (one or more)
 			opn2 = new Variable<Integer>(Integer.parseInt(v2));
 		}
 		else {
