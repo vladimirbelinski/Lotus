@@ -32,4 +32,6 @@ class Variable<T> {
     public String toString() {
         return String.valueOf(this.value);
     }
+    
+    private static final String varRegex = "(\\w)+( )+((\\w)+( )*(,( )*(\\w)+)*)( )*\\:( )*(\\w)+( )*\\;";
 }
