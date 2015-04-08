@@ -17,6 +17,31 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
+	private void let(String line) {
+		String[] decl = Variable.fix(line);
+		int i = decl.length - 1;
+		String type = decl[i];
+		Variable v = null;
+
+		while (i--) {
+			switch (type) {
+				case "int":
+				v = new Variable<Integer>(0);
+				break;
+
+				case "double":
+				v = new Variable<Double>(0.0);
+				break;
+
+				case "string":
+				v = new Variable<String>("");
+				break;
+			}
+			if (v != null) this.newVar(decl[i], v);
+			// else throws Exception
+		}
+	}
+	
 	public String solve(String exp) {
 		int i = 0, offset = 0;
 		String tokens = this.infixToPostfix(exp);
