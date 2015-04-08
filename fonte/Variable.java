@@ -33,5 +33,11 @@ class Variable<T> {
         return String.valueOf(this.value);
     }
     
+    public static String fix(String line) {
+      if (line.matches(varRegex)) System.out.println(line);
+      else System.out.println("nops");
+      return "";
+    }
+
     private static final String varRegex = "(\\w)+( )+((\\w)+( )*(,( )*(\\w)+)*)( )*\\:( )*(\\w)+( )*\\;";
 }
