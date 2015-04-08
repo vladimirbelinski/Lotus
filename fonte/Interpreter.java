@@ -20,7 +20,7 @@ class Interpreter {
 	public void interpret(String line) {
 		String[] t = line.split(" ");
 		if (t[0].matches("\\-{2}.*")) {
-			// a line comment
+			return; // a line comment
 		}
 		else if (t[0].matches("\\/\\-.*")) {
 			// it's a block comment
@@ -58,7 +58,8 @@ class Interpreter {
 		String type = decl[i];
 		Variable v = null;
 
-		while (i--) {
+		i--; // decl[i] is the type
+		while (i >= 0) {
 			switch (type) {
 				case "int":
 				v = new Variable<Integer>(0);
@@ -72,8 +73,12 @@ class Interpreter {
 				v = new Variable<String>("");
 				break;
 			}
-			if (v != null) this.newVar(decl[i], v);
+			if (v != null) {
+				this.newVar(decl[i], v);
+				v = null; // prevents from adding the same variable again
+			}
 			// else throws Exception
+			i--;
 		}
 	}
 
