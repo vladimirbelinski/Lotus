@@ -16,6 +16,41 @@ class Interpreter {
 	}
 
 	/* ---------------------------------------------------------------------- */
+	
+	public void interpret(String line) {
+		String[] t = line.split(" ");
+		if (t[0].matches("\\-{2}.*")) {
+			// a line comment
+		}
+		else if (t[0].matches("\\/\\-.*")) {
+			// it's a block comment
+		}
+		switch(t[0]) {
+			case "fn":
+			break;
+
+			case "let":
+			this.let(line);
+			break;
+
+			case "if":
+			break;
+
+			case "elsif":
+			break;
+
+			case "else":
+			break;
+
+			case "for":
+			break;
+
+			case "while":
+			break;
+
+
+		}
+	}
 
 	private void let(String line) {
 		String[] decl = Variable.fix(line);
@@ -41,7 +76,7 @@ class Interpreter {
 			// else throws Exception
 		}
 	}
-	
+
 	public String solve(String exp) {
 		int i = 0, offset = 0;
 		String tokens = this.infixToPostfix(exp);
