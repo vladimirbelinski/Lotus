@@ -11,13 +11,62 @@ class Interpreter {
 		this.vars.put(n, v);
 	}
 
-	public Variable getVar(String n) {
-		return this.vars.get(n);
+	public Variable getVar(String name) {
+		return this.vars.get(name);
+	}
+
+	public void setVar(String name, Integer value) {
+		Variable v = this.getVar(name);
+
+		if (v instanceof IntVar) {
+			((IntVar)v).setValue(value);
+		}
+		else if (v == null) {
+			System.out.println("Cannot find variable: " + name);
+		    // throw Exception?
+		}
+		else {
+			System.out.println("Variable " + name + " is not Integer");
+		    // throw Exception?
+		}
+	}
+
+	public void setVar(String name, Double value) {
+		Variable v = this.getVar(name);
+
+		if (v instanceof DoubleVar) {
+			((DoubleVar)v).setValue(value);
+		}
+		else if (v == null) {
+			System.out.println("Cannot find variable: " + name);
+		    // throw Exception?
+		}
+		else {
+			System.out.println("Variable " + name + " is not Double");
+		    // throw Exception?
+		}
+	}
+
+	public void setVar(String name, String value) {
+		Variable v = this.getVar(name);
+
+		if (v instanceof StringVar) {
+			((StringVar)v).setValue(value);
+		}
+		else if (v == null) {
+			System.out.println("Cannot find variable: " + name);
+		    // throw Exception?
+		}
+		else {
+			System.out.println("Variable " + name + " is not String");
+		    // throw Exception?
+		}
 	}
 
 	/* ---------------------------------------------------------------------- */
 
 	public void interpret(String line) {
+		line = line.trim();
 		String[] t = line.split(" ");
 		if (t[0].matches("\\-{2}.*")) {
 			return; // a line comment
@@ -25,30 +74,35 @@ class Interpreter {
 		else if (t[0].matches("\\/\\-.*")) {
 			// it's a block comment
 		}
-		switch(t[0]) {
-			case "fn":
-			break;
+		else if (t[0].matches("(\\w)+") && this.vars.containsKey(t[0])) {
+			System.out.println("Variable assignment, for example");
+			System.out.println("{" + t[0] + ", " + this.getVar(t[0]) + "}");
+			System.out.println();
+		}
+		else {
+			switch(t[0]) {
+				case "fn":
+				break;
 
-			case "let":
-			this.let(line);
-			break;
+				case "let":
+				this.let(line);
+				break;
 
-			case "if":
-			break;
+				case "if":
+				break;
 
-			case "elsif":
-			break;
+				case "elsif":
+				break;
 
-			case "else":
-			break;
+				case "else":
+				break;
 
-			case "for":
-			break;
+				case "for":
+				break;
 
-			case "while":
-			break;
-
-
+				case "while":
+				break;
+			}
 		}
 	}
 
@@ -62,15 +116,15 @@ class Interpreter {
 		while (i >= 0) {
 			switch (type) {
 				case "int":
-				v = new Variable<Integer>(0);
+				v = new IntVar(0);
 				break;
 
 				case "double":
-				v = new Variable<Double>(0.0);
+				v = new DoubleVar(0.0);
 				break;
 
 				case "string":
-				v = new Variable<String>("");
+				v = new StringVar("");
 				break;
 			}
 			if (v != null) {
@@ -150,10 +204,10 @@ class Interpreter {
 
 		if (v2.matches("[+-]?[0-9]+")) {
 			// ? (+ or - are optional); + (one or more)
-			opn2 = new Variable<Integer>(Integer.parseInt(v2));
+			opn2 = new IntVar(Integer.parseInt(v2));
 		}
 		else {
-			opn2 = new Variable<Double>(Double.parseDouble(v2));
+			opn2 = new DoubleVar(Double.parseDouble(v2));
 			intOpns = false;
 		}
 
@@ -162,10 +216,10 @@ class Interpreter {
 		 */
 		if (v1 != "") {
 			if (v1.matches("[+-]?[0-9]+")) {
-				opn1 = new Variable<Integer>(Integer.parseInt(v1));
+				opn1 = new IntVar(Integer.parseInt(v1));
 			}
 			else {
-				opn1 = new Variable<Double>(Double.parseDouble(v1));
+				opn1 = new DoubleVar(Double.parseDouble(v1));
 				intOpns = false;
 			}
 		}
@@ -182,52 +236,52 @@ class Interpreter {
 			 * a binary exponentiation later...
 			 */
 			case "^":
-				answ = String.valueOf(Math.pow(opn1.toDouble(), opn2.toDouble()));
-				break;
+			answ = String.valueOf(Math.pow(opn1.toDouble(), opn2.toDouble()));
+			break;
 
 			case "*":
-				if (intOpns) answ = String.valueOf(opn1.toInt() * opn2.toInt());
-				else answ = String.valueOf(opn1.toDouble() * opn2.toDouble());
-				break;
+			if (intOpns) answ = String.valueOf(opn1.toInt() * opn2.toInt());
+			else answ = String.valueOf(opn1.toDouble() * opn2.toDouble());
+			break;
 
 			case "/":
-				/* if opn2 is not zero, then I can properly divide...
-				 * I think this regex works as it should, identifying
-				 * integer zeroes and floating point zeroes, but needs
-				 * more testing (or a different, better way lol)
-				 */
-				if (!opn2.toString().matches("0+(\\.)?0*")) {
-					if (intOpns) {
-						answ = String.valueOf(opn1.toInt() / opn2.toInt());
-					}
-					else {
-						answ = String.valueOf(opn1.toDouble() / opn2.toDouble());
-					}
+			/* if opn2 is not zero, then I can properly divide...
+			 * I think this regex works as it should, identifying
+			 * integer zeroes and floating point zeroes, but needs
+			 * more testing (or a different, better way lol)
+			 */
+			if (!opn2.toString().matches("0+(\\.)?0*")) {
+				if (intOpns) {
+					answ = String.valueOf(opn1.toInt() / opn2.toInt());
 				}
-				else answ = "undefined";
-				break;
+				else {
+					answ = String.valueOf(opn1.toDouble() / opn2.toDouble());
+				}
+			}
+			else answ = "undefined";
+			break;
 
 			case "+":
-				if (intOpns) {
-					answ = String.valueOf(opn1.toInt() + opn2.toInt());
-				}
-				else {
-					answ = String.valueOf(opn1.toDouble() + opn2.toDouble());
-				}
-				break;
+			if (intOpns) {
+				answ = String.valueOf(opn1.toInt() + opn2.toInt());
+			}
+			else {
+				answ = String.valueOf(opn1.toDouble() + opn2.toDouble());
+			}
+			break;
 
 			case "-":
-				if (intOpns) {
-					answ = String.valueOf(opn1.toInt() - opn2.toInt());
-				}
-				else {
-					answ = String.valueOf(opn1.toDouble() - opn2.toDouble());
-				}
-				break;
+			if (intOpns) {
+				answ = String.valueOf(opn1.toInt() - opn2.toInt());
+			}
+			else {
+				answ = String.valueOf(opn1.toDouble() - opn2.toDouble());
+			}
+			break;
 
 			default:
-				answ = "0";
-				break;
+			answ = "0";
+			break;
 		}
 
 		return answ;
@@ -377,14 +431,14 @@ class Interpreter {
 		return t;
     }
 
-	static final String opRegex = "\\^|\\*|\\/|\\+|\\-|\\(|\\)";
+	public static final String opRegex = "\\^|\\*|\\/|\\+|\\-|\\(|\\)";
 	/* fpRegex taken from Java documentation */
-	static final String Digits     = "(\\p{Digit}+)";
-	static final String HexDigits  = "(\\p{XDigit}+)";
+	private static final String Digits     = "(\\p{Digit}+)";
+	private static final String HexDigits  = "(\\p{XDigit}+)";
 	// an exponent is 'e' or 'E' followed by an optionally
 	// signed decimal integer.
-	static final String Exp        = "[eE][+-]?"+Digits;
-	static final String fpRegex    =
+	private static final String Exp        = "[eE][+-]?"+Digits;
+	public static final String fpRegex    =
 		"[+-]?(" + // Optional sign character
 		"NaN|" +           // "NaN" string
 		"Infinity|" +      // "Infinity" string
