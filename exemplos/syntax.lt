@@ -2,7 +2,12 @@ fn square(x: int): int {
   return x * x;
 }
 
-fn main: void {
+-- this is a line comment.
+
+/- this is a block comment.
+ - possible main arguments format:
+ -/
+fn main(String[] args): void {
   let x, i: int;
 
   print("Oi, digite um numero: ");
