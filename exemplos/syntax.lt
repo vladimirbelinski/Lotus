@@ -1,0 +1,27 @@
+fn square(x: int): int {
+  return x * x;
+}
+
+fn main: void {
+  let x, i: int;
+
+  print("Oi, digite um numero: ");
+  scan(x);
+
+  for [i = 0, i < x, i++] {
+    if [i > 0 && true] {
+      println(square(i));
+
+      if [i < 5] {
+        println(square(i) * square(i));
+      }
+    }
+    else {
+      println(0);
+    }
+  }
+
+  while [true] {
+    break;
+  }
+}
