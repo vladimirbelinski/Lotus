@@ -56,37 +56,42 @@ class Lotus {
               System.out.println(lotus.getVar("z"));
               System.out.println(lotus.getVar("k"));
               System.out.println(lotus.getVar("s"));
+
+              if (lotus.getVar("s") != null) lotus.setVar("s", "teste");
+
+              lotus.setVar("x", 3);
+              System.out.println("new x: " + lotus.getVar("x"));
+
+              lotus.setVar("gabriel", 9);
+
+              lotus.setVar("x", lotus.getVar("y").toInt() + lotus.getVar("z").toInt());
+              System.out.println("new x: " + lotus.getVar("x"));
+
               System.out.println();
+
               /*System.out.println(input.get(i));
               System.out.println("= " + lotus.solve(input.get(i)));
               if (i < max - 1) System.out.println();*/
             }
-
-            Variable x = lotus.getVar("x");
-            x.value = 2 + 3;
-            System.out.println(x);
-            System.out.println(lotus.getVar("x"));
         }
         else if (!validParam) {
             System.out.println("Invalid input file.");
         }
         /**********************************************************************/
-        Variable g, d, tni, z;
-        g = new Variable<String>("Gabriel");
-        d = new Variable<Double>(7.0);
-        tni = new Variable<Integer>(11);
-        z = new Variable<Double>(d.toDouble() + tni.toInt());
+        StringVar g = new StringVar("Gabriel");
+        DoubleVar d = new DoubleVar(7.0);
+        IntVar tni = new IntVar(11);
 
         System.out.println("---------------------------------------");
-        // Gotta be sure that it's a String to do that casting!
-        System.out.println(((String)g.value).substring(0, 1));
-        // or:
-        System.out.println(g.toString().substring(0, 1));
-
-        System.out.println(g);
-        System.out.println(g.type());
-        System.out.println(d);
-        System.out.println(tni);
-        System.out.println(z);
+        IntVar a, b, c;
+        a = new IntVar(7);
+        b = new IntVar(11);
+        c = new IntVar(a.value + b.value);
+        System.out.println(a + ", " + b + ", " + c);
+        c.value = (a.value + b.value) * 2;
+        System.out.println(a + ", " + b + ", " + c);
+        c.value = d.toInt() + 5;
+        System.out.println(a + ", " + b + ", " + c);
+        System.out.println("---------------------------------------");
     }
 }
