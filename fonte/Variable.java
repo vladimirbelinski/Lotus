@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Variable<T> {
+abstract class Variable<T> {
     public T value;
 
     public Variable(T value) {
@@ -11,35 +11,13 @@ class Variable<T> {
         return this.value.getClass();
     }
 
-    public double toDouble() {
-        if (this.value instanceof Double) {
-            return ((Double)this.value).doubleValue();
-        }
-        else if (this.value instanceof Integer) {
-            return ((Integer)this.value).doubleValue();
-        }
-        else {
-            System.out.println("Cannot convert " + this.type() + " to double");
-            return 0.0; // throw Exception
-        }
+    public void setValue(T value) {
+        this.value = value;
     }
 
-    public int toInt() {
-        if (this.value instanceof Double) {
-            return ((Double)this.value).intValue();
-        }
-        else if (this.value instanceof Integer) {
-            return ((Integer)this.value).intValue();
-        }
-        else {
-            System.out.println("Cannot convert " + this.type() + " to int");
-            return 0; // throw Exception
-        }
-    }
-
-    public String toString() {
-        return String.valueOf(this.value);
-    }
+    public abstract int toInt();
+    public abstract double toDouble();
+    public abstract String toString();
 
     // remember the Arrays!
     public static String[] fix(String line) {
