@@ -18,19 +18,33 @@ class Expression {
         String[] tokens = this.value.split(" ");
         ArrayList<String> ts = new ArrayList<String>();
 
+        System.out.println("~~~> this.value: " + this.value);
+
         for (int i = 0; i < tokens.length; i++) {
+
+            System.out.println("tokens[i]: " + tokens[i]);
+
             if (tokens[i].matches(opRegex)) {
-                ts.add(tokens[i]);
+                if (tokens[i].matches("[+-]") &&
+                    i - 1 >= 0 && tokens[i - 1].matches(opRegex) &&
+                    i + 1 < tokens.length && tokens[i + 1].matches("\\w|\\."))
+                {
+                    t = tokens[i];
+                }
+                else {
+                    ts.add(tokens[i]);
+                }
             }
-            while (i < tokens.length && tokens[i].matches("\\w|\\.")) {
-                System.out.println(": " + tokens[i]);
-                t += tokens[i];
-                i++;
-            }
-            if (!t.isEmpty()) {
-                ts.add(t);
-                t = "";
-                i--;
+            else {
+                while (i < tokens.length && tokens[i].matches("\\w|\\.")) {
+                    t += tokens[i];
+                    i++;
+                }
+                if (!t.isEmpty()) {
+                    ts.add(t);
+                    t = "";
+                    i--;
+                }
             }
         }
 
@@ -77,6 +91,12 @@ class Expression {
 				i++;
 			}
 
+            // System.out.println("----------");
+            // for (String s: t) {
+            //     System.out.println(s);
+            // }
+            // System.out.println("----------");
+
 			// then, the operation char is at i's position in the array
 			op = t[i];
 			// as it's postfix, the 2nd operand is right before op
@@ -89,6 +109,11 @@ class Expression {
             }
 			else {
                 num1 = null;
+            }
+
+            if (num1 == null && num2 == null) {
+                answ = new StringVar("undefined");
+                break;
             }
 
             if (num2 instanceof DoubleVar || (num1 != null && num1 instanceof DoubleVar)) {
@@ -160,6 +185,10 @@ class Expression {
 			intOpns = false;
 		}
 
+        System.out.println();
+        System.out.println(v1+op+v2);
+        System.out.println();
+
 		/* If it doesn't and the operation is a '-'
 		 * simply return -v2 (it's a number sign).
 		 * Else, return v2 to prevent a crash in
@@ -199,7 +228,7 @@ class Expression {
     			 * integer zeroes and floating point zeroes, but needs
     			 * more testing (or a different, better way lol)
     			 */
-    			if (!v2.equals(0)) {
+    			if (!v2.equals(0)) { // pra double!
     				if (intOpns) {
     					answ = new IntVar(v1.toInt() / v2.toInt());
     				}
