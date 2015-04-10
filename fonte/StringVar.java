@@ -4,13 +4,27 @@ class StringVar extends Variable<String> {
         super(value);
     }
 
+    public String toString() {
+        return this.value;
+    }
+
     public int toInt() {
         if (this.value.matches(Expression.intRegex)) {
             return Integer.parseInt(this.value);
         }
         else {
             System.out.println("Cannot convert to int");
-            return 0; // throw Exception?
+            return 0; // throw Exception
+        }
+    }
+
+    public boolean toBool() {
+        // ?
+        if (this.value.equals("") || this.value.equals("false")) {
+            return false;
+        }
+        else {
+            return true;
         }
     }
 
@@ -20,11 +34,7 @@ class StringVar extends Variable<String> {
         }
         else {
             System.out.println("Cannot convert to double");
-            return 0.0; // throw Exception?
+            return 0.0; // throw Exception
         }
-    }
-
-    public String toString() {
-        return this.value;
     }
 }

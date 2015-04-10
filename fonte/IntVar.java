@@ -8,6 +8,15 @@ class IntVar extends Variable<Integer> {
         return this.value;
     }
 
+    public boolean toBool() {
+        if (this.value == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     public double toDouble() {
         return this.value.doubleValue();
     }
