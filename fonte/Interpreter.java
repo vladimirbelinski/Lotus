@@ -65,7 +65,7 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
-	public void interpret(String line) {
+	public void execute(String line) {
 		line = line.trim();
 		//String[] t = line.split(" ");
 
