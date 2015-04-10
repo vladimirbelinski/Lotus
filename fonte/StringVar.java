@@ -5,7 +5,7 @@ class StringVar extends Variable<String> {
     }
 
     public int toInt() {
-        if (this.value.matches("[+-]?[0-9]+")) {
+        if (this.value.matches(Expression.intRegex)) {
             return Integer.parseInt(this.value);
         }
         else {
@@ -15,7 +15,7 @@ class StringVar extends Variable<String> {
     }
 
     public double toDouble() {
-        if (this.value.matches(Interpreter.fpRegex)) {
+        if (this.value.matches(Expression.fpRegex)) {
             return Double.parseDouble(this.value);
         }
         else {
