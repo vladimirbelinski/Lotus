@@ -1,3 +1,7 @@
-let x: int;
-let y: double;
+let x, y, z: int;
 let s: string;
+
+x = 2;
+y=1;
+
+x=y^2 + (z/2);
