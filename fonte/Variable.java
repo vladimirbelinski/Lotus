@@ -19,8 +19,13 @@ abstract class Variable<T> {
     public abstract double toDouble();
     public abstract String toString();
 
-    public void assignment(String line) {
-        System.out.println("** [" + line + "]");
+    public String assignment(String line) {
+        line = line.replace(";", "");
+        Expression assign = new Expression(line);
+        String result = assign.solve();
+        System.out.println("** [" + assign.value + "]");
+        System.out.println("= " + result);
+        return result;
     }
 
     // remember the Arrays!
