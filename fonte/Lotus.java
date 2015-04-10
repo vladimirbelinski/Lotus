@@ -51,7 +51,7 @@ class Lotus {
             max = input.size();
             for (int i = 0; i < max; i++) {
               lotus.interpret(input.get(i));
-              System.out.println(lotus.getVar("x"));
+              /*System.out.println(lotus.getVar("x"));
               System.out.println(lotus.getVar("y"));
               System.out.println(lotus.getVar("z"));
               System.out.println(lotus.getVar("k"));
@@ -65,7 +65,7 @@ class Lotus {
               lotus.setVar("gabriel", 9);
 
               lotus.setVar("x", lotus.getVar("y").toInt() + lotus.getVar("z").toInt());
-              System.out.println("new x: " + lotus.getVar("x"));
+              System.out.println("new x: " + lotus.getVar("x"));*/
 
               System.out.println();
 
