@@ -19,18 +19,22 @@ abstract class Variable<T> {
     public abstract double toDouble();
     public abstract String toString();
 
+    public void assignment(String line) {
+        System.out.println("** [" + line + "]");
+    }
+
     // remember the Arrays!
-    public static String[] fix(String line) {
-        // takes ou "let" and removes all trailing spaces
-        line = line.replace("let", "").trim();
-        if (!line.matches(varRegex)) {
+    public static String[] fixDecl(String line) {
+        // removes all trailing spaces
+        line = line.trim();
+        if (!line.matches(declRegex)) {
             System.out.println("Syntax error!");
             return null; // throw Exception
         }
 
         int i;
         String var = new String("");
-        String[] t = line.split("");
+        String[] t = line.replace("let", "").split("");
         ArrayList<String> tokens = new ArrayList<String>();
 
         for (i = 0; i < t.length && !t[i].equals(":"); i++) {
@@ -70,6 +74,6 @@ abstract class Variable<T> {
         return t;
     }
 
-    private static final String varRegex = "((\\w)+( )*(,( )*(\\w)+)*)( )*\\:( )*(\\w)+( )*\\;";
-    private static final String typeRegex = "int|double|string";
+    public static final String declRegex = "(let)( )+((\\w)+((,( )*(\\w)+)( )*)*)( )*:( )*(\\w)+;";
+    public static final String typeRegex = "int|double|string";
 }
