@@ -17,11 +17,12 @@ import java.io.*;
  */
 
 class Lotus {
+    public static Interpreter lotus = new Interpreter();
+
     public static void main(String[] args) throws Exception {
         File f;
         Scanner sc;
         int max, ind = 0;
-        Interpreter lotus = new Interpreter();
         boolean hasParam = true, validParam = true;
         ArrayList<String> input = new ArrayList<String>();
 
@@ -45,27 +46,13 @@ class Lotus {
 
             while (sc.hasNext()) {
                 input.add(sc.nextLine());
+                // should we parse and "compile" previously?
             }
             sc.close();
 
             max = input.size();
             for (int i = 0; i < max; i++) {
-              lotus.interpret(input.get(i));
-              /*System.out.println(lotus.getVar("x"));
-              System.out.println(lotus.getVar("y"));
-              System.out.println(lotus.getVar("z"));
-              System.out.println(lotus.getVar("k"));
-              System.out.println(lotus.getVar("s"));
-
-              if (lotus.getVar("s") != null) lotus.setVar("s", "teste");
-
-              lotus.setVar("x", 3);
-              System.out.println("new x: " + lotus.getVar("x"));
-
-              lotus.setVar("gabriel", 9);
-
-              lotus.setVar("x", lotus.getVar("y").toInt() + lotus.getVar("z").toInt());
-              System.out.println("new x: " + lotus.getVar("x"));*/
+              lotus.execute(input.get(i));
 
               System.out.println();
 
@@ -81,6 +68,14 @@ class Lotus {
         StringVar g = new StringVar("Gabriel");
         DoubleVar d = new DoubleVar(7.0);
         IntVar tni = new IntVar(11);
+        Variable test = new IntVar(0);
+
+        if (test instanceof IntVar) {
+            System.out.println("--> works!");
+        }
+        else {
+            System.out.println("--> this doesn't work -.-");
+        }
 
         System.out.println("---------------------------------------");
         IntVar a, b, c;
