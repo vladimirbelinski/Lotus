@@ -45,20 +45,20 @@ class Lotus {
             sc = new Scanner(f);
 
             while (sc.hasNext()) {
-                input.add(sc.nextLine());
+                input.add(sc.nextLine().replaceAll("( )+", " "));
                 // should we parse and "compile" previously?
             }
             sc.close();
 
             max = input.size();
             for (int i = 0; i < max; i++) {
-              lotus.execute(input.get(i));
+                lotus.execute(input.get(i));
 
-              System.out.println();
+                System.out.println("~~~~~~~~~~~~~~~");
 
-              /*System.out.println(input.get(i));
-              System.out.println("= " + lotus.solve(input.get(i)));
-              if (i < max - 1) System.out.println();*/
+                /*System.out.println(input.get(i));
+                System.out.println("= " + lotus.solve(input.get(i)));
+                if (i < max - 1) System.out.println();*/
             }
         }
         else if (!validParam) {

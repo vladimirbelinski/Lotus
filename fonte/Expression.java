@@ -4,16 +4,54 @@ class Expression {
     public String value;
 
     public Expression(String value) {
-        this.value = value;
+        this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
+        this.value = this.fixSpaces();
     }
 
     public String toString() {
         return this.value;
     }
 
+    private String fixSpaces() {
+        int max;
+        String t = new String("");
+        String[] tokens = this.value.split(" ");
+        ArrayList<String> ts = new ArrayList<String>();
+
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i].matches(opRegex)) {
+                ts.add(tokens[i]);
+            }
+            while (i < tokens.length && tokens[i].matches("\\w|\\.")) {
+                System.out.println(": " + tokens[i]);
+                t += tokens[i];
+                i++;
+            }
+            if (!t.isEmpty()) {
+                ts.add(t);
+                t = "";
+                i--;
+            }
+        }
+
+        t = "";
+        max = ts.size();
+        for (int i = 0; i < max; i++) {
+            t += ts.get(i);
+            if (i < max - 1) t += " ";
+        }
+
+        return t;
+    }
+
     public Variable solve() {
 		String tokens = this.infixToPostfix();
+
+        System.out.println();
+        System.out.println(">> value: " + this.value);
         System.out.println(">> tokens: " + tokens);
+        System.out.println();
+
 		String t[] = tokens.split(" ");
         Variable answ = null, num1 = null, num2 = null;
 		String front[], back[];
@@ -78,8 +116,9 @@ class Expression {
 				 * and I leave one spot for the result of this operation
 				 * in the middle of the new vector :)
 				 */
-				if (num1.equals("")) offset = i - 1;
+				if (num1 == null) offset = i - 1;
 				else offset = i - 2;
+
 				front = Arrays.copyOfRange(t, 0, offset);
 				back = Arrays.copyOfRange(t, i, t.length);
 				t = this.merge(front, back);
@@ -135,16 +174,17 @@ class Expression {
                     answ = new DoubleVar(0.0 - v2.toDouble());
                 }
             }
-            else return v2;
+            else {
+                answ = v2;
+            }
         }
 		else {
+            System.out.println("calculate: " + v1 + op + v2);
     		switch (op) {
     			/* pow() returns double. I will implement
     			 * a binary exponentiation later...
     			 */
     			case "^":
-                System.out.println("^ v1: " + v1);
-                System.out.println("^ v2: " + v2);
     			answ = new DoubleVar(Math.pow(v1.toDouble(), v2.toDouble()));
     			break;
 
@@ -213,13 +253,13 @@ class Expression {
 
 	/* Dijkstra's Shunting Yard algorithm. Taken from Rosetta Code
 	 * It needs an expression with everything separated by spaces
-	 * and that's why it calls the splitExp() monster method ;x
+	 * and that's why it calls the fixExp() monster method ;x
 	 */
 	private String infixToPostfix() {
         final String ops = "-+/*^";
         StringBuilder sb = new StringBuilder();
         Stack<Integer> s = new Stack<>();
-        String[] tokens = this.splitExp();
+        String[] tokens = this.value.split(" ");
 
         for (String token: tokens) {
             char c = token.charAt(0);
@@ -258,87 +298,6 @@ class Expression {
             sb.append(ops.charAt(s.pop())).append(' ');
         }
         return sb.toString();
-    }
-
-	/* This is the method that gets a random infix expression
-	 * and splits it in the tokens that compose it. This is
-	 * called by the infixToPostfix() method, because it needs
-	 * an expression that has everything separated by spaces
-	 */
-	private String[] splitExp() {
-		int i = 0, sign = 0;
-		String[] t;
-        String num = new String("");
-        ArrayList<String> tokens = new ArrayList<String>();
-
-        String[] spl = this.value.split("");
-        for (i = 0; i < spl.length; i++) {
-			/* If I found a +/- sign and I didn't previously find
-			 * a number, I gotta check if its an operation
-			 * or is owned by a number
-			 */
-			if (num.equals("") && spl[i].matches("[+-]")) {
-				// to save the current i, as the while will go forward
-				// and I need this position inside those ifs
-				sign = i;
-
-				while (spl[i + 1].equals(" ")) i++;
-
-				// If I found a digit, then it's not an operation
-				if (spl[i + 1].matches("[0-9]") || spl[i + 1].equals(".")) {
-					num += spl[sign] + spl[i + 1];
-					i++;
-				}
-				// If I found a '(', it's an operation...
-				else if (spl[i + 1].equals("(")) {
-					tokens.add(spl[sign]);
-				}
-			}
-			// else, if its a digit or a decimal point
-			else if (spl[i].matches("[0-9]") || spl[i].equals(".")) {
-				num += spl[i];
-			}
-			// finally, if its a char that represents an operation
-			else if (spl[i].matches(opRegex)) {
-				/* If my number is not empty, then I know that
-				 * at THIS point, the code is done building it
-				 * and I gotta add it to the list of tokens
-				 */
-	            if (!num.equals("")) {
-	                tokens.add(num);
-	                num = "";
-					tokens.add(spl[i]);
-	            }
-				/* else, if this char is a '-', I gotta check if
-				 * it's indeed an operation or it's a number sign
-				 */
-				else if (spl[i].equals("-") && i < spl.length - 1 &&
-						spl[i + 1].matches("[0-9]"))
-				{
-					num += spl[i] + spl[i + 1];
-					i++;
-				}
-				// if it enters here, it's a normal operation char
-	            else {
-					tokens.add(spl[i]);
-				}
-	        }
-        }
-		/* I gotta check if I left the for loop with a number
-		 * in 'num' string, because I would only add it in the
-		 * next iteration, but I have already quit the loop
-		 */
-        if (!num.equals("")) {
-            tokens.add(num);
-        }
-
-		/* transform the built list in a normal array of strings
-		 * so that infixToPostfix() can use it
-		 */
-        t = new String[tokens.size()];
-        tokens.toArray(t);
-
-		return t;
     }
 
     public static final String opRegex = "\\^|\\*|\\/|\\+|\\-|\\(|\\)";
