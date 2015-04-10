@@ -20,13 +20,18 @@ abstract class Variable<T> {
     public abstract double toDouble();
     public abstract String toString();
 
-    public String assignment(String line) {
+    public abstract boolean equals(Object value);
+
+    public boolean assign(String line) {
         line = line.replace(";", "");
+
         Expression assign = new Expression(line);
-        String result = assign.solve();
-        System.out.println("** [" + assign.value + "]");
-        System.out.println("= " + result);
-        return result;
+        System.out.println("assign: " + assign);
+        Variable result = assign.solve();
+        System.out.println("result: " + result);
+
+        //this.setValue(result.value);
+        return true;
     }
 
     // remember the Arrays!
@@ -81,5 +86,6 @@ abstract class Variable<T> {
     }
 
     public static final String declRegex = "(let)( )+((\\w)+((,( )*(\\w)+)( )*)*)( )*:( )*(\\w)+;";
+    public static final String nameRegex = "(\\w)+";
     public static final String typeRegex = "int|double|string|bool";
 }

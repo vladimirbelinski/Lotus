@@ -37,4 +37,8 @@ class StringVar extends Variable<String> {
             return 0.0; // throw Exception
         }
     }
+
+    public boolean equals(Object value) {
+        return this.value.equals(value);
+    }
 }
