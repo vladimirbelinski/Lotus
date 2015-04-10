@@ -16,6 +16,7 @@ abstract class Variable<T> {
     }
 
     public abstract int toInt();
+    public abstract boolean toBool();
     public abstract double toDouble();
     public abstract String toString();
 
@@ -80,5 +81,5 @@ abstract class Variable<T> {
     }
 
     public static final String declRegex = "(let)( )+((\\w)+((,( )*(\\w)+)( )*)*)( )*:( )*(\\w)+;";
-    public static final String typeRegex = "int|double|string";
+    public static final String typeRegex = "int|double|string|bool";
 }
