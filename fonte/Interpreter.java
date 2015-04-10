@@ -11,6 +11,10 @@ class Interpreter {
 		this.vars.put(n, v);
 	}
 
+	public boolean hasVar(String name) {
+		return this.vars.containsKey(name);
+	}
+
 	public Variable getVar(String name) {
 		return this.vars.get(name);
 	}
@@ -77,14 +81,14 @@ class Interpreter {
 		}
 		else if (line.matches("(\\w)+( )*=( )*.+;")/* && this.vars.containsKey(t[0])*/) {
 			System.out.println("Variable assignment, for example");
-			// gets only the name of the variable
+			// gets only the name of the variable being assigned to
 			String vname = line.split("( )*=( )*.+;")[0];
 			// gets that variable and calls assignment() on it
 			// passing the string after the '=' token
 			Variable v = this.getVar(vname);
 
 			if (v != null) {
-				String result = v.assignment(line.split("(\\w)+( )*=( )*")[1]);
+				v.assign(line.split("(\\w)+( )*=( )*")[1]);
 				//v.setValue(vname, result); // tratar o tipo... retorno?
 			}
 			else {

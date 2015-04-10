@@ -7,17 +7,31 @@ class Expression {
         this.value = value;
     }
 
-    public String solve() {
-		int i = 0, offset = 0;
-		String tokens = this.infixToPostfix();
-		String t[] = tokens.split(" ");
-		String front[], back[];
-		String answ, num1, op, num2;
+    public String toString() {
+        return this.value;
+    }
 
-        if (t.length == 1 && t[0].matches(fpRegex)) {
-            answ = new String(t[0]);
+    public Variable solve() {
+		String tokens = this.infixToPostfix();
+        System.out.println(">> tokens: " + tokens);
+		String t[] = tokens.split(" ");
+        Variable answ = null, num1 = null, num2 = null;
+		String front[], back[];
+		int i = 0, offset = 0;
+		String op;
+
+        if (t.length == 1) {
+            if (t[0].matches(intRegex)) {
+                answ = new IntVar(Integer.parseInt(t[0]));
+            }
+            else if (t[0].matches(fpRegex)) {
+                answ = new DoubleVar(Double.parseDouble(t[0]));
+            }
+            else if (t[0].matches(Variable.nameRegex) && Lotus.lotus.hasVar(t[0])) {
+                answ = Lotus.lotus.getVar(t[0]);
+            }
         }
-        else answ = new String("0");
+        //else answ = new String("0");
 
 		while (t.length > 1) {
 			// advance until you don't find an operation to perform
@@ -28,12 +42,23 @@ class Expression {
 			// then, the operation char is at i's position in the array
 			op = t[i];
 			// as it's postfix, the 2nd operand is right before op
-			num2 = t[i - 1];
+            num2 = this.getOperand(t[i - 1]);
 			/* now, if i > 1, then 1st operand is certainly 2 positions
 			 * before op. Else, it doesn't exist lol
 			 */
-			if (i > 1) num1 = t[i - 2];
-			else num1 = "";
+			if (i > 1) {
+                num1 = this.getOperand(t[i - 2]);
+            }
+			else {
+                num1 = null;
+            }
+
+            if (num2 instanceof DoubleVar || (num1 != null && num1 instanceof DoubleVar)) {
+                answ = new DoubleVar(0.0);
+            }
+            else {
+                answ = new IntVar(0);
+            }
 
 			/* As I am overwriting my token vector, I gotta
 			 * copy the parts that I'm not currently working with.
@@ -63,101 +88,111 @@ class Expression {
 			/* calculating where the result will be put
 			 * same logic as the else above
 			 */
-			if (num1.equals("")) i -= 1;
+			if (num1 == null) i -= 1;
 			else i -= 2;
 
 			answ = this.calculate(num1, num2, op);
-			t[i] = answ;
+			t[i] = answ.toString();
 		}
+
 		return answ;
 	}
 
-	private String calculate(String v1, String v2, String op) {
-		boolean intOpns = true;
-		Variable opn1, opn2;
-		String answ;
+    private Variable getOperand(String t) {
+        if (t.matches(intRegex)) {
+            return new IntVar(Integer.parseInt(t));
+        }
+        else if (t.matches(fpRegex)) {
+            return new DoubleVar(Double.parseDouble(t));
+        }
+        else if (t.matches(Variable.nameRegex) && Lotus.lotus.hasVar(t)) {
+            return Lotus.lotus.getVar(t);
+        }
+        else {
+            return null; // ?
+        }
+    }
 
-		if (v2.matches(intRegex)) {
-			// ? (+ or - are optional); + (one or more)
-			opn2 = new IntVar(Integer.parseInt(v2));
-		}
-		else {
-			opn2 = new DoubleVar(Double.parseDouble(v2));
+	private Variable calculate(Variable v1, Variable v2, String op) {
+		boolean intOpns = true;
+		Variable answ = null;
+
+		if (v2 instanceof DoubleVar || (v1 != null && v1 instanceof DoubleVar)) {
 			intOpns = false;
 		}
 
-		/* Gotta check if the first operand exists
-		 * or parseDouble() freaks out hehe
-		 */
-		if (v1 != "") {
-			if (v1.matches(intRegex)) {
-				opn1 = new IntVar(Integer.parseInt(v1));
-			}
-			else {
-				opn1 = new DoubleVar(Double.parseDouble(v1));
-				intOpns = false;
-			}
-		}
 		/* If it doesn't and the operation is a '-'
 		 * simply return -v2 (it's a number sign).
 		 * Else, return v2 to prevent a crash in
 		 * the operations below
 		 */
-		else if (op.equals("-")) return op + v2;
-		else return v2;
+		if (v1 == null) {
+            if (op.equals("-")) {
+                if (intOpns) {
+                    answ = new IntVar(0 - v2.toInt());
+                }
+                else {
+                    answ = new DoubleVar(0.0 - v2.toDouble());
+                }
+            }
+            else return v2;
+        }
+		else {
+    		switch (op) {
+    			/* pow() returns double. I will implement
+    			 * a binary exponentiation later...
+    			 */
+    			case "^":
+                System.out.println("^ v1: " + v1);
+                System.out.println("^ v2: " + v2);
+    			answ = new DoubleVar(Math.pow(v1.toDouble(), v2.toDouble()));
+    			break;
 
-		switch (op) {
-			/* pow() returns double. I will implement
-			 * a binary exponentiation later...
-			 */
-			case "^":
-			answ = String.valueOf(Math.pow(opn1.toDouble(), opn2.toDouble()));
-			break;
+    			case "*":
+    			if (intOpns) answ = new IntVar(v1.toInt() * v2.toInt());
+    			else answ = new DoubleVar(v1.toDouble() * v2.toDouble());
+    			break;
 
-			case "*":
-			if (intOpns) answ = String.valueOf(opn1.toInt() * opn2.toInt());
-			else answ = String.valueOf(opn1.toDouble() * opn2.toDouble());
-			break;
+    			case "/":
+    			/* if v2 is not zero, then I can properly divide...
+    			 * I think this regex works as it should, identifying
+    			 * integer zeroes and floating point zeroes, but needs
+    			 * more testing (or a different, better way lol)
+    			 */
+    			if (!v2.equals(0)) {
+    				if (intOpns) {
+    					answ = new IntVar(v1.toInt() / v2.toInt());
+    				}
+    				else {
+    					answ = new DoubleVar(v1.toDouble() / v2.toDouble());
+    				}
+    			}
+    			else answ = new StringVar("undefined");
+    			break;
 
-			case "/":
-			/* if opn2 is not zero, then I can properly divide...
-			 * I think this regex works as it should, identifying
-			 * integer zeroes and floating point zeroes, but needs
-			 * more testing (or a different, better way lol)
-			 */
-			if (!opn2.toString().matches(zeroRegex)) {
-				if (intOpns) {
-					answ = String.valueOf(opn1.toInt() / opn2.toInt());
-				}
-				else {
-					answ = String.valueOf(opn1.toDouble() / opn2.toDouble());
-				}
-			}
-			else answ = "undefined";
-			break;
+    			case "+":
+    			if (intOpns) {
+    				answ = new IntVar(v1.toInt() + v2.toInt());
+    			}
+    			else {
+    				answ = new DoubleVar(v1.toDouble() + v2.toDouble());
+    			}
+    			break;
 
-			case "+":
-			if (intOpns) {
-				answ = String.valueOf(opn1.toInt() + opn2.toInt());
-			}
-			else {
-				answ = String.valueOf(opn1.toDouble() + opn2.toDouble());
-			}
-			break;
+    			case "-":
+    			if (intOpns) {
+    				answ = new IntVar(v1.toInt() - v2.toInt());
+    			}
+    			else {
+    				answ = new DoubleVar(v1.toDouble() - v2.toDouble());
+    			}
+    			break;
 
-			case "-":
-			if (intOpns) {
-				answ = String.valueOf(opn1.toInt() - opn2.toInt());
-			}
-			else {
-				answ = String.valueOf(opn1.toDouble() - opn2.toDouble());
-			}
-			break;
-
-			default:
-			answ = "0";
-			break;
-		}
+    			default:
+    			answ = new StringVar("undefined"); // ? haha
+    			break;
+    		}
+        }
 
 		return answ;
 	}
