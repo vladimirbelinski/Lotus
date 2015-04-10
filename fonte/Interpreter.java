@@ -67,19 +67,31 @@ class Interpreter {
 
 	public void interpret(String line) {
 		line = line.trim();
-		String[] t = line.split(" ");
-		if (t[0].matches("\\-{2}.*")) {
+		//String[] t = line.split(" ");
+
+		if (line.matches("\\-{2}.*")) {
 			return; // a line comment
 		}
-		else if (t[0].matches("\\/\\-.*")) {
+		else if (line.matches("\\/\\-.*")) {
 			// it's a block comment
 		}
-		else if (t[0].matches("(\\w)+") && this.vars.containsKey(t[0])) {
+		else if (line.matches("(\\w)+( )*=( )*.+;")/* && this.vars.containsKey(t[0])*/) {
 			System.out.println("Variable assignment, for example");
-			System.out.println("{" + t[0] + ", " + this.getVar(t[0]) + "}");
-			System.out.println();
+			// gets only the name of the variable
+			String vname = line.split("( )*=( )*.+;")[0];
+			// gets that variable and calls assignment() on it
+			// passing the string after the '=' token
+			Variable v = this.getVar(vname);
+			if (v != null) v.assignment(line.split("(\\w)+( )*=( )*")[1]);
+			else {
+				System.out.println("Could not find variable " + vname);
+				// throw Exception
+			}
 		}
-		else {
+		else if (line.matches(Variable.declRegex)) {
+			this.let(line);
+		}
+		/*else {
 			switch(t[0]) {
 				case "fn":
 				break;
@@ -103,11 +115,11 @@ class Interpreter {
 				case "while":
 				break;
 			}
-		}
+		}*/
 	}
 
 	private void let(String line) {
-		String[] decl = Variable.fix(line);
+		String[] decl = Variable.fixDecl(line);
 		int i = decl.length - 1;
 		String type = decl[i];
 		Variable v = null;
