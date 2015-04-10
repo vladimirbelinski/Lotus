@@ -26,10 +26,7 @@ abstract class Variable<T> {
         line = line.replace(";", "");
 
         Expression assign = new Expression(line);
-        System.out.println("assign: " + assign);
         Variable result = assign.solve();
-        System.out.println("result: " + result);
-
         //this.setValue(result.value);
         return true;
     }

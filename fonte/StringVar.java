@@ -20,7 +20,7 @@ class StringVar extends Variable<String> {
 
     public boolean toBool() {
         // ?
-        if (this.value.equals("") || this.value.equals("false")) {
+        if (this.value.isEmpty() || this.value.equals("false")) {
             return false;
         }
         else {
