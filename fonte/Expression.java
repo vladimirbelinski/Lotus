@@ -233,6 +233,20 @@ class Expression {
     			else answ = new DoubleVar(v1.toDouble() * v2.toDouble());
     			break;
 
+                case "%":
+                if (v2 instanceof IntVar && !v2.equals(0) ||
+                    v2 instanceof DoubleVar && !v2.equals(0.0))
+                {
+                    if (intOpns) answ = new IntVar(v1.toInt() % v2.toInt());
+                    else {
+                        throw new LotusException("Cannot calculate remainder of a division between non-integer operands");
+                    }
+                }
+                else {
+                    throw new LotusException("Division by zero");
+                }
+                break;
+
     			case "/":
     			/* if v2 is not zero, then I can properly divide...
     			 * I think this regex works as it should, identifying
@@ -273,8 +287,7 @@ class Expression {
     			break;
 
     			default:
-    			answ = new StringVar("undefined"); // ? haha
-    			break;
+                throw new LotusException("Unknown operation " + op);
     		}
         }
 
@@ -300,7 +313,7 @@ class Expression {
 	 * and that's why it calls the fixExp() monster method ;x
 	 */
 	private String infixToPostfix() {
-        final String ops = "-+/*^";
+        final String ops = "-+/%*^";
         StringBuilder sb = new StringBuilder();
         Stack<Integer> s = new Stack<>();
         String[] tokens = this.value.split(" ");
@@ -344,7 +357,7 @@ class Expression {
         return sb.toString();
     }
 
-    public static final String opRegex = "\\^|\\*|\\/|\\+|\\-|\\(|\\)";
+    public static final String opRegex = "\\^|\\*|\\%|\\/|\\+|\\-|\\(|\\)";
     public static final String intRegex = "[+-]?[0-9]+";
     public static final String zeroRegex = "0+(\\.)?0*";
     /* fpRegex taken from Java documentation */
