@@ -35,14 +35,13 @@ abstract class Variable<T> {
 		}
     }
 
+    public abstract void invert();
     public abstract int toInt();
     public abstract boolean toBool();
     public abstract double toDouble();
     public abstract boolean equals(Object value);
 
     public boolean assign(String name, String exp) {
-        exp = exp.replace(";", "");
-
         Expression assign = new Expression(exp);
         Variable result = assign.solve();
 

@@ -4,6 +4,10 @@ class IntVar extends Variable<Integer> {
         super(value);
     }
 
+    public void invert() {
+        this.value = (-this.value);
+    }
+
     public int toInt() {
         return this.value;
     }

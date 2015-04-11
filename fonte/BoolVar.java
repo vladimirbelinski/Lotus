@@ -4,6 +4,10 @@ class BoolVar extends Variable<Boolean> {
         super(value);
     }
 
+    public void invert() {
+        this.value = (!this.value);
+    }
+
     public boolean toBool() {
         return this.value.booleanValue();
     }
