@@ -7,8 +7,12 @@ fn square(x: int): int {
 fn main(String[] args): void {
   let x, i: int;
 
-  print("Oi, digite um numero: ");
+  print(Oi, digite um numero: );
   scan(x);
+
+  print($x oioifefuefefie$var oi oi uy nj);
+  oi();
+  scan(f); -- hey
 
   for [i = 0, i < x, i++] {
     if [i > 0 && true] {
