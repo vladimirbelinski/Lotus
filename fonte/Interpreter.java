@@ -19,6 +19,43 @@ class Interpreter {
 		return this.vars.get(name);
 	}
 
+	public boolean setVar(String name, Variable other) {
+		boolean success = false;
+		Variable v = this.getVar(name);
+
+		if (v != null && other != null) {
+			if (v.getClass().equals(other.getClass())) {
+				if (v instanceof IntVar) {
+					this.setVar(name, (Integer)other.value);
+				}
+				else if (v instanceof BoolVar) {
+					this.setVar(name, (Boolean)other.value);
+				}
+				else if (v instanceof DoubleVar) {
+					this.setVar(name, (Double)other.value);
+				}
+				else if (v instanceof StringVar) {
+					this.setVar(name, (String)other.value);
+				}
+				success = true;
+			}
+		}
+		else if (v == null){
+			System.out.println("Cannot find variable: " + name);
+		    // throw Exception?
+		}
+		else if (other != null) {
+			System.out.println("Incompatible assignment of types " + v.getClass() + " and " + v.getClass());
+		    // throw Exception
+		}
+		else {
+			System.out.println("Incompatible assignment");
+			// throw Exception
+		}
+
+		return success;
+	}
+
 	public void setVar(String name, Integer value) {
 		Variable v = this.getVar(name);
 
@@ -31,6 +68,22 @@ class Interpreter {
 		}
 		else {
 			System.out.println("Variable " + name + " is not Integer");
+		    // throw Exception?
+		}
+	}
+
+	public void setVar(String name, Boolean value) {
+		Variable v = this.getVar(name);
+
+		if (v instanceof BoolVar) {
+			((BoolVar)v).setValue(value);
+		}
+		else if (v == null) {
+			System.out.println("Cannot find variable: " + name);
+		    // throw Exception?
+		}
+		else {
+			System.out.println("Variable " + name + " is not Boolean");
 		    // throw Exception?
 		}
 	}
@@ -88,7 +141,7 @@ class Interpreter {
 			Variable v = this.getVar(vname);
 
 			if (v != null) {
-				v.assign(line.split("(\\w)+( )*=( )*")[1]);
+				v.assign(vname, line.split("(\\w)+( )*=( )*")[1]);
 				//v.setValue(vname, result); // tratar o tipo... retorno?
 			}
 			else {
