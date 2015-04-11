@@ -46,7 +46,7 @@ class Lotus {
             sc = new Scanner(f);
 
             while (sc.hasNext()) {
-                tmpInput = sc.nextLine().replaceAll("( )+", " ");
+                tmpInput = sc.nextLine().replaceAll("( )+", " ").trim();
 
                 lineEnding = tmpInput.substring(tmpInput.lastIndexOf(';') + 1);
                 // comments after the last ';'
@@ -72,7 +72,7 @@ class Lotus {
                 try {
                     interpreter.execute(tmpInput);
                 } catch (LotusException e) {
-                    System.out.println("Error at line: " + (i + 1));
+                    System.out.println("\nError at line: " + (i + 1));
                     System.out.println("> " + e);
                     System.exit(1);
                 }
@@ -92,27 +92,11 @@ class Lotus {
         IntVar tni = new IntVar(11);
         Variable test = new IntVar(0);
 
-        if (test instanceof IntVar) {
-            System.out.println("--> works!");
-        }
-        else {
-            System.out.println("--> doesn't work -.-");
-        }
-
         System.out.println("---------------------------------------");
-        IntVar a, b, c;
-        a = new IntVar(7);
-        b = new IntVar(11);
-        c = new IntVar(a.value + b.value);
-        System.out.println(a + ", " + b + ", " + c);
-        c.value = (a.value + b.value) * 2;
-        System.out.println(a + ", " + b + ", " + c);
-        c.value = d.toInt() + 5;
-        System.out.println(a + ", " + b + ", " + c);
-        System.out.println("---------------------------------------");
-        DoubleVar tk = new DoubleVar(0.0);
-        if (tk.equals(0.0)) System.out.println("It's zero");
-        else System.out.println("Not zero");
+        interpreter.newVar("g", g);
+        System.out.println(interpreter.getVar("g"));
+        interpreter.setVar("g", "Acácia");
+        System.out.println(interpreter.getVar("g"));
         System.out.println("---------------------------------------");
     }
 }
