@@ -22,8 +22,8 @@ class Lotus {
     public static void main(String[] args) throws Exception {
         File f;
         Scanner sc;
-        String tmpInput;
         int max, ind = 0;
+        String tmpInput, lineEnding;
         boolean hasParam = true, validParam = true;
         ArrayList<String> input = new ArrayList<String>();
 
@@ -47,8 +47,20 @@ class Lotus {
 
             while (sc.hasNext()) {
                 tmpInput = sc.nextLine().replaceAll("( )+", " ");
-                tmpInput = tmpInput.replace(tmpInput.substring(tmpInput.lastIndexOf(';') + 1), "");
-                if (!tmpInput.isEmpty()) input.add(tmpInput);
+
+                if (tmpInput.isEmpty() || (!tmpInput.isEmpty() && tmpInput.substring(0, 2).equals("--"))) continue; // ignoring (empty lines) or (comments)
+
+                lineEnding = tmpInput.substring(tmpInput.lastIndexOf(';') + 1);
+                // comments after the last ';'
+                if (lineEnding.length() >= 2) {
+                    if (lineEnding.startsWith("--") ||
+                        (lineEnding.charAt(0) == ' ' && lineEnding.startsWith("--", 1)))
+                    {
+                        tmpInput = tmpInput.replace(lineEnding, "");
+                    }
+                }
+
+                input.add(tmpInput);
             }
             sc.close();
 
