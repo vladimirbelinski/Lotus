@@ -74,18 +74,11 @@ class Expression {
 		int i = 0, offset = 0;
 		String op;
 
+        System.out.println("exp: " + this.value);
         System.out.println(">> " + tokens);
 
         if (t.length == 1) {
-            if (t[0].matches(intRegex)) {
-                answ = new IntVar(Integer.parseInt(t[0]));
-            }
-            else if (t[0].matches(fpRegex)) {
-                answ = new DoubleVar(Double.parseDouble(t[0]));
-            }
-            else if (t[0].matches(Variable.nameRegex) && Lotus.lotus.hasVar(t[0])) {
-                answ = Lotus.lotus.getVar(t[0]);
-            }
+            answ = this.getOperand(t[0]);
         }
 
 		while (t.length > 1) {
@@ -157,18 +150,30 @@ class Expression {
 	}
 
     private Variable getOperand(String t) {
+        Variable v = null;
+
         if (t.matches(intRegex)) {
-            return new IntVar(Integer.parseInt(t));
+            v = new IntVar(Integer.parseInt(t));
         }
         else if (t.matches(fpRegex)) {
-            return new DoubleVar(Double.parseDouble(t));
+            v = new DoubleVar(Double.parseDouble(t));
         }
-        else if (t.matches(Variable.nameRegex) && Lotus.lotus.hasVar(t)) {
-            return Lotus.lotus.getVar(t);
+        else if (t.charAt(0) == '-') {
+            t = t.replace("-", "");
+            if (t.matches(Variable.nameRegex)) {
+                v = Lotus.lotus.getVar(t);
+                if (v != null) v.invert();
+            }
+        }
+        else if (t.matches(Variable.nameRegex)){
+            v = Lotus.lotus.getVar(t);
         }
         else {
-            return null; // ?
+            System.out.println("Symbol " + t + " could not be recognized");
+            // throw Exception
         }
+
+        return v;
     }
 
 	private Variable calculate(Variable v1, Variable v2, String op) {
