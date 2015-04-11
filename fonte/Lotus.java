@@ -48,7 +48,7 @@ class Lotus {
             while (sc.hasNext()) {
                 tmpInput = sc.nextLine().replaceAll("( )+", " ");
 
-                if (tmpInput.isEmpty() || (!tmpInput.isEmpty() && tmpInput.substring(0, 2).equals("--"))) continue; // ignoring (empty lines) or (comments)
+                if (tmpInput.isEmpty() || (tmpInput.length() >= 2 && tmpInput.substring(0, 2).equals("--"))) continue; // ignoring (empty lines) or (comments)
 
                 lineEnding = tmpInput.substring(tmpInput.lastIndexOf(';') + 1);
                 // comments after the last ';'
@@ -79,6 +79,7 @@ class Lotus {
             System.out.println("Invalid input file.");
         }
         /**********************************************************************/
+        System.out.println("---------------------------------------");
         StringVar g = new StringVar("Gabriel");
         DoubleVar d = new DoubleVar(7.0);
         IntVar tni = new IntVar(11);
