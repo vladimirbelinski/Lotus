@@ -51,15 +51,37 @@ abstract class Variable<T> {
     public abstract boolean equals(Object value);
 
     public void assign(String name, String exp) throws LotusException {
-        Expression assign = new Expression(exp);
-        Variable result = assign.solve();
+        Variable result = null;
+        Expression assign = null;
 
-        System.out.println("result: " + result);
+        if (exp.matches("\\\".+\\\"( )*;")) {
+            exp = exp.replaceFirst("\\\"", "");
+            exp = exp.replaceFirst("\\\"( )*;", "");
 
-        try {
-            Lotus.interpreter.setVar(name, result);
-        } catch (LotusException e) {
-            throw e;
+            try {
+                Lotus.interpreter.setVar(name, exp);
+            } catch (LotusException e) {
+                throw e;
+            }
+        }
+        else if (exp.matches("(true|false)( )*;")){
+            exp = exp.replaceFirst("( )*;", "");
+            
+            try {
+                Lotus.interpreter.setVar(name, Boolean.parseBoolean(exp));
+            } catch (LotusException e) {
+                throw e;
+            }
+        }
+        else {
+            assign = new Expression(exp);
+            result = assign.solve();
+
+            try {
+                Lotus.interpreter.setVar(name, result);
+            } catch (LotusException e) {
+                throw e;
+            }
         }
     }
 
