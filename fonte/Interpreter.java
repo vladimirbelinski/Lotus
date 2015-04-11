@@ -124,15 +124,8 @@ class Interpreter {
 
 	public void execute(String line) {
 		line = line.trim();
-		//String[] t = line.split(" ");
 
-		if (line.matches("\\-{2}.*")) {
-			return; // a line comment
-		}
-		else if (line.matches("\\/\\-.*")) {
-			// it's a block comment
-		}
-		else if (line.matches("(\\w)+( )*=( )*.+;")/* && this.vars.containsKey(t[0])*/) {
+		if (line.matches("(\\w)+( )*=( )*.+;")) {
 			System.out.println("Variable assignment, for example");
 			// gets only the name of the variable being assigned to
 			String vname = line.split("( )*=( )*.+;")[0];
@@ -142,7 +135,6 @@ class Interpreter {
 
 			if (v != null) {
 				v.assign(vname, line.split("(\\w)+( )*=( )*")[1]);
-				//v.setValue(vname, result); // tratar o tipo... retorno?
 			}
 			else {
 				System.out.println("Could not find variable " + vname);
@@ -151,6 +143,11 @@ class Interpreter {
 		}
 		else if (line.matches(Variable.declRegex)) {
 			this.let(line);
+		}
+		else {
+			System.out.println("Syntax error!"); // line, etc...
+			System.out.println("Line: " + line);
+			// throw Exception
 		}
 		/*else {
 			switch(t[0]) {
