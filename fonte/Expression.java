@@ -18,12 +18,7 @@ class Expression {
         String[] tokens = this.value.split(" ");
         ArrayList<String> ts = new ArrayList<String>();
 
-        System.out.println("~~~> this.value: " + this.value);
-
         for (int i = 0; i < tokens.length; i++) {
-
-            System.out.println("tokens[i]: " + tokens[i]);
-
             if (tokens[i].matches(opRegex)) {
                 if (tokens[i].matches("[+-]") &&
                     i - 1 >= 0 && tokens[i - 1].matches(opRegex) &&
@@ -58,19 +53,28 @@ class Expression {
         return t;
     }
 
+    // private String fixSignals() {
+    //     while (tokens[i].equals("-") && i + 1 < tokens.length && tokens[i + 1].matches("[+-]")) {
+    //         if (tokens[i + 1].equals("-")) {
+    //             tokens[i + 1] = "+";
+    //         }
+    //         else {
+    //             tokens[i] = "-";
+    //         }
+    //
+    //         tokens = this.merge(Arrays.copyOfRange(tokens, 0, i - 1), Arrays.copyOfRange(tokens, i + 1, tokens.length));
+    //     }
+    // }
+
     public Variable solve() {
-		String tokens = this.infixToPostfix();
-
-        System.out.println();
-        System.out.println(">> value: " + this.value);
-        System.out.println(">> tokens: " + tokens);
-        System.out.println();
-
-		String t[] = tokens.split(" ");
         Variable answ = null, num1 = null, num2 = null;
+		String tokens = this.infixToPostfix();
+		String t[] = tokens.split(" ");
 		String front[], back[];
 		int i = 0, offset = 0;
 		String op;
+
+        System.out.println(">> " + tokens);
 
         if (t.length == 1) {
             if (t[0].matches(intRegex)) {
@@ -83,7 +87,6 @@ class Expression {
                 answ = Lotus.lotus.getVar(t[0]);
             }
         }
-        //else answ = new String("0");
 
 		while (t.length > 1) {
 			// advance until you don't find an operation to perform
@@ -91,11 +94,10 @@ class Expression {
 				i++;
 			}
 
-            // System.out.println("----------");
-            // for (String s: t) {
-            //     System.out.println(s);
-            // }
-            // System.out.println("----------");
+            if (i == 0) {
+                t = Arrays.copyOfRange(t, i + 1, t.length);
+                continue;
+            }
 
 			// then, the operation char is at i's position in the array
 			op = t[i];
@@ -124,30 +126,22 @@ class Expression {
             }
 
 			/* As I am overwriting my token vector, I gotta
-			 * copy the parts that I'm not currently working with.
-			 * if i == 1, then I operated on it's initial part
-			 * and I just need to copy the rest of it
+			 * copy the parts that I'm not currently working with:
+			 * the first (frontside) and the second (backside) parts,
+             * with the result f the current operation in between.
+             * Then, if my first operand doesn't exist, I gotta copy
+             * the first part until this position (i) - 1. If it exists,
+			 * until this position - 2. This way I discard
+			 * the spots where the current operands were located
+			 * and I leave one spot for the result of this operation
+			 * in the middle of the new vector :)
 			 */
-			if (i == 1) t = Arrays.copyOfRange(t, i, t.length);
-			else {
-				/* If i != 1, I am working somewhere in the middle
-				 * of the vector, so I gotta copy the first (frontside)
-				 * and the second (backside) parts, with the result
-				 * of the current operation in between. Then, if my
-				 * first operand doesn't exist, I gotta copy the first
-				 * part until this position (i) - 1. If it exists,
-				 * until this position - 2. This way I discard
-				 * the spots where the current operands were located
-				 * and I leave one spot for the result of this operation
-				 * in the middle of the new vector :)
-				 */
-				if (num1 == null) offset = i - 1;
-				else offset = i - 2;
+			if (num1 == null) offset = i - 1;
+			else offset = i - 2;
 
-				front = Arrays.copyOfRange(t, 0, offset);
-				back = Arrays.copyOfRange(t, i, t.length);
-				t = this.merge(front, back);
-			}
+			front = Arrays.copyOfRange(t, 0, offset);
+			back = Arrays.copyOfRange(t, i, t.length);
+			t = this.merge(front, back);
 
 			/* calculating where the result will be put
 			 * same logic as the else above
@@ -185,10 +179,6 @@ class Expression {
 			intOpns = false;
 		}
 
-        System.out.println();
-        System.out.println(v1+op+v2);
-        System.out.println();
-
 		/* If it doesn't and the operation is a '-'
 		 * simply return -v2 (it's a number sign).
 		 * Else, return v2 to prevent a crash in
@@ -208,7 +198,6 @@ class Expression {
             }
         }
 		else {
-            System.out.println("calculate: " + v1 + op + v2);
     		switch (op) {
     			/* pow() returns double. I will implement
     			 * a binary exponentiation later...
@@ -228,7 +217,9 @@ class Expression {
     			 * integer zeroes and floating point zeroes, but needs
     			 * more testing (or a different, better way lol)
     			 */
-    			if (!v2.equals(0)) { // pra double!
+    			if (v2 instanceof IntVar && !v2.equals(0) ||
+                    v2 instanceof DoubleVar && !v2.equals(0.0))
+                {
     				if (intOpns) {
     					answ = new IntVar(v1.toInt() / v2.toInt());
     				}
@@ -236,7 +227,10 @@ class Expression {
     					answ = new DoubleVar(v1.toDouble() / v2.toDouble());
     				}
     			}
-    			else answ = new StringVar("undefined");
+    			else {
+                    // throw Exception
+                    answ = new StringVar("undefined");
+                }
     			break;
 
     			case "+":
@@ -369,4 +363,5 @@ class Expression {
 
 		")[pP][+-]?" + Digits + "))" +
 		"[fFdD]?))";
+        public static final String ufpRegex = fpRegex.replaceFirst("\\[\\+\\-\\]\\?", "");
 }
