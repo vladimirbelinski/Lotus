@@ -5,14 +5,23 @@ class Expression {
 
     public Expression(String value) {
         this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
-        this.value = this.fixSpaces();
+        this.fixSignals();
+        this.fixSpaces();
     }
 
-    public String toString() {
-        return this.value;
+    private void fixSignals() {
+        String aux;
+        do {
+            aux = this.value.replaceAll("\\+( )+\\-|\\-( )+\\+", "-").replaceAll("\\-( )+\\-", "+").replaceAll("\\+( )+\\+", "+");
+
+            if (!this.value.equals(aux)) {
+                this.value = aux;
+                aux = "";
+            }
+        } while (aux.isEmpty());
     }
 
-    private String fixSpaces() {
+    private void fixSpaces() {
         int max;
         String t = new String("");
         String[] tokens = this.value.split(" ");
@@ -50,21 +59,12 @@ class Expression {
             if (i < max - 1) t += " ";
         }
 
-        return t;
+        this.value = t;
     }
 
-    // private String fixSignals() {
-    //     while (tokens[i].equals("-") && i + 1 < tokens.length && tokens[i + 1].matches("[+-]")) {
-    //         if (tokens[i + 1].equals("-")) {
-    //             tokens[i + 1] = "+";
-    //         }
-    //         else {
-    //             tokens[i] = "-";
-    //         }
-    //
-    //         tokens = this.merge(Arrays.copyOfRange(tokens, 0, i - 1), Arrays.copyOfRange(tokens, i + 1, tokens.length));
-    //     }
-    // }
+    public String toString() {
+        return this.value;
+    }
 
     public Variable solve() {
         Variable answ = null, num1 = null, num2 = null;
@@ -74,8 +74,10 @@ class Expression {
 		int i = 0, offset = 0;
 		String op;
 
-        System.out.println("exp: " + this.value);
-        System.out.println(">> " + tokens);
+        System.out.println();
+        System.out.println("exp: [" + this.value + "]");
+        System.out.println("tokens: [" + tokens + "]");
+        System.out.println();
 
         if (t.length == 1) {
             answ = this.getOperand(t[0]);
@@ -86,11 +88,6 @@ class Expression {
 			while (i < t.length && !t[i].matches(opRegex)) {
 				i++;
 			}
-
-            if (i == 0) {
-                t = Arrays.copyOfRange(t, i + 1, t.length);
-                continue;
-            }
 
 			// then, the operation char is at i's position in the array
 			op = t[i];
@@ -368,5 +365,4 @@ class Expression {
 
 		")[pP][+-]?" + Digits + "))" +
 		"[fFdD]?))";
-        public static final String ufpRegex = fpRegex.replaceFirst("\\[\\+\\-\\]\\?", "");
 }

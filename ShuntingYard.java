@@ -1,3 +1,19 @@
+impot java.util.*;
+
+class ShuntingYard {
+    public static void main(String[] args) {
+        String infix = "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3";
+        System.out.printf("infix:   %s%n", infix);
+        System.out.printf("postfix: %s%n", infixToPostfix(infix));
+    }
+
+    static String infixToPostfix(String infix) {
+        private final String ops = "-+/*^";
+        StringBuilder sb = new StringBuilder();
+        Stack<Integer> s = new Stack<>();
+    }
+}
+
 /* While there are tokens to be read {
 
     - Read a token.
