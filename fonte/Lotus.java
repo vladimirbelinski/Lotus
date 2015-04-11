@@ -22,6 +22,7 @@ class Lotus {
     public static void main(String[] args) throws Exception {
         File f;
         Scanner sc;
+        String tmpInput;
         int max, ind = 0;
         boolean hasParam = true, validParam = true;
         ArrayList<String> input = new ArrayList<String>();
@@ -45,8 +46,9 @@ class Lotus {
             sc = new Scanner(f);
 
             while (sc.hasNext()) {
-                input.add(sc.nextLine().replaceAll("( )+", " "));
-                // should we parse and "compile" previously?
+                tmpInput = sc.nextLine().replaceAll("( )+", " ");
+                tmpInput = tmpInput.replace(tmpInput.substring(tmpInput.lastIndexOf(';') + 1), "");
+                if (!tmpInput.isEmpty()) input.add(tmpInput);
             }
             sc.close();
 
@@ -74,7 +76,7 @@ class Lotus {
             System.out.println("--> works!");
         }
         else {
-            System.out.println("--> this doesn't work -.-");
+            System.out.println("--> doesn't work -.-");
         }
 
         System.out.println("---------------------------------------");
@@ -89,8 +91,8 @@ class Lotus {
         System.out.println(a + ", " + b + ", " + c);
         System.out.println("---------------------------------------");
         DoubleVar tk = new DoubleVar(0.0);
-        if (tk.equals(0.0)) System.out.println("é zero");
-        else System.out.println("não é zero");
+        if (tk.equals(0.0)) System.out.println("It's zero");
+        else System.out.println("Not zero");
         System.out.println("---------------------------------------");
     }
 }
