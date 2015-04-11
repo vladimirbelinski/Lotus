@@ -4,10 +4,6 @@ class StringVar extends Variable<String> {
         super(value);
     }
 
-    public String toString() {
-        return this.value;
-    }
-
     public int toInt() {
         if (this.value.matches(Expression.intRegex)) {
             return Integer.parseInt(this.value);

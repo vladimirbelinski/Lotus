@@ -15,20 +15,40 @@ abstract class Variable<T> {
         this.value = value;
     }
 
+    public String toString() {
+        return this.value.toString();
+    }
+
+    public void setValue(Variable v) {
+        if (v instanceof IntVar) {
+			((IntVar)this).setValue((Integer)v.value);
+		}
+        else if (v instanceof DoubleVar) {
+			((DoubleVar)this).setValue((Double)v.value);
+		}
+        else if (v instanceof StringVar) {
+			((StringVar)this).setValue((String)v.value);
+		}
+		else {
+			System.out.println("Assignment of incompatible types");
+		    // throw Exception?
+		}
+    }
+
     public abstract int toInt();
     public abstract boolean toBool();
     public abstract double toDouble();
-    public abstract String toString();
-
     public abstract boolean equals(Object value);
 
-    public boolean assign(String line) {
-        line = line.replace(";", "");
+    public boolean assign(String name, String exp) {
+        exp = exp.replace(";", "");
 
-        Expression assign = new Expression(line);
+        Expression assign = new Expression(exp);
         Variable result = assign.solve();
-        //this.setValue(result.value);
-        return true;
+
+        System.out.println("result: " + result);
+
+        return Lotus.lotus.setVar(name, result);
     }
 
     // remember the Arrays!

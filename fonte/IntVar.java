@@ -21,10 +21,6 @@ class IntVar extends Variable<Integer> {
         return this.value.doubleValue();
     }
 
-    public String toString() {
-        return this.value.toString();
-    }
-
     public boolean equals(Object value) {
         return this.value.equals(value);
     }
