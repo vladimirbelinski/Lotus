@@ -112,9 +112,15 @@ class Interpreter {
 
 	public void execute(String line) throws LotusException {
 		String[] atr;
-		line = line.trim();
 
-		if (line.matches(atrRegex)) {
+		if (line.matches(Variable.declRegex)) {
+			try {
+				this.let(line);
+			} catch(LotusException e) {
+				throw e;
+			}
+		}
+		else if (line.matches(atrRegex)) {
 			atr = line.split(stripAtrRegex);
 			// gets only the name of the variable being assigned to:
 			// String vname = line.split(stripNameRegex)[0];
@@ -134,10 +140,10 @@ class Interpreter {
 				throw new LotusException("Could not find variable " + atr[0]);
 			}
 		}
-		else if (line.matches(Variable.declRegex)) {
+		else if (line.matches(printRegex)) {
 			try {
-				this.let(line);
-			} catch(LotusException e) {
+				this.print(line);
+			} catch (LotusException e) {
 				throw e;
 			}
 		}
@@ -155,7 +161,7 @@ class Interpreter {
 		i--; // decl[i] is the type
 		while (i >= 0) {
 			switch (type) {
-				case "boolean":
+				case "bool":
 				v = new BoolVar(false);
 				break;
 
@@ -176,14 +182,56 @@ class Interpreter {
 				v = null; // prevents from adding the same variable again
 			}
 			else {
-				throw new LotusException("Invalid type");
+				throw new LotusException("Invalid type " + type);
 			}
 			i--;
 		}
 	}
 
+	// tem que refazer essa função!
+	// tratar \n, \$, print($x$)...
+	private void print(String line) throws LotusException {
+		String var;
+		String[] ss, ts;
+		Variable v = null;
+		int i, j, ind, offset;
+		String lineEnding = line.substring(line.lastIndexOf(")"));
+
+		line = line.replaceFirst("(print)( )*\\(", "");
+		line = line.replace(lineEnding, "");
+		System.out.println(line);
+		ss = line.split("\\$(\\w)+\\$");
+		ts = line.split(" ");
+
+		j = 0;
+		for (i = 0; i < ss.length; i++) {
+			System.out.print(ss[i]);
+
+			for (j++; j < ts.length; j++) {
+				if (ts[j].matches(printVarRegex)) {
+					ind = ts[j].indexOf("$") + 1;
+					offset = ts[j].indexOf("$", ind);
+					var = ts[j].substring(ind, offset);
+
+					v = this.getVar(var);
+					if (v != null) {
+						System.out.print(v);
+						v = null;
+					}
+					else {
+						throw new LotusException("Could not find variable " + var);
+					}
+					break;
+				}
+			}
+		}
+		System.out.println(); // tratar se é pra printar \n
+	}
+
 	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
 	public static final String stripAtrRegex = "( )*=( )*";
+	public static final String printRegex = "(print)( )*\\(.*\\)( )*;";
+	public static final String printVarRegex = ".*(\\$(\\w)+\\$).*";
 	// public static final String stripNameRegex = "( )*=( )*.+;";
 	// public static final String stripExpRegex = "(\\w)+( )*=( )*";
 }
