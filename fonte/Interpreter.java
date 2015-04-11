@@ -19,8 +19,7 @@ class Interpreter {
 		return this.vars.get(name);
 	}
 
-	public boolean setVar(String name, Variable other) {
-		boolean success = false;
+	public void setVar(String name, Variable other) throws LotusException {
 		Variable v = this.getVar(name);
 
 		if (v != null && other != null) {
@@ -37,146 +36,117 @@ class Interpreter {
 				else if (v instanceof StringVar) {
 					this.setVar(name, (String)other.value);
 				}
-				success = true;
+			}
+			else {
+				throw new LotusException("Cannot assign " + other.getClass() + " to a " + v.getClass() + " variable");
 			}
 		}
 		else if (v == null){
-			System.out.println("Cannot find variable: " + name);
-		    // throw Exception?
+			throw new LotusException("Cannot find variable: " + name);
 		}
-		else if (other != null) {
-			System.out.println("Incompatible assignment of types " + v.getClass() + " and " + v.getClass());
-		    // throw Exception
+		else if (other == null) {
+			throw new LotusException("Assignment of null");
 		}
 		else {
-			System.out.println("Incompatible assignment");
-			// throw Exception
+			throw new LotusException("Assigning null to null!?");
 		}
-
-		return success;
 	}
 
-	public void setVar(String name, Integer value) {
+	public void setVar(String name, Integer value) throws LotusException {
 		Variable v = this.getVar(name);
 
 		if (v instanceof IntVar) {
 			((IntVar)v).setValue(value);
 		}
 		else if (v == null) {
-			System.out.println("Cannot find variable: " + name);
-		    // throw Exception?
+			throw new LotusException("Cannot find variable: " + name);
 		}
 		else {
-			System.out.println("Variable " + name + " is not Integer");
-		    // throw Exception?
+			throw new LotusException("Cannot assign an int to a non-int variable");
 		}
 	}
 
-	public void setVar(String name, Boolean value) {
+	public void setVar(String name, Boolean value) throws LotusException {
 		Variable v = this.getVar(name);
 
 		if (v instanceof BoolVar) {
 			((BoolVar)v).setValue(value);
 		}
 		else if (v == null) {
-			System.out.println("Cannot find variable: " + name);
-		    // throw Exception?
+			throw new LotusException("Cannot find variable: " + name);
 		}
 		else {
-			System.out.println("Variable " + name + " is not Boolean");
-		    // throw Exception?
+			throw new LotusException("Cannot assign a boolean to a non-bool variable");
 		}
 	}
 
-	public void setVar(String name, Double value) {
+	public void setVar(String name, Double value) throws LotusException {
 		Variable v = this.getVar(name);
 
 		if (v instanceof DoubleVar) {
 			((DoubleVar)v).setValue(value);
 		}
 		else if (v == null) {
-			System.out.println("Cannot find variable: " + name);
-		    // throw Exception?
+			throw new LotusException("Cannot find variable: " + name);
 		}
 		else {
-			System.out.println("Variable " + name + " is not Double");
-		    // throw Exception?
+			throw new LotusException("Cannot assign a double to a non-double variable");
 		}
 	}
 
-	public void setVar(String name, String value) {
+	public void setVar(String name, String value) throws LotusException {
 		Variable v = this.getVar(name);
 
 		if (v instanceof StringVar) {
 			((StringVar)v).setValue(value);
 		}
 		else if (v == null) {
-			System.out.println("Cannot find variable: " + name);
-		    // throw Exception?
+			throw new LotusException("Cannot find variable: " + name);
 		}
 		else {
-			System.out.println("Variable " + name + " is not String");
-		    // throw Exception?
+			throw new LotusException("Cannot assign a string to a non-string variable");
 		}
 	}
 
 	/* ---------------------------------------------------------------------- */
 
-	public void execute(String line) {
+	public void execute(String line) throws LotusException {
+		String[] atr;
 		line = line.trim();
 
-		if (line.matches("(\\w)+( )*=( )*.+;")) {
-			System.out.println("Variable assignment, for example");
-			// gets only the name of the variable being assigned to
-			String vname = line.split("( )*=( )*.+;")[0];
+		if (line.matches(atrRegex)) {
+			atr = line.split(stripAtrRegex);
+			// gets only the name of the variable being assigned to:
+			// String vname = line.split(stripNameRegex)[0];
 			// gets that variable and calls assignment() on it
 			// passing the string after the '=' token
-			Variable v = this.getVar(vname);
+			// Variable v = this.getVar(vname);
+			Variable v = this.getVar(atr[0]);
 
 			if (v != null) {
-				v.assign(vname, line.split("(\\w)+( )*=( )*")[1]);
+				try {
+					v.assign(atr[0], atr[1]);
+				} catch (LotusException e) {
+					throw e;
+				}
 			}
 			else {
-				System.out.println("Could not find variable " + vname);
-				// throw Exception
+				throw new LotusException("Could not find variable " + atr[0]);
 			}
 		}
 		else if (line.matches(Variable.declRegex)) {
-			this.let(line);
+			try {
+				this.let(line);
+			} catch(LotusException e) {
+				throw e;
+			}
 		}
 		else {
-			System.out.println("Syntax error!"); // line, etc...
-			System.out.println("Line: " + line);
-			// throw Exception
+			throw new LotusException("Syntax error!");
 		}
-		/*else {
-			switch(t[0]) {
-				case "fn":
-				break;
-
-				case "let":
-				this.let(line);
-				break;
-
-				case "if":
-				break;
-
-				case "elsif":
-				break;
-
-				case "else":
-				break;
-
-				case "for":
-				break;
-
-				case "while":
-				break;
-			}
-		}*/
 	}
 
-	private void let(String line) {
+	private void let(String line) throws LotusException {
 		String[] decl = Variable.fixDecl(line);
 		int i = decl.length - 1;
 		String type = decl[i];
@@ -185,6 +155,10 @@ class Interpreter {
 		i--; // decl[i] is the type
 		while (i >= 0) {
 			switch (type) {
+				case "boolean":
+				v = new BoolVar(false);
+				break;
+
 				case "int":
 				v = new IntVar(0);
 				break;
@@ -201,8 +175,15 @@ class Interpreter {
 				this.newVar(decl[i], v);
 				v = null; // prevents from adding the same variable again
 			}
-			// else throws Exception
+			else {
+				throw new LotusException("Invalid type");
+			}
 			i--;
 		}
 	}
+
+	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
+	public static final String stripAtrRegex = "( )*=( )*";
+	// public static final String stripNameRegex = "( )*=( )*.+;";
+	// public static final String stripExpRegex = "(\\w)+( )*=( )*";
 }

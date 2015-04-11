@@ -19,20 +19,29 @@ abstract class Variable<T> {
         return this.value.toString();
     }
 
-    public void setValue(Variable v) {
-        if (v instanceof IntVar) {
-			((IntVar)this).setValue((Integer)v.value);
-		}
-        else if (v instanceof DoubleVar) {
-			((DoubleVar)this).setValue((Double)v.value);
-		}
-        else if (v instanceof StringVar) {
-			((StringVar)this).setValue((String)v.value);
-		}
-		else {
-			System.out.println("Assignment of incompatible types");
-		    // throw Exception?
-		}
+    public boolean setValue(Variable v) throws LotusException {
+        if (v != null) {
+            if (v instanceof BoolVar) {
+                ((BoolVar)this).setValue((Boolean)v.value);
+            }
+            else if (v instanceof IntVar) {
+    			((IntVar)this).setValue((Integer)v.value);
+    		}
+            else if (v instanceof DoubleVar) {
+    			((DoubleVar)this).setValue((Double)v.value);
+    		}
+            else if (v instanceof StringVar) {
+    			((StringVar)this).setValue((String)v.value);
+    		}
+    		else {
+    			throw new LotusException("Cannot assign " + v.getClass() + " to variable of type " + this.getClass());
+    		}
+        }
+        else {
+            throw new LotusException("Assignment of null");
+        }
+
+        return true;
     }
 
     public abstract void invert();
@@ -41,22 +50,25 @@ abstract class Variable<T> {
     public abstract double toDouble();
     public abstract boolean equals(Object value);
 
-    public boolean assign(String name, String exp) {
+    public void assign(String name, String exp) throws LotusException {
         Expression assign = new Expression(exp);
         Variable result = assign.solve();
 
         System.out.println("result: " + result);
 
-        return Lotus.lotus.setVar(name, result);
+        try {
+            Lotus.interpreter.setVar(name, result);
+        } catch (LotusException e) {
+            throw e;
+        }
     }
 
     // remember the Arrays!
-    public static String[] fixDecl(String line) {
+    public static String[] fixDecl(String line) throws LotusException {
         // removes all trailing spaces
         line = line.trim();
         if (!line.matches(declRegex)) {
-            System.out.println("Syntax error!");
-            return null; // throw Exception
+            throw new LotusException("Syntax error!");
         }
 
         int i;
@@ -91,8 +103,7 @@ abstract class Variable<T> {
             tokens.add(var);
         }
         else {
-            System.out.println("Syntax error!");
-            return null; // throw Exception
+            throw new LotusException("Syntax error!");
         }
 
         t = new String[tokens.size()];

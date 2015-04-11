@@ -17,7 +17,7 @@ import java.io.*;
  */
 
 class Lotus {
-    public static Interpreter lotus = new Interpreter();
+    public static Interpreter interpreter = new Interpreter();
 
     public static void main(String[] args) throws Exception {
         File f;
@@ -48,8 +48,6 @@ class Lotus {
             while (sc.hasNext()) {
                 tmpInput = sc.nextLine().replaceAll("( )+", " ");
 
-                if (tmpInput.isEmpty() || (tmpInput.length() >= 2 && tmpInput.substring(0, 2).equals("--"))) continue; // ignoring (empty lines) or (comments)
-
                 lineEnding = tmpInput.substring(tmpInput.lastIndexOf(';') + 1);
                 // comments after the last ';'
                 if (lineEnding.length() >= 2) {
@@ -66,19 +64,28 @@ class Lotus {
 
             max = input.size();
             for (int i = 0; i < max; i++) {
-                lotus.execute(input.get(i));
+                tmpInput = input.get(i);
+                if (tmpInput.isEmpty() || (tmpInput.length() >= 2 && tmpInput.substring(0, 2).equals("--"))) {
+                    continue; // ignoring comments and blank lines
+                }
+
+                try {
+                    interpreter.execute(tmpInput);
+                } catch (LotusException e) {
+                    System.out.println("Error at line: " + (i + 1));
+                    System.out.println("> " + e);
+                    System.exit(1);
+                }
 
                 System.out.println("~~~~~~~~~~~~~~~");
-
-                /*System.out.println(input.get(i));
-                System.out.println("= " + lotus.solve(input.get(i)));
-                if (i < max - 1) System.out.println();*/
             }
         }
         else if (!validParam) {
             System.out.println("Invalid input file.");
         }
+
         /**********************************************************************/
+
         System.out.println("---------------------------------------");
         StringVar g = new StringVar("Gabriel");
         DoubleVar d = new DoubleVar(7.0);

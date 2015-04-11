@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 class Expression {
     public String value;
@@ -66,7 +67,7 @@ class Expression {
         return this.value;
     }
 
-    public Variable solve() {
+    public Variable solve() throws LotusException {
         Variable answ = null, num1 = null, num2 = null;
 		String tokens = this.infixToPostfix();
 		String t[] = tokens.split(" ");
@@ -80,7 +81,11 @@ class Expression {
         System.out.println();
 
         if (t.length == 1) {
-            answ = this.getOperand(t[0]);
+            try {
+                answ = this.getOperand(t[0]);
+            } catch (LotusException e) {
+                throw e;
+            }
         }
 
 		while (t.length > 1) {
@@ -92,19 +97,28 @@ class Expression {
 			// then, the operation char is at i's position in the array
 			op = t[i];
 			// as it's postfix, the 2nd operand is right before op
-            num2 = this.getOperand(t[i - 1]);
+            try {
+                num2 = this.getOperand(t[i - 1]);
+            } catch (LotusException e) {
+                throw e;
+            }
+
 			/* now, if i > 1, then 1st operand is certainly 2 positions
 			 * before op. Else, it doesn't exist lol
 			 */
 			if (i > 1) {
-                num1 = this.getOperand(t[i - 2]);
+                try {
+                    num1 = this.getOperand(t[i - 2]);
+                } catch (LotusException e) {
+                    throw e;
+                }
             }
 			else {
                 num1 = null;
             }
 
             if (num1 == null && num2 == null) {
-                answ = new StringVar("undefined");
+                answ = new StringVar("undefined"); // throw Exception?
                 break;
             }
 
@@ -139,14 +153,18 @@ class Expression {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
-			answ = this.calculate(num1, num2, op);
+            try {
+			    answ = this.calculate(num1, num2, op);
+            } catch (LotusException e) {
+                throw e;
+            }
 			t[i] = answ.toString();
 		}
 
 		return answ;
 	}
 
-    private Variable getOperand(String t) {
+    private Variable getOperand(String t) throws LotusException {
         Variable v = null;
 
         if (t.matches(intRegex)) {
@@ -158,22 +176,21 @@ class Expression {
         else if (t.charAt(0) == '-') {
             t = t.replace("-", "");
             if (t.matches(Variable.nameRegex)) {
-                v = Lotus.lotus.getVar(t);
+                v = Lotus.interpreter.getVar(t);
                 if (v != null) v.invert();
             }
         }
         else if (t.matches(Variable.nameRegex)){
-            v = Lotus.lotus.getVar(t);
+            v = Lotus.interpreter.getVar(t);
         }
         else {
-            System.out.println("Symbol " + t + " could not be recognized");
-            // throw Exception
+            throw new LotusException("Unknown symbol " + t);
         }
 
         return v;
     }
 
-	private Variable calculate(Variable v1, Variable v2, String op) {
+	private Variable calculate(Variable v1, Variable v2, String op) throws LotusException {
 		boolean intOpns = true;
 		Variable answ = null;
 
@@ -195,8 +212,11 @@ class Expression {
                     answ = new DoubleVar(0.0 - v2.toDouble());
                 }
             }
-            else {
+            else if (op.equals("+")) {
                 answ = v2;
+            }
+            else if (op.matches(opRegex)) {
+                throw new LotusException("Syntax error!");
             }
         }
 		else {
@@ -230,8 +250,7 @@ class Expression {
     				}
     			}
     			else {
-                    // throw Exception
-                    answ = new StringVar("undefined");
+                    throw new LotusException("Division by zero");
                 }
     			break;
 
