@@ -9,7 +9,7 @@ class BoolVar extends Variable<Boolean> {
     }
 
     public boolean toBool() {
-        return this.value.booleanValue();
+        return this.value;
     }
 
     public int toInt() {
