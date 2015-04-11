@@ -88,5 +88,9 @@ class Lotus {
         c.value = d.toInt() + 5;
         System.out.println(a + ", " + b + ", " + c);
         System.out.println("---------------------------------------");
+        DoubleVar tk = new DoubleVar(0.0);
+        if (tk.equals(0.0)) System.out.println("é zero");
+        else System.out.println("não é zero");
+        System.out.println("---------------------------------------");
     }
 }
