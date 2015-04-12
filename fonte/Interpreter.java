@@ -188,9 +188,9 @@ class Interpreter {
 
 	// tratar \n, \$, print($x$)...
 	private void print(String line) throws LotusException {
-		String var;
 		int i, offset;
 		String[] content;
+		String text = "";
 		Variable v = null;
 		String lineEnding = line.substring(line.lastIndexOf(")"));
 
@@ -203,27 +203,30 @@ class Interpreter {
 			if (content[i].equals("$")) {
 				// i is the index of the first '$'!
 				try {
-					if (this.printVar(line, i)) {
+					v = this.varToPrint(line, i);
+					if (v != null) {
+						text += v.toString();
 						i = line.indexOf("$", i + 1);
 					}
 					else {
-						System.out.print(content[i]);
+						text += content[i];
 					}
 				} catch (LotusException e) {
 					throw e;
 				}
 			}
 			else if (content[i].equals("\\") && i + 1 < content.length && content[i + 1].equals("n")) {
-				System.out.println();
+				text += "\n";
 				i++;
 			}
 			else {
-				System.out.print(content[i]);
+				text += content[i];
 			}
 		}
+		System.out.print(text);
 	}
 
-	private boolean printVar(String content, int fromIndex) throws LotusException {
+	private Variable varToPrint(String content, int fromIndex) throws LotusException {
 		String name;
 		Variable var = null;
 		int offset = content.indexOf("$", fromIndex + 1);
@@ -232,18 +235,13 @@ class Interpreter {
 			name = content.substring(fromIndex + 1, offset);
 			if (name.matches(Variable.nameRegex)) {
 				var = this.getVar(name);
-				if (var != null) System.out.print(var);
-				else throw new LotusException("Could not find variable \"" + name + "\"");
+				if (var == null) {
+					throw new LotusException("Could not find variable \"" + name + "\"");
+				}
 			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return false;
 		}
 
-		return true;
+		return var;
 	}
 
 	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
