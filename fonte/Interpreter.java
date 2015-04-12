@@ -200,7 +200,13 @@ class Interpreter {
 		}
 
 		line = line.replaceFirst("(print|println)( )*\\(", "");
+		// substitui todas as substrings "\n" pelo próprio caractere
+		// '\n', que representa uma quebra de linha.
 		line = line.replaceAll("\\\\n", "\n");
+		// e agora substitui todas as substrings "\\n" (nesse caso \n é o
+		// caracter quebra de linha que foi substituído acima) pela
+		// substring "\n". Desse modo, onde há "\\n", iremos printar
+		// "\n", de fato. E onde há apenas "\n", printa uma quebra de linha.
 		line = line.replaceAll("\\\\\n", "\\\\n");
 		content = line.split("");
 
