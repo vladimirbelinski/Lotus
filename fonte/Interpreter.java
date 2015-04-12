@@ -186,16 +186,21 @@ class Interpreter {
 		}
 	}
 
-	// tratar \n, \$, print($x$)...
+	// não há como mandar ele printar a string "\n"
 	private void print(String line) throws LotusException {
 		int i, offset;
 		String[] content;
 		String text = "";
 		Variable v = null;
-		String lineEnding = line.substring(line.lastIndexOf(")"));
+		String lineEnding;
 
-		line = line.replaceFirst("(print)( )*\\(", "");
+		lineEnding = line.substring(line.lastIndexOf(")"));
 		line = line.replace(lineEnding, "");
+		if (line.startsWith("println")) {
+			line += "\n";
+		}
+
+		line = line.replaceFirst("(print|println)( )*\\(", "");
 		line = line.replaceAll("\\\\n", "\n");
 		content = line.split("");
 
@@ -215,10 +220,10 @@ class Interpreter {
 					throw e;
 				}
 			}
-			else if (content[i].equals("\\") && i + 1 < content.length && content[i + 1].equals("n")) {
+			/*else if (content[i].equals("\\") && i + 1 < content.length && content[i + 1].equals("n")) {
 				text += "\n";
 				i++;
-			}
+			}*/
 			else {
 				text += content[i];
 			}
@@ -246,7 +251,7 @@ class Interpreter {
 
 	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
 	public static final String stripAtrRegex = "( )*=( )*";
-	public static final String printRegex = "(print)( )*\\(.*\\)( )*;";
+	public static final String printRegex = "(print|println)( )*\\(.*\\)( )*;";
 	public static final String printVarRegex = ".*(\\$(\\w)+\\$).*";
 	// public static final String stripNameRegex = "( )*=( )*.+;";
 	// public static final String stripExpRegex = "(\\w)+( )*=( )*";
