@@ -146,7 +146,7 @@ class Interpreter {
 			}
 		}
 		else {
-			throw new LotusException("Syntax error!");
+			throw new LotusException("Unknown expression \"" + line + "\"");
 		}
 	}
 
