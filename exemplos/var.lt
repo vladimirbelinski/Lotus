@@ -69,11 +69,19 @@ x = 10 % 3 - 2 % z % 7;
 
 s = "Acácia"    ;
 
-print(sfd ewdfe $s$ fe fef );
+print(sfd ewdfe $s$ fe fef\n);
 
-print( $x$dsdsds $y$ kkk);
-print ( dowi 21 $z$  );
-print($s$);
+print(\\n);
 
-let b: bool;
-b = true;
+print( $x$dsdsds $y$ kkk $\n);
+println( $x$dsdsds $y$ kkk $);
+print ( dowi 21 $z$  \n);
+print(\n$s$\n);
+
+print("oi" R$ 3.5 R$1$x$ *$());
+
+    print(\n);
+
+    println();
+    println(oi);
+    println(\n);
