@@ -75,11 +75,6 @@ class Expression {
 		int i = 0, offset = 0;
 		String op;
 
-        System.out.println();
-        System.out.println("exp: [" + this.value + "]");
-        System.out.println("tokens: [" + tokens + "]");
-        System.out.println();
-
         if (t.length == 1) {
             try {
                 answ = this.getOperand(t[0]);
@@ -184,7 +179,7 @@ class Expression {
             v = Lotus.interpreter.getVar(t);
         }
         else {
-            throw new LotusException("Unknown symbol " + t);
+            throw new LotusException("Unknown symbol '" + t + "'");
         }
 
         return v;
@@ -287,7 +282,7 @@ class Expression {
     			break;
 
     			default:
-                throw new LotusException("Unknown operation " + op);
+                throw new LotusException("Unknown operation '" + op + "'");
     		}
         }
 

@@ -34,7 +34,7 @@ abstract class Variable<T> {
     			((StringVar)this).setValue((String)v.value);
     		}
     		else {
-    			throw new LotusException("Cannot assign " + v.getClass() + " to variable of type " + this.getClass());
+    			throw new LotusException("Cannot assign a " + v.getClass() + " value to a " + this.getClass() + " variable");
     		}
         }
         else {
@@ -66,7 +66,7 @@ abstract class Variable<T> {
         }
         else if (exp.matches("(true|false)( )*;")){
             exp = exp.replaceFirst("( )*;", "");
-            
+
             try {
                 Lotus.interpreter.setVar(name, Boolean.parseBoolean(exp));
             } catch (LotusException e) {
@@ -87,22 +87,19 @@ abstract class Variable<T> {
 
     // remember the Arrays!
     public static String[] fixDecl(String line) throws LotusException {
-        // removes all trailing spaces
-        line = line.trim();
-        if (!line.matches(declRegex)) {
-            throw new LotusException("Syntax error!");
-        }
-
         int i;
         String var = new String("");
-        String[] t = line.replace("let", "").split("");
+        String[] t = line.replace("let ", "").replaceAll(" ", "").split("");
         ArrayList<String> tokens = new ArrayList<String>();
 
         for (i = 0; i < t.length && !t[i].equals(":"); i++) {
-            if (t[i].matches("\\w")) {
+            if (var.isEmpty() && t[i].matches("([^\\w]|\\d)")) {
+                throw new LotusException("Variable names cannot start with numbers or special characters: '" + t[i] + "'");
+            }
+            else if (t[i].matches("\\w")) {
                 var += t[i];
             }
-            else if (var != "" && (t[i].equals(" ") || t[i].equals(","))) {
+            else if (!var.isEmpty() && (t[i].equals(" ") || t[i].equals(","))) {
                 tokens.add(var);
                 var = "";
             }
@@ -135,6 +132,7 @@ abstract class Variable<T> {
     }
 
     public static final String declRegex = "(let)( )+((\\w)+((,( )*(\\w)+)( )*)*)( )*:( )*(\\w)+;";
-    public static final String nameRegex = "(\\w)+";
+    // public static final String nameRegex = "(\\w)+";
+    public static final String nameRegex = "(?!\\d)\\w+";
     public static final String typeRegex = "int|double|string|bool";
 }

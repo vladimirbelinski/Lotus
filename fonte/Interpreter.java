@@ -38,11 +38,11 @@ class Interpreter {
 				}
 			}
 			else {
-				throw new LotusException("Cannot assign " + other.getClass() + " to a " + v.getClass() + " variable");
+				throw new LotusException("Cannot assign a " + other.getClass() + " value to a " + v.getClass() + " variable");
 			}
 		}
 		else if (v == null){
-			throw new LotusException("Cannot find variable: " + name);
+			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
 		else if (other == null) {
 			throw new LotusException("Assignment of null");
@@ -59,7 +59,7 @@ class Interpreter {
 			((IntVar)v).setValue(value);
 		}
 		else if (v == null) {
-			throw new LotusException("Cannot find variable: " + name);
+			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
 		else {
 			throw new LotusException("Cannot assign an int to a non-int variable");
@@ -73,7 +73,7 @@ class Interpreter {
 			((BoolVar)v).setValue(value);
 		}
 		else if (v == null) {
-			throw new LotusException("Cannot find variable: " + name);
+			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
 		else {
 			throw new LotusException("Cannot assign a boolean to a non-bool variable");
@@ -87,7 +87,7 @@ class Interpreter {
 			((DoubleVar)v).setValue(value);
 		}
 		else if (v == null) {
-			throw new LotusException("Cannot find variable: " + name);
+			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
 		else {
 			throw new LotusException("Cannot assign a double to a non-double variable");
@@ -101,7 +101,7 @@ class Interpreter {
 			((StringVar)v).setValue(value);
 		}
 		else if (v == null) {
-			throw new LotusException("Cannot find variable: " + name);
+			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
 		else {
 			throw new LotusException("Cannot assign a string to a non-string variable");
@@ -123,10 +123,8 @@ class Interpreter {
 		else if (line.matches(atrRegex)) {
 			atr = line.split(stripAtrRegex);
 			// gets only the name of the variable being assigned to:
-			// String vname = line.split(stripNameRegex)[0];
 			// gets that variable and calls assignment() on it
 			// passing the string after the '=' token
-			// Variable v = this.getVar(vname);
 			Variable v = this.getVar(atr[0]);
 
 			if (v != null) {
@@ -137,7 +135,7 @@ class Interpreter {
 				}
 			}
 			else {
-				throw new LotusException("Could not find variable " + atr[0]);
+				throw new LotusException("Could not find variable \"" + atr[0] + "\"");
 			}
 		}
 		else if (line.matches(printRegex)) {
@@ -182,50 +180,70 @@ class Interpreter {
 				v = null; // prevents from adding the same variable again
 			}
 			else {
-				throw new LotusException("Invalid type " + type);
+				throw new LotusException("Invalid type \"" + type + "\"");
 			}
 			i--;
 		}
 	}
 
-	// tem que refazer essa função!
 	// tratar \n, \$, print($x$)...
 	private void print(String line) throws LotusException {
 		String var;
-		String[] ss, ts;
+		int i, offset;
+		String[] content;
 		Variable v = null;
-		int i, j, ind, offset;
 		String lineEnding = line.substring(line.lastIndexOf(")"));
 
 		line = line.replaceFirst("(print)( )*\\(", "");
 		line = line.replace(lineEnding, "");
-		System.out.println(line);
-		ss = line.split("\\$(\\w)+\\$");
-		ts = line.split(" ");
+		line = line.replaceAll("\\\\n", "\n");
+		content = line.split("");
 
-		j = 0;
-		for (i = 0; i < ss.length; i++) {
-			System.out.print(ss[i]);
-
-			for (j++; j < ts.length; j++) {
-				if (ts[j].matches(printVarRegex)) {
-					ind = ts[j].indexOf("$") + 1;
-					offset = ts[j].indexOf("$", ind);
-					var = ts[j].substring(ind, offset);
-
-					v = this.getVar(var);
-					if (v != null) {
-						System.out.print(v);
-						v = null;
+		for (i = 0; i < content.length; i++) {
+			if (content[i].equals("$")) {
+				// i is the index of the first '$'!
+				try {
+					if (this.printVar(line, i)) {
+						i = line.indexOf("$", i + 1);
 					}
 					else {
-						throw new LotusException("Could not find variable " + var);
+						System.out.print(content[i]);
 					}
-					break;
+				} catch (LotusException e) {
+					throw e;
 				}
 			}
+			else if (content[i].equals("\\") && i + 1 < content.length && content[i + 1].equals("n")) {
+				System.out.println();
+				i++;
+			}
+			else {
+				System.out.print(content[i]);
+			}
 		}
-		System.out.println(); // tratar se é pra printar \n
+	}
+
+	private boolean printVar(String content, int fromIndex) throws LotusException {
+		String name;
+		Variable var = null;
+		int offset = content.indexOf("$", fromIndex + 1);
+
+		if (offset > fromIndex) {
+			name = content.substring(fromIndex + 1, offset);
+			if (name.matches(Variable.nameRegex)) {
+				var = this.getVar(name);
+				if (var != null) System.out.print(var);
+				else throw new LotusException("Could not find variable \"" + name + "\"");
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+
+		return true;
 	}
 
 	public static final String atrRegex = "(\\w)+( )*=( )*.+;";

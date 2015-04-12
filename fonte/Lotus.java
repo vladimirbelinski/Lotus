@@ -76,8 +76,6 @@ class Lotus {
                     System.out.println("> " + e);
                     System.exit(1);
                 }
-
-                System.out.println("~~~~~~~~~~~~~~~");
             }
         }
         else if (!validParam) {
@@ -86,17 +84,17 @@ class Lotus {
 
         /**********************************************************************/
 
-        System.out.println("---------------------------------------");
-        StringVar g = new StringVar("Gabriel");
-        DoubleVar d = new DoubleVar(7.0);
-        IntVar tni = new IntVar(11);
-        Variable test = new IntVar(0);
-
-        System.out.println("---------------------------------------");
-        interpreter.newVar("g", g);
-        System.out.println(interpreter.getVar("g"));
-        interpreter.setVar("g", "Acácia");
-        System.out.println(interpreter.getVar("g"));
-        System.out.println("---------------------------------------");
+        // System.out.println("---------------------------------------");
+        // StringVar g = new StringVar("Gabriel");
+        // DoubleVar d = new DoubleVar(7.0);
+        // IntVar tni = new IntVar(11);
+        // Variable test = new IntVar(0);
+        //
+        // System.out.println("---------------------------------------");
+        // interpreter.newVar("g", g);
+        // System.out.println(interpreter.getVar("g"));
+        // interpreter.setVar("g", "Acácia");
+        // System.out.println(interpreter.getVar("g"));
+        // System.out.println("---------------------------------------");
     }
 }
