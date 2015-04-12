@@ -186,7 +186,6 @@ class Interpreter {
 		}
 	}
 
-	// não há como mandar ele printar a string "\n"
 	private void print(String line) throws LotusException {
 		int i, offset;
 		String[] content;
@@ -202,6 +201,7 @@ class Interpreter {
 
 		line = line.replaceFirst("(print|println)( )*\\(", "");
 		line = line.replaceAll("\\\\n", "\n");
+		line = line.replaceAll("\\\\\n", "\\\\n");
 		content = line.split("");
 
 		for (i = 0; i < content.length; i++) {
