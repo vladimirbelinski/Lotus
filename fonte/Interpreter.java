@@ -188,6 +188,7 @@ class Interpreter {
 
 	private void print(String line) throws LotusException {
 		int i, offset;
+		boolean breakLine = false;
 		String[] content;
 		String text = "";
 		Variable v = null;
@@ -196,7 +197,7 @@ class Interpreter {
 		lineEnding = line.substring(line.lastIndexOf(")"));
 		line = line.replace(lineEnding, "");
 		if (line.startsWith("println")) {
-			line += "\n";
+			breakLine = true;
 		}
 
 		line = line.replaceFirst("(print|println)( )*\\(", "");
@@ -237,15 +238,12 @@ class Interpreter {
 					throw e;
 				}
 			}
-			/*else if (content[i].equals("\\") && i + 1 < content.length && content[i + 1].equals("n")) {
-				text += "\n";
-				i++;
-			}*/
 			else {
 				text += content[i];
 			}
 		}
-		System.out.print(text);
+		if (breakLine) System.out.println(text);
+		else System.out.print(text);
 	}
 
 	private Variable varToPrint(String content, int fromIndex) throws LotusException {
