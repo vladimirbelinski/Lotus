@@ -19,6 +19,11 @@ class Interpreter {
 		return this.vars.get(name);
 	}
 
+	// We need to allow some "non-compatible" assignments too, for example:
+	// int = double (and vice versa)
+	// string = double, int, boolean
+	// boolean = int (?)
+
 	public void setVar(String name, Variable other) throws LotusException {
 		Variable v = this.getVar(name);
 
