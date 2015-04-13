@@ -525,29 +525,32 @@ class Interpreter {
 		}
 
 		line = line.replaceFirst("(print|println)( )*\\(", "");
-		// substitui todas as substrings "\n" pelo próprio caractere
-		// '\n', que representa uma quebra de linha.
-		line = line.replaceAll("\\\\n", "\n");
-		// Por que todas essas '\'? Porque '\' é "escape" em regex
-		// e em Java:
-		// Pra printar "\n", fazemos: System.out.println("\\n");
-		// Desse modo, em regex junto com Java, precisa-se de "\\\\n",
-		// porque "\\" == '\' da regex, "\\" = '\' pro Java e
-		// enfim o 'n' pra então formar um "\\n" que é a string
-		// que representa uma string "\n".
-		// Agora, substitui todas as substrings "\\n" (nesse caso \n é o
-		// caracter quebra de linha que foi substituído acima) pela
-		// substring "\n". Desse modo, onde há "\\n", iremos printar
-		// "\n", de fato. E onde há apenas "\n", printa uma quebra de linha.
-		line = line.replaceAll("\\\\\n", "\\\\n");
-		// Agora precisa-se de MAIS UMA '\' porque queremos capturar o padrão
-		// "\\n", sendo que '\n' é a quebra de linha. Como a regex pra "\n"
-		// é "\\\\n" e queremos uma '\' na frente, fica "\\\\\n".
-		// SIM, ISSO BUGA MEU CÉREBRO :)
 		content = line.split("");
-
 		for (i = 0; i < content.length; i++) {
-			if (content[i].equals("$")) {
+			// \t 	Insert a tab in the text at this point.
+			// \n 	Insert a newline in the text at this point.
+			// \\ 	Insert a backslash character in the text at this point.
+			if (content[i].equals("\\") && i + 1 < content.length) {
+				if (content[i + 1].equals("t")) {
+					text += "\t";
+				}
+				else if (content[i + 1].equals("n")) {
+					text += "\n";
+				}
+				else if (content[i + 1].equals("\\")) {
+					if (i + 2 < content.length && content[i + 2].equals("n")) {
+						text += "\\n";
+						i++;
+					}
+					else text += "\\";
+				}
+				else {
+					throw new LotusException("Unknown escape sequence: \"" + content[i] + content[i + 1] + "\"");
+				}
+
+				i++;
+			}
+			else if (content[i].equals("$")) {
 				// i is the index of the first '$'!
 				try {
 					v = this.varToPrint(line, i);
