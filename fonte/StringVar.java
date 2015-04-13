@@ -4,22 +4,26 @@ class StringVar extends Variable<String> {
         super(value);
     }
 
+    // what should we do here? Flip all the chars?
     public void invert() {
         return;
     }
 
-    public int toInt() {
-        if (this.value.matches(Expression.intRegex)) {
+    // cannot throw exception because this method
+    // should override the one from Variable. But that one
+    // doesn't throw exceptions... (and in the other variables)
+    // we don't need it... so I don't know.
+    public int toInt() /*throws LotusException*/ {
+        if (this.value.matches(Interpreter.intRegex)) {
             return Integer.parseInt(this.value);
         }
         else {
-            System.out.println("Cannot convert to int");
-            return 0; // throw Exception
+            return 0;
+            //throw new LotusException("Cannot convert \"" + this.value + "\" to int");
         }
     }
 
     public boolean toBool() {
-        // ?
         if (this.value.isEmpty() || this.value.equals("false")) {
             return false;
         }
@@ -28,13 +32,13 @@ class StringVar extends Variable<String> {
         }
     }
 
-    public double toDouble() {
-        if (this.value.matches(Expression.fpRegex)) {
+    public double toDouble()/* throws LotusException*/ {
+        if (this.value.matches(Interpreter.fpRegex)) {
             return Double.parseDouble(this.value);
         }
         else {
-            System.out.println("Cannot convert to double");
-            return 0.0; // throw Exception
+            return 0.0;
+            //throw new LotusException("Cannot convert \"" + this.value + "\" to double");
         }
     }
 
