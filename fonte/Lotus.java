@@ -46,10 +46,13 @@ class Lotus {
             sc = new Scanner(f);
 
             while (sc.hasNext()) {
+                // takes off all duplicated and trailing spaces
                 tmpInput = sc.nextLine().replaceAll("( )+", " ").trim();
 
+                // ignores everything after the last ';' (for the sake of comments)
+                // we still add empty and commented lines to the 'input' ArrayList
+                // because we report the line of an eventual error
                 lineEnding = tmpInput.substring(tmpInput.lastIndexOf(';') + 1);
-                // comments after the last ';'
                 if (lineEnding.length() >= 2) {
                     if (lineEnding.startsWith("--") ||
                         (lineEnding.charAt(0) == ' ' && lineEnding.startsWith("--", 1)))
@@ -66,7 +69,7 @@ class Lotus {
             for (int i = 0; i < max; i++) {
                 tmpInput = input.get(i);
                 if (tmpInput.isEmpty() || (tmpInput.length() >= 2 && tmpInput.substring(0, 2).equals("--"))) {
-                    continue; // ignoring comments and blank lines
+                    continue; // ignoring commented and blank lines
                 }
 
                 try {
@@ -81,20 +84,5 @@ class Lotus {
         else if (!validParam) {
             System.out.println("Invalid input file.");
         }
-
-        /**********************************************************************/
-
-        // System.out.println("---------------------------------------");
-        // StringVar g = new StringVar("Gabriel");
-        // DoubleVar d = new DoubleVar(7.0);
-        // IntVar tni = new IntVar(11);
-        // Variable test = new IntVar(0);
-        //
-        // System.out.println("---------------------------------------");
-        // interpreter.newVar("g", g);
-        // System.out.println(interpreter.getVar("g"));
-        // interpreter.setVar("g", "Acácia");
-        // System.out.println(interpreter.getVar("g"));
-        // System.out.println("---------------------------------------");
     }
 }
