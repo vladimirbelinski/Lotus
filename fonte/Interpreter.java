@@ -203,11 +203,22 @@ class Interpreter {
 		// substitui todas as substrings "\n" pelo próprio caractere
 		// '\n', que representa uma quebra de linha.
 		line = line.replaceAll("\\\\n", "\n");
-		// e agora substitui todas as substrings "\\n" (nesse caso \n é o
+		// Por que todas essas '\'? Porque '\' é "escape" em regex
+		// e em Java:
+		// Pra printar "\n", fazemos: System.out.println("\\n");
+		// Desse modo, em regex junto com Java, precisa-se de "\\\\n",
+		// porque "\\" == '\' da regex, "\\" = '\' pro Java e
+		// enfim o 'n' pra então formar um "\\n" que é a string
+		// que representa uma string "\n".
+		// Agora, substitui todas as substrings "\\n" (nesse caso \n é o
 		// caracter quebra de linha que foi substituído acima) pela
 		// substring "\n". Desse modo, onde há "\\n", iremos printar
 		// "\n", de fato. E onde há apenas "\n", printa uma quebra de linha.
 		line = line.replaceAll("\\\\\n", "\\\\n");
+		// Agora precisa-se de MAIS UMA '\' porque queremos capturar o padrão
+		// "\\n", sendo que '\n' é a quebra de linha. Como a regex pra "\n"
+		// é "\\\\n" e queremos uma '\' na frente, fica "\\\\\n".
+		// SIM, ISSO BUGA MEU CÉREBRO :)
 		content = line.split("");
 
 		for (i = 0; i < content.length; i++) {
