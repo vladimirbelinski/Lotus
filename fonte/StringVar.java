@@ -11,8 +11,8 @@ class StringVar extends Variable<String> {
 
     // cannot throw exception because this method
     // should override the one from Variable. But that one
-    // doesn't throw exceptions (and in the other variables
-    // we don't need to throw any exception)... so I don't know.
+    // doesn't throw exceptions... (and in the other variables)
+    // we don't need it... so I don't know.
     public int toInt() /*throws LotusException*/ {
         if (this.value.matches(Interpreter.intRegex)) {
             return Integer.parseInt(this.value);
