@@ -49,14 +49,17 @@ class Lotus {
                 // takes off all duplicated and trailing spaces
                 tmpInput = sc.nextLine().replaceAll("( )+", " ").trim();
                 // everything after the ';' is considered a comment
-                input.add(tmpInput.substring(0, tmpInput.indexOf(";") + 1));
+                if (tmpInput.contains(";")) {
+                    tmpInput = tmpInput.substring(0, tmpInput.indexOf(";") + 1);
+                }
+                input.add(tmpInput);
             }
             sc.close();
 
             max = input.size();
             for (int i = 0; i < max; i++) {
                 tmpInput = input.get(i);
-                if (tmpInput.isEmpty() || (tmpInput.length() >= 2 && tmpInput.substring(0, 2).equals("--"))) {
+                if (tmpInput.isEmpty() || tmpInput.startsWith("--")) {
                     continue; // ignoring commented and blank lines
                 }
 
