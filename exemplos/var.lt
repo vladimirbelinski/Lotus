@@ -1,4 +1,4 @@
-let x, y, z, gabriel: int;
+let x, y, z, gabriel: intdoubke;
 let k: double;
 let s: string;
 

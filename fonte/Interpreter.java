@@ -27,31 +27,27 @@ class Interpreter {
 		Variable v = this.getVar(name);
 
 		if (v != null && other != null) {
-			try {
-				if (other instanceof IntVar) {
-					this.setVar(name, (Integer)other.value);
-				}
-				else if (other instanceof BoolVar) {
-					this.setVar(name, (Boolean)other.value);
-				}
-				else if (other instanceof DoubleVar) {
-					this.setVar(name, (Double)other.value);
-				}
-				else if (other instanceof StringVar) {
-					this.setVar(name, (String)other.value);
-				}
-			} catch (LotusException e) {
-				throw e;
+			if (other instanceof IntVar) {
+				this.setVar(name, (Integer)other.value);
+			}
+			else if (other instanceof BoolVar) {
+				this.setVar(name, (Boolean)other.value);
+			}
+			else if (other instanceof DoubleVar) {
+				this.setVar(name, (Double)other.value);
+			}
+			else if (other instanceof StringVar) {
+				this.setVar(name, (String)other.value);
 			}
 		}
 		else if (v == null){
-			throw new LotusException("Could not find variable: \"" + name + "\"");
+			throw new LotusException("varNotFound", name);
 		}
 		else if (other == null) {
-			throw new LotusException("Assignment of null");
+			throw new LotusException("nullAssignment", name);
 		}
 		else {
-			throw new LotusException("Assigning null to null!?");
+			throw new LotusException("nullToNull", "");
 		}
 	}
 
@@ -59,7 +55,7 @@ class Interpreter {
 		Variable v = this.getVar(name);
 
 		if (v == null) {
-			throw new LotusException("Could not find variable: \"" + name + "\"");
+			throw new LotusException("varNotFound", name);
 		}
 		else if (v instanceof IntVar) {
 			((IntVar)v).setValue(value);
@@ -77,7 +73,7 @@ class Interpreter {
 			((StringVar)v).setValue(value.toString());
 		}
 		else {
-			throw new LotusException("Cannot assign an int to a variable of type \"" + v.getClass() + "\"");
+			throw new LotusException("cantAssignInt", v.getClass().toString());
 		}
 	}
 
@@ -85,7 +81,7 @@ class Interpreter {
 		Variable v = this.getVar(name);
 
 		if (v == null) {
-			throw new LotusException("Could not find variable: \"" + name + "\"");
+			throw new LotusException("varNotFound", name);
 		}
 		else if (v instanceof IntVar) {
 			if (value.equals(true)) {
@@ -110,7 +106,7 @@ class Interpreter {
 			((StringVar)v).setValue(value.toString());
 		}
 		else {
-			throw new LotusException("Cannot assign a bool to a variable of type \"" + v.getClass() + "\"");
+			throw new LotusException("cantAssignBool", v.getClass().toString());
 		}
 	}
 
@@ -118,7 +114,7 @@ class Interpreter {
 		Variable v = this.getVar(name);
 
 		if (v == null) {
-			throw new LotusException("Could not find variable: \"" + name + "\"");
+			throw new LotusException("varNotFound", name);
 		}
 		else if (v instanceof IntVar) {
 			((IntVar)v).setValue(value.intValue());
@@ -136,7 +132,7 @@ class Interpreter {
 			((StringVar)v).setValue(value.toString());
 		}
 		else {
-			throw new LotusException("Cannot assign a double to a variable of type \"" + v.getClass() + "\"");
+			throw new LotusException("cantAssignDouble", v.getClass().toString());
 		}
 	}
 
@@ -144,7 +140,7 @@ class Interpreter {
 		Variable v = this.getVar(name);
 
 		if (v == null) {
-			throw new LotusException("Could not find variable: \"" + name + "\"");
+			throw new LotusException("varNotFound", name);
 		}
 		else if (v instanceof StringVar) {
 			((StringVar)v).setValue(value);
@@ -153,7 +149,7 @@ class Interpreter {
 			((BoolVar)v).setValue(value.isEmpty());
 		}
 		else {
-			throw new LotusException("Cannot assign a string to a variable of type \"" + v.getClass() + "\"");
+			throw new LotusException("cantAssignString", v.getClass().toString());
 		}
 	}
 
@@ -163,34 +159,22 @@ class Interpreter {
 		String lineEnding = line.substring(line.indexOf(";") + 1).trim();
 
 		if (!lineEnding.isEmpty() && !lineEnding.startsWith("--")) {
-			throw new LotusException("You can only have one command per line: \"" + line + "\"");
+			throw new LotusException("multipleCommands", line);
 		}
 
 		line = line.substring(0, line.indexOf(";") + 1);
 
 		if (line.matches(Variable.declRegex)) {
-			try {
-				this.let(line);
-			} catch(LotusException e) {
-				throw e;
-			}
+			this.let(line);
 		}
 		else if (line.matches(atrRegex)) {
-			try {
-				this.assign(line);
-			} catch (LotusException e) {
-				throw e;
-			}
+			this.assign(line);
 		}
 		else if (line.matches(printRegex)) {
-			try {
-				this.print(line);
-			} catch (LotusException e) {
-				throw e;
-			}
+			this.print(line);
 		}
 		else {
-			throw new LotusException("Unknown expression \"" + line + "\"");
+			throw new LotusException("unknownCommand", line);
 		}
 	}
 
@@ -201,7 +185,7 @@ class Interpreter {
 
 		for (i = 0; i < max; i++) {
 			if (reservedWords.containsKey(decl[i])) {
-				throw new LotusException("You cannot use Lotus' reserved words as variable names: \"" + decl[i] + "\"");
+				throw new LotusException("usingReservedWords", decl[i]);
 			}
 
 			// decl[max] holds the type
@@ -231,7 +215,7 @@ class Interpreter {
 				//v = null; // prevents from adding the same variable again (?)
 			}
 			else {
-				throw new LotusException("Invalid type \"" + decl[max] + "\"");
+				throw new LotusException("invalidType", decl[max]);
 			}
 		}
 	}
@@ -245,7 +229,7 @@ class Interpreter {
 
         for (i = 0; i < t.length && !t[i].equals(":"); i++) {
             if (var.isEmpty() && t[i].matches("([^\\w]|\\d)")) {
-                throw new LotusException("Variable names cannot start with numbers or special characters: '" + t[i] + "'");
+                throw new LotusException("invalidVarName", t[i]);
             }
             else if (t[i].matches("\\w")) {
                 var += t[i];
@@ -273,7 +257,7 @@ class Interpreter {
             tokens.add(var);
         }
         else {
-            throw new LotusException("Syntax error!");
+            throw new LotusException("syntaxError", line);
         }
 
         t = new String[tokens.size()];
@@ -291,30 +275,16 @@ class Interpreter {
             atr[1] = atr[1].replaceFirst("\\\"", "");
             atr[1] = atr[1].replaceFirst("\\\"( )*;", "");
 
-            try {
-                this.setVar(atr[0], atr[1]);
-            } catch (LotusException e) {
-                throw e;
-            }
+            this.setVar(atr[0], atr[1]);
         }
         else if (atr[1].matches("(true|false)( )*;")){
             atr[1] = atr[1].replaceFirst("( )*;", "");
 
-            try {
-                this.setVar(atr[0], Boolean.parseBoolean(atr[1]));
-            } catch (LotusException e) {
-                throw e;
-            }
+            this.setVar(atr[0], Boolean.parseBoolean(atr[1]));
         }
         else {
-            // assign = new Expression(atr[1]);
             result = this.solve(new Expression(atr[1]));
-
-            try {
-                this.setVar(atr[0], result);
-            } catch (LotusException e) {
-                throw e;
-            }
+            this.setVar(atr[0], result);
         }
     }
 
@@ -327,11 +297,7 @@ class Interpreter {
 		String op;
 
         if (t.length == 1) {
-            try {
-                answ = this.getOperand(t[0]);
-            } catch (LotusException e) {
-                throw e;
-            }
+            answ = this.getOperand(t[0]);
         }
 
 		while (t.length > 1) {
@@ -343,30 +309,23 @@ class Interpreter {
 			// then, the operation char is at i's position in the array
 			op = t[i];
 			// as it's postfix, the 2nd operand is right before op
-            try {
-                num2 = this.getOperand(t[i - 1]);
-            } catch (LotusException e) {
-                throw e;
-            }
+            num2 = this.getOperand(t[i - 1]);
 
 			/* now, if i > 1, then 1st operand is certainly 2 positions
 			 * before op. Else, it doesn't exist lol
 			 */
 			if (i > 1) {
-                try {
-                    num1 = this.getOperand(t[i - 2]);
-                } catch (LotusException e) {
-                    throw e;
-                }
+                num1 = this.getOperand(t[i - 2]);
             }
 			else {
                 num1 = null;
             }
 
-            if (num1 == null && num2 == null) {
-                answ = new StringVar("undefined"); // throw Exception?
-                break;
-            }
+            // if (num1 == null && num2 == null) {
+			// 	// throw Exception?
+            //     answ = new StringVar("undefined");
+            //     break;
+            // }
 
             if (num2 instanceof DoubleVar || (num1 != null && num1 instanceof DoubleVar)) {
                 answ = new DoubleVar(0.0);
@@ -399,11 +358,7 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
-            try {
-			    answ = this.calculate(num1, num2, op);
-            } catch (LotusException e) {
-                throw e;
-            }
+			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
 		}
 
@@ -430,7 +385,7 @@ class Interpreter {
             v = this.getVar(t);
         }
         else {
-            throw new LotusException("Unknown symbol '" + t + "'");
+            throw new LotusException("unknownSymbol", t);
         }
 
         return v;
@@ -462,7 +417,7 @@ class Interpreter {
                 answ = v2;
             }
             else if (op.matches(opRegex)) {
-                throw new LotusException("Syntax error!");
+                throw new LotusException("syntaxError", v1 + " " + op + " " + v2);
             }
         }
 		else {
@@ -485,11 +440,11 @@ class Interpreter {
                 {
                     if (intOpns) answ = new IntVar(v1.toInt() % v2.toInt());
                     else {
-                        throw new LotusException("Cannot calculate remainder of a division between non-integer operands");
+                        throw new LotusException("nonIntMod", v1 + " % " + v2);
                     }
                 }
                 else {
-                    throw new LotusException("Division by zero");
+                    throw new LotusException("divisionByZero", v1 + " / " + v2);
                 }
                 break;
 
@@ -510,7 +465,7 @@ class Interpreter {
     				}
     			}
     			else {
-                    throw new LotusException("Division by zero");
+                    throw new LotusException("divisionByZero", v1 + " / " + v2);
                 }
     			break;
 
@@ -533,7 +488,7 @@ class Interpreter {
     			break;
 
     			default:
-                throw new LotusException("Unknown operation '" + op + "'");
+                throw new LotusException("unknownSymbol", op);
     		}
         }
 
@@ -594,24 +549,20 @@ class Interpreter {
 					else text += "\\";
 				}
 				else {
-					throw new LotusException("Unknown escape sequence: \"" + content[i] + content[i + 1] + "\"");
+					throw new LotusException("unknownEscape", content[i] + content[i + 1]);
 				}
 
 				i++;
 			}
 			else if (content[i].equals("$")) {
 				// i is the index of the first '$'!
-				try {
-					v = this.varToPrint(line, i);
-					if (v != null) {
-						text += v.toString();
-						i = line.indexOf("$", i + 1) + 1;
-					}
-					else {
-						text += content[i];
-					}
-				} catch (LotusException e) {
-					throw e;
+				v = this.varToPrint(line, i);
+				if (v != null) {
+					text += v.toString();
+					i = line.indexOf("$", i + 1) + 1;
+				}
+				else {
+					text += content[i];
 				}
 			}
 			else {
@@ -632,7 +583,7 @@ class Interpreter {
 			if (name.matches(Variable.nameRegex)) {
 				var = this.getVar(name);
 				if (var == null) {
-					throw new LotusException("Could not find variable \"" + name + "\"");
+					throw new LotusException("varNotFound", name);
 				}
 			}
 		}

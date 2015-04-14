@@ -34,11 +34,11 @@ abstract class Variable<T> {
     			((StringVar)this).setValue((String)v.value);
     		}
     		else {
-    			throw new LotusException("Cannot assign a " + v.getClass() + " value to a " + this.getClass() + " variable");
+    			throw new LotusException("cantAssign", v.getClass() + ";" + this.getClass());
     		}
         }
         else {
-            throw new LotusException("Assignment of null");
+            throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString());
         }
 
         return true;
