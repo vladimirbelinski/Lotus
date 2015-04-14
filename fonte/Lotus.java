@@ -48,20 +48,8 @@ class Lotus {
             while (sc.hasNext()) {
                 // takes off all duplicated and trailing spaces
                 tmpInput = sc.nextLine().replaceAll("( )+", " ").trim();
-
-                // ignores everything after the last ';' (for the sake of comments)
-                // we still add empty and commented lines to the 'input' ArrayList
-                // because we report the line of an eventual error
-                lineEnding = tmpInput.substring(tmpInput.lastIndexOf(';') + 1);
-                if (lineEnding.length() >= 2) {
-                    if (lineEnding.startsWith("--") ||
-                        (lineEnding.charAt(0) == ' ' && lineEnding.startsWith("--", 1)))
-                    {
-                        tmpInput = tmpInput.replace(lineEnding, "");
-                    }
-                }
-
-                input.add(tmpInput);
+                // everything after the ';' is considered a comment
+                input.add(tmpInput.substring(0, tmpInput.indexOf(";") + 1));
             }
             sc.close();
 
