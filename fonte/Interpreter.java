@@ -160,6 +160,14 @@ class Interpreter {
 	/* ---------------------------------------------------------------------- */
 
 	public void execute(String line) throws LotusException {
+		String lineEnding = line.substring(line.indexOf(";") + 1).trim();
+
+		if (!lineEnding.isEmpty() && !lineEnding.startsWith("--")) {
+			throw new LotusException("You can only have one command per line: \"" + line + "\"");
+		}
+
+		line = line.substring(0, line.indexOf(";") + 1);
+
 		if (line.matches(Variable.declRegex)) {
 			try {
 				this.let(line);
@@ -597,7 +605,7 @@ class Interpreter {
 					v = this.varToPrint(line, i);
 					if (v != null) {
 						text += v.toString();
-						i = line.indexOf("$", i + 1);
+						i = line.indexOf("$", i + 1) + 1;
 					}
 					else {
 						text += content[i];
@@ -620,7 +628,7 @@ class Interpreter {
 		int offset = content.indexOf("$", fromIndex + 1);
 
 		if (offset > fromIndex) {
-			name = content.substring(fromIndex + 1, offset);
+			name = content.substring(fromIndex, offset);
 			if (name.matches(Variable.nameRegex)) {
 				var = this.getVar(name);
 				if (var == null) {

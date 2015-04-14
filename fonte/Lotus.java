@@ -17,13 +17,12 @@ import java.io.*;
  */
 
 class Lotus {
-    public static Interpreter interpreter = new Interpreter();
-
     public static void main(String[] args) throws Exception {
         File f;
         Scanner sc;
         int max, ind = 0;
         String tmpInput, lineEnding;
+        Interpreter lotus = new Interpreter();
         boolean hasParam = true, validParam = true;
         ArrayList<String> input = new ArrayList<String>();
 
@@ -48,10 +47,6 @@ class Lotus {
             while (sc.hasNext()) {
                 // takes off all duplicated and trailing spaces
                 tmpInput = sc.nextLine().replaceAll("( )+", " ").trim();
-                // everything after the ';' is considered a comment
-                if (tmpInput.contains(";")) {
-                    tmpInput = tmpInput.substring(0, tmpInput.indexOf(";") + 1);
-                }
                 input.add(tmpInput);
             }
             sc.close();
@@ -64,7 +59,7 @@ class Lotus {
                 }
 
                 try {
-                    interpreter.execute(tmpInput);
+                    lotus.execute(tmpInput);
                 } catch (LotusException e) {
                     System.out.println("\nError at line: " + (i + 1));
                     System.out.println("> " + e);

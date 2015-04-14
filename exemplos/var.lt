@@ -88,3 +88,7 @@ println(oi\);
 print(\);
 print(\\n);
 println(\\n);
+
+
+x = y;--  ;     y = z;
+print($x$, $y$\n);
