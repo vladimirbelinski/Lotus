@@ -5,7 +5,7 @@ class Interpreter {
 	// this doesn't make that much sense now, but it's faster to
 	// look up in a hash than an array. And later on we can replace
 	// the boolean value to a Runnable...
-	private static final Map<String, Boolean> reservedWords = newMap();
+	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -537,6 +537,8 @@ class Interpreter {
 				else if (content[i + 1].equals("n")) {
 					text += "\n";
 				}
+				// if you want to print something like "$gabriel$",
+				// you just need to escape one '$' (or both)
 				else if (content[i + 1].equals("$")) {
 					text += "$";
 				}
@@ -594,7 +596,7 @@ class Interpreter {
 		return var;
 	}
 
-	private static Map<String, Boolean> newMap() {
+	private static Map<String, Boolean> mapReservedWords() {
         Map<String, Boolean> result = new HashMap<String, Boolean>();
         result.put("let", true);
         result.put("int", true);
