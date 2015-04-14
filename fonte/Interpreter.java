@@ -164,7 +164,7 @@ class Interpreter {
 
 		line = line.substring(0, line.indexOf(";") + 1);
 
-		if (line.matches(Variable.declRegex)) {
+		if (line.matches(declRegex)) {
 			this.let(line);
 		}
 		else if (line.matches(atrRegex)) {
@@ -376,12 +376,12 @@ class Interpreter {
         }
         else if (t.charAt(0) == '-') {
             t = t.replace("-", "");
-            if (t.matches(Variable.nameRegex)) {
+            if (t.matches(nameRegex)) {
                 v = this.getVar(t);
                 if (v != null) v.invert();
             }
         }
-        else if (t.matches(Variable.nameRegex)){
+        else if (t.matches(nameRegex)){
             v = this.getVar(t);
         }
         else {
@@ -588,7 +588,7 @@ class Interpreter {
 		if (offset > fromIndex) {
 			// name = content.substring(fromIndex, offset);
 			name = content.substring(fromIndex + 1, offset);
-			if (name.matches(Variable.nameRegex)) {
+			if (name.matches(nameRegex)) {
 				var = this.getVar(name);
 				if (var == null) {
 					throw new LotusException("varNotFound", name);
@@ -626,15 +626,17 @@ class Interpreter {
     }
 
 	public static final String typeRegex = "int|double|string|bool";
+	public static final String declRegex = "(let)( )+((\\w)+((,( )*(\\w)+)( )*)*)( )*:( )*(\\w)+;";
+	public static final String nameRegex = "(?!\\d)\\w+";
 	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
 	public static final String stripAtrRegex = "( )*=( )*";
 	public static final String printRegex = "(print|println)( )*\\(.*\\)( )*;";
-	public static final String printVarRegex = ".*(\\$(\\w)+\\$).*";
+	// public static final String printVarRegex = ".*(\\$(\\w)+\\$).*";
 	// public static final String stripNameRegex = "( )*=( )*.+;";
 	// public static final String stripExpRegex = "(\\w)+( )*=( )*";
     public static final String opRegex = "\\^|\\*|\\%|\\/|\\+|\\-|\\(|\\)";
     public static final String intRegex = "[+-]?[0-9]+";
-    public static final String zeroRegex = "0+(\\.)?0*";
+    // public static final String zeroRegex = "0+(\\.)?0*";
     /* fpRegex taken from Java documentation */
 	private static final String Digits     = "(\\p{Digit}+)";
 	private static final String HexDigits  = "(\\p{XDigit}+)";
