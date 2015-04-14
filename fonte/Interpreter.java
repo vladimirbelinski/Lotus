@@ -23,35 +23,25 @@ class Interpreter {
 		return this.vars.get(name);
 	}
 
-	// We need to allow some "non-compatible" assignments too, for example:
-	// int = double (and vice versa)
-	// string = double, int, boolean
-	// boolean = int (?)
-
 	public void setVar(String name, Variable other) throws LotusException {
 		Variable v = this.getVar(name);
 
 		if (v != null && other != null) {
-			if (v.getClass().equals(other.getClass())) {
-				try {
-					if (v instanceof IntVar) {
-						this.setVar(name, (Integer)other.value); // do we need all these ifs and castings? They're being made inside the other setVars...
-					}
-					else if (v instanceof BoolVar) {
-						this.setVar(name, (Boolean)other.value);
-					}
-					else if (v instanceof DoubleVar) {
-						this.setVar(name, (Double)other.value);
-					}
-					else if (v instanceof StringVar) {
-						this.setVar(name, (String)other.value);
-					}
-				} catch (LotusException e) {
-					throw e;
+			try {
+				if (other instanceof IntVar) {
+					this.setVar(name, (Integer)other.value);
 				}
-			}
-			else {
-				throw new LotusException("Cannot assign a " + other.getClass() + " value to a " + v.getClass() + " variable");
+				else if (other instanceof BoolVar) {
+					this.setVar(name, (Boolean)other.value);
+				}
+				else if (other instanceof DoubleVar) {
+					this.setVar(name, (Double)other.value);
+				}
+				else if (other instanceof StringVar) {
+					this.setVar(name, (String)other.value);
+				}
+			} catch (LotusException e) {
+				throw e;
 			}
 		}
 		else if (v == null){
@@ -68,56 +58,102 @@ class Interpreter {
 	public void setVar(String name, Integer value) throws LotusException {
 		Variable v = this.getVar(name);
 
-		if (v instanceof IntVar) {
-			((IntVar)v).setValue(value);
-		}
-		else if (v == null) {
+		if (v == null) {
 			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
+		else if (v instanceof IntVar) {
+			((IntVar)v).setValue(value);
+		}
+		else if (v instanceof BoolVar) {
+			if (value.equals(0)) {
+				((BoolVar)v).setValue(false);
+			}
+			else ((BoolVar)v).setValue(true);
+		}
+		else if (v instanceof DoubleVar) {
+			((DoubleVar)v).setValue(value.doubleValue());
+		}
+		else if (v instanceof StringVar) {
+			((StringVar)v).setValue(value.toString());
+		}
 		else {
-			throw new LotusException("Cannot assign an int to a non-int variable");
+			throw new LotusException("Cannot assign an int to a variable of type \"" + v.getClass() + "\"");
 		}
 	}
 
 	public void setVar(String name, Boolean value) throws LotusException {
 		Variable v = this.getVar(name);
 
-		if (v instanceof BoolVar) {
-			((BoolVar)v).setValue(value);
-		}
-		else if (v == null) {
+		if (v == null) {
 			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
+		else if (v instanceof IntVar) {
+			if (value.equals(true)) {
+				((IntVar)v).setValue(1);
+			}
+			else {
+				((IntVar)v).setValue(0);
+			}
+		}
+		else if (v instanceof BoolVar) {
+			((BoolVar)v).setValue(value);
+		}
+		else if (v instanceof DoubleVar) {
+			if (value.equals(true)) {
+				((DoubleVar)v).setValue(1.0);
+			}
+			else {
+				((DoubleVar)v).setValue(0.0);
+			}
+		}
+		else if (v instanceof StringVar) {
+			((StringVar)v).setValue(value.toString());
+		}
 		else {
-			throw new LotusException("Cannot assign a boolean to a non-bool variable");
+			throw new LotusException("Cannot assign a bool to a variable of type \"" + v.getClass() + "\"");
 		}
 	}
 
 	public void setVar(String name, Double value) throws LotusException {
 		Variable v = this.getVar(name);
 
-		if (v instanceof DoubleVar) {
-			((DoubleVar)v).setValue(value);
-		}
-		else if (v == null) {
+		if (v == null) {
 			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
+		else if (v instanceof IntVar) {
+			((IntVar)v).setValue(value.intValue());
+		}
+		else if (v instanceof BoolVar) {
+			if (value.equals(0.0)) {
+				((BoolVar)v).setValue(false);
+			}
+			else ((BoolVar)v).setValue(true);
+		}
+		else if (v instanceof DoubleVar) {
+			((DoubleVar)v).setValue(value);
+		}
+		else if (v instanceof StringVar) {
+			((StringVar)v).setValue(value.toString());
+		}
 		else {
-			throw new LotusException("Cannot assign a double to a non-double variable");
+			throw new LotusException("Cannot assign a double to a variable of type \"" + v.getClass() + "\"");
 		}
 	}
 
 	public void setVar(String name, String value) throws LotusException {
 		Variable v = this.getVar(name);
 
-		if (v instanceof StringVar) {
-			((StringVar)v).setValue(value);
-		}
-		else if (v == null) {
+		if (v == null) {
 			throw new LotusException("Could not find variable: \"" + name + "\"");
 		}
+		else if (v instanceof StringVar) {
+			((StringVar)v).setValue(value);
+		}
+		else if (v instanceof BoolVar) {
+			((BoolVar)v).setValue(value.isEmpty());
+		}
 		else {
-			throw new LotusException("Cannot assign a string to a non-string variable");
+			throw new LotusException("Cannot assign a string to a variable of type \"" + v.getClass() + "\"");
 		}
 	}
 
