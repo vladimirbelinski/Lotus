@@ -70,5 +70,15 @@ class Lotus {
         else if (!validParam) {
             System.out.println("Invalid input file.");
         }
+
+        Variable v = new IntVar(7);
+        Variable w = null;
+        try {
+            v.setValue(w);
+        } catch (LotusException e) {
+            System.out.println("\n" + e.getCode() + " at line NaN");
+            System.out.println("> " + e.getMessage());
+            System.exit(1);
+        }
     }
 }

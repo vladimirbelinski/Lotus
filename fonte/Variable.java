@@ -38,7 +38,8 @@ abstract class Variable<T> {
     		}
         }
         else {
-            throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString());
+            throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString() + "\n" + (Thread.currentThread().getStackTrace()[2]).toString());
+            // throw new LotusException("nullVar", (Thread.currentThread().getStackTrace().toString()));
         }
 
         return true;
