@@ -525,6 +525,13 @@ class Interpreter {
 
 		line = line.replaceFirst("(print|println)( )*\\(", "");
 		content = line.split("");
+
+		// System.out.println("-------------");
+		// for (i = 0; i < content.length; i++) {
+		// 	System.out.println("content[" + i + "]: " + content[i]);
+		// }
+		// System.out.println("-------------");
+
 		for (i = 0; i < content.length; i++) {
 			// \t 	Insert a tab in the text at this point.
 			// \n 	Insert a newline in the text at this point.
@@ -559,7 +566,7 @@ class Interpreter {
 				v = this.varToPrint(line, i);
 				if (v != null) {
 					text += v.toString();
-					i = line.indexOf("$", i + 1) + 1;
+					i = line.indexOf("$", i + 1)/* + 1*/;
 				}
 				else {
 					text += content[i];
@@ -579,7 +586,8 @@ class Interpreter {
 		int offset = content.indexOf("$", fromIndex + 1);
 
 		if (offset > fromIndex) {
-			name = content.substring(fromIndex, offset);
+			// name = content.substring(fromIndex, offset);
+			name = content.substring(fromIndex + 1, offset);
 			if (name.matches(Variable.nameRegex)) {
 				var = this.getVar(name);
 				if (var == null) {
