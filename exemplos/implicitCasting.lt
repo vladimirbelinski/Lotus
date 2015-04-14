@@ -1,0 +1,65 @@
+let a: int;
+let b: double;
+let c: string;
+let d: bool;
+
+a = 7;
+b = 11;
+c = "Gabriel";
+d = true;
+
+println(Original values:);
+println($a$);
+println($b$);
+println($c$);
+println($d$);
+
+println(----------);
+
+a = d;
+b = d;
+c = d;
+println($a$);
+println($b$);
+println($c$);
+println($d$);
+
+println(----------);
+
+a = 7;
+b = 11;
+c = "Gabriel";
+d = true;
+
+--a = c;
+--b = c;
+d = c;
+println($d$);
+
+println(----------);
+
+a = 7;
+b = 11;
+c = "Gabriel";
+d = true;
+
+a = b;
+c = b;
+d = b;
+println($a$);
+println($c$);
+println($d$);
+
+println(----------);
+
+a = 7;
+b = 11;
+c = "Gabriel";
+d = true;
+
+b = a;
+c = a;
+d = a;
+println($b$);
+println($c$);
+println($d$);
