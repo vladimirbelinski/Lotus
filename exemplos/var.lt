@@ -104,6 +104,16 @@ println(Digite outra string:);
 scan($s$);
 println($s$);
 
+println(Enter e depois double:);
+scan(\n$k$);
+println($k$);
+
+let k: string;
+
+println(k agora é string, digite uma string então:);
+scan($k$);
+println($k$);
+
 let b: bool;
 println (Agora um bool:);
 scan($b$);
