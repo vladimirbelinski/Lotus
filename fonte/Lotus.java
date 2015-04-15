@@ -46,7 +46,7 @@ class Lotus {
 
             while (sc.hasNext()) {
                 // takes off all duplicated and trailing spaces
-                tmpInput = sc.nextLine().replaceAll("( )+", " ").trim();
+                tmpInput = sc.nextLine().trim();
                 input.add(tmpInput);
             }
             sc.close();
@@ -61,24 +61,13 @@ class Lotus {
                 try {
                     lotus.execute(tmpInput);
                 } catch (LotusException e) {
-                    System.out.println("\n" + e.getCode() + " at line " + (i + 1));
-                    System.out.println("> " + e.getMessage());
+                    System.out.println("> " + e.getMessage() + ", at line " + (i + 1));
                     System.exit(1);
                 }
             }
         }
         else if (!validParam) {
             System.out.println("Invalid input file.");
-        }
-
-        Variable v = new IntVar(7);
-        Variable w = null;
-        try {
-            v.setValue(w);
-        } catch (LotusException e) {
-            System.out.println("\n" + e.getCode() + " at line NaN");
-            System.out.println("> " + e.getMessage());
-            System.exit(1);
         }
     }
 }

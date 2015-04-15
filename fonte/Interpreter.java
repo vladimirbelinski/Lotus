@@ -168,10 +168,14 @@ class Interpreter {
 			this.let(line);
 		}
 		else if (line.matches(atrRegex)) {
+			// +=, -=...?
 			this.assign(line);
 		}
 		else if (line.matches(printRegex)) {
 			this.print(line);
+		}
+		else if (line.matches(scanRegex)) {
+			this.scan(line);
 		}
 		else {
 			throw new LotusException("unknownCommand", line);
@@ -362,6 +366,8 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
+
+		System.out.println(">>> result: " + answ);
 		return answ;
 	}
 
@@ -563,7 +569,7 @@ class Interpreter {
 			}
 			else if (content[i].equals("$")) {
 				// i is the index of the first '$'!
-				v = this.varToPrint(line, i);
+				v = this.whatVar(line, i);
 				if (v != null) {
 					text += v.toString();
 					i = line.indexOf("$", i + 1)/* + 1*/;
@@ -580,7 +586,7 @@ class Interpreter {
 		else System.out.print(text);
 	}
 
-	private Variable varToPrint(String content, int fromIndex) throws LotusException {
+	private Variable whatVar(String content, int fromIndex) throws LotusException {
 		String name;
 		Variable var = null;
 		int offset = content.indexOf("$", fromIndex + 1);
@@ -597,6 +603,81 @@ class Interpreter {
 		}
 
 		return var;
+	}
+
+	private String scan(String line) throws LotusException {
+		int i, offset;
+		String[] content;
+		String input = "", name, lineEnding;
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("scan line: {" + line + "}");
+
+		lineEnding = line.substring(line.lastIndexOf(")"));
+		line = line.replace(lineEnding, "");
+		line = line.replaceFirst("(scan)( )*\\(", "");
+		content = line.split("");
+
+		for (i = 0; i < content.length; i++) {
+			if (content[i].equals("\\") && i + 1 < content.length) {
+				if (content[i + 1].equals("n") && sc.hasNextLine()) {
+					input += sc.nextLine();
+				}
+				else if (content[i + 1].equals("$") && sc.hasNext("$")) {
+					input += sc.next("$");
+				}
+				else if (content[i + 1].equals("\\")) {
+					if (i + 2 < content.length && content[i + 2].equals("n") && sc.hasNext("\\n")) {
+						input += sc.next("\\n");
+						i++;
+					}
+					else input += sc.next("\\");
+				}
+				else {
+					throw new LotusException("inputMismatch", sc.next());
+				}
+
+				i++;
+			}
+			else if (content[i].equals("$")) {
+				offset = line.indexOf("$", i + 1);
+				name = line.substring(i + 1, offset);
+				if (offset > i + 1) {
+					if (this.hasVar(name)) {
+						if (sc.hasNextBoolean()) {
+							this.setVar(name, sc.nextBoolean());
+						}
+						else if (sc.hasNextInt()) {
+							this.setVar(name, sc.nextInt());
+						}
+						else if (sc.hasNextDouble()) {
+							this.setVar(name, sc.nextDouble());
+						}
+						else if (sc.hasNextLine()) {
+							this.setVar(name, sc.nextLine());
+						}
+						else {
+							throw new LotusException("inputMismatch", sc.next());
+						}
+
+						input += line.substring(i, offset + 1);
+						i = offset;
+					}
+					else {
+						throw new LotusException("varNotFound", name);
+					}
+				}
+				else {
+					input += sc.next(content[i]);
+				}
+			}
+			else {
+				input += sc.next(content[i]);
+			}
+		}
+
+		System.out.println("input read: " + input);
+		return input;
 	}
 
 	private static Map<String, Boolean> mapReservedWords() {
@@ -631,6 +712,7 @@ class Interpreter {
 	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
 	public static final String stripAtrRegex = "( )*=( )*";
 	public static final String printRegex = "(print|println)( )*\\(.*\\)( )*;";
+	public static final String scanRegex = "(scan)( )*\\(.*\\)( )*;";
 	// public static final String printVarRegex = ".*(\\$(\\w)+\\$).*";
 	// public static final String stripNameRegex = "( )*=( )*.+;";
 	// public static final String stripExpRegex = "(\\w)+( )*=( )*";

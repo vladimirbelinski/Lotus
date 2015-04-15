@@ -22,6 +22,7 @@ class LotusException extends Exception {
         case "cantAssignDouble": this.setMessage("Cannot assign a double to a variable of type \"" + line + "\""); break;
         case "cantAssignString": this.setMessage("Cannot assign a string to a variable of type \"" + line + "\""); break;
         case "cantAssign": this.setMessage("Cannot assign a \"" + line.substring(0, line.indexOf(");") - 1) + "\" value to a variable of type \"" + line.substring(line.indexOf(");") + 1) + "\""); break;
+        case "inputMismatch": this.setMessage("Could not read the input \"" + line + "\""); break;
         }
         this.setCode(code);
     }
