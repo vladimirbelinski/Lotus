@@ -146,7 +146,23 @@ class Interpreter {
 			((StringVar)v).setValue(value);
 		}
 		else if (v instanceof BoolVar) {
-			((BoolVar)v).setValue(value.isEmpty());
+			((BoolVar)v).setValue(Boolean.valueOf(value));
+		}
+		else if (v instanceof IntVar) {
+			if (value.matches(intRegex)) {
+				((IntVar)v).setValue(Integer.parseInt(value));
+	        }
+	        else {
+				throw new LotusException("cantAssignString", v.getClass().toString());
+	        }
+		}
+		else if (v instanceof DoubleVar) {
+			if (value.matches(fpRegex)) {
+				((DoubleVar)v).setValue(Double.parseDouble(value));
+	        }
+	        else {
+				throw new LotusException("cantAssignString", v.getClass().toString());
+	        }
 		}
 		else {
 			throw new LotusException("cantAssignString", v.getClass().toString());
@@ -156,8 +172,13 @@ class Interpreter {
 	/* ---------------------------------------------------------------------- */
 
 	public void execute(String line) throws LotusException {
-		String lineEnding = line.substring(line.indexOf(";") + 1).trim();
+		int semicolon = line.indexOf(";");
 
+		if (semicolon < 0) {
+			throw new LotusException("syntaxError", line);
+		}
+
+		String lineEnding = line.substring(semicolon + 1).trim();
 		if (!lineEnding.isEmpty() && !lineEnding.startsWith("--")) {
 			throw new LotusException("multipleCommands", line);
 		}
@@ -366,8 +387,6 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-
-		System.out.println(">>> result: " + answ);
 		return answ;
 	}
 
@@ -605,13 +624,15 @@ class Interpreter {
 		return var;
 	}
 
+	// directly assigns the input read into the requested variable
+	// (if there's any) and returnds all the successful read inputs
+	// as a string. A successfully read variable will be returned
+	// as its name between '$'.
 	private String scan(String line) throws LotusException {
 		int i, offset;
 		String[] content;
 		String input = "", name, lineEnding;
 		Scanner sc = new Scanner(System.in);
-
-		System.out.println("scan line: {" + line + "}");
 
 		lineEnding = line.substring(line.lastIndexOf(")"));
 		line = line.replace(lineEnding, "");
@@ -646,12 +667,15 @@ class Interpreter {
 					if (this.hasVar(name)) {
 						if (sc.hasNextBoolean()) {
 							this.setVar(name, sc.nextBoolean());
+							sc.nextLine(); // prevents that annoying but with strings
 						}
 						else if (sc.hasNextInt()) {
 							this.setVar(name, sc.nextInt());
+							sc.nextLine(); // prevents that annoying but with strings
 						}
 						else if (sc.hasNextDouble()) {
 							this.setVar(name, sc.nextDouble());
+							sc.nextLine(); // prevents that annoying but with strings
 						}
 						else if (sc.hasNextLine()) {
 							this.setVar(name, sc.nextLine());
@@ -676,7 +700,6 @@ class Interpreter {
 			}
 		}
 
-		System.out.println("input read: " + input);
 		return input;
 	}
 
@@ -692,6 +715,7 @@ class Interpreter {
         result.put("println", true);
         result.put("scan", true);
 
+        result.put("unless", true); // ? :)
         result.put("if", true);
         result.put("elsif", true);
         result.put("else", true);
