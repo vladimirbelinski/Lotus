@@ -29,9 +29,9 @@ class Expression {
         ArrayList<String> ts = new ArrayList<String>();
 
         for (int i = 0; i < tokens.length; i++) {
-            if (tokens[i].matches(Interpreter.opRegex)) {
+            if (tokens[i].matches(Interpreter.operRegex)) {
                 if (tokens[i].matches("[+-]") &&
-                    i - 1 >= 0 && tokens[i - 1].matches(Interpreter.opRegex) &&
+                    i - 1 >= 0 && tokens[i - 1].matches(Interpreter.operRegex) &&
                     i + 1 < tokens.length && tokens[i + 1].matches("\\w|\\."))
                 {
                     t = tokens[i];
