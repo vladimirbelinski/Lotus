@@ -97,9 +97,12 @@ print($x$, $y$\n);
 println(Digite uma string:);
 scan($s$);
 println($s$);
-println(Dê um enter e digite um número:);
+println(Digite um número:);
 scan($x$);
 println($x$);
+println(Digite outra string:);
+scan($s$);
+println($s$);
 
 let b: bool;
 println (Agora um bool:);
