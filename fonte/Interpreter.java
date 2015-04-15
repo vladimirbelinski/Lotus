@@ -7,15 +7,16 @@ class Interpreter {
 	// look up in a hash than an array. And later on we can replace
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
-	Pattern word, type, decl, name, atr, stripAtr, print, scan, scanContent, oper, integer, fp;
+	public static Pattern word, string, type, decl, varName, atr, stripAtr, print, scan, scanContent, oper, integer, boole, fp;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
 
 		word = Pattern.compile("\\w+");
+		string = Pattern.compile("\\S+");
 		type = Pattern.compile(typeRegex);
 		decl = Pattern.compile(declRegex);
-		name = Pattern.compile(nameRegex);
+		varName = Pattern.compile(varNameRegex);
 		atr = Pattern.compile(atrRegex);
 		stripAtr = Pattern.compile(stripAtrRegex);
 		print = Pattern.compile(printRegex);
@@ -23,6 +24,7 @@ class Interpreter {
 		scanContent = Pattern.compile(scanContentRegex);
 		oper = Pattern.compile(operRegex);
 		integer = Pattern.compile(intRegex);
+		boole = Pattern.compile(boolRegex);
 		fp = Pattern.compile(fpRegex);
 	}
 
@@ -161,6 +163,17 @@ class Interpreter {
 			if (value.matches(intRegex)) {
 				((IntVar)v).setValue(Integer.parseInt(value));
 	        }
+			else if (value.matches(fpRegex)) {
+				((IntVar)v).setValue((int)Double.parseDouble(value));
+	        }
+			else if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
+				if (Boolean.valueOf(value)) {
+					((IntVar)v).setValue(1);
+				}
+				else {
+					((IntVar)v).setValue(0);
+				}
+			}
 	        else {
 				throw new LotusException("cantAssignString", v.getClass().toString());
 	        }
@@ -169,6 +182,14 @@ class Interpreter {
 			if (value.matches(fpRegex)) {
 				((DoubleVar)v).setValue(Double.parseDouble(value));
 	        }
+			else if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
+				if (Boolean.valueOf(value)) {
+					((DoubleVar)v).setValue(1.0);
+				}
+				else {
+					((DoubleVar)v).setValue(0.0);
+				}
+			}
 	        else {
 				throw new LotusException("cantAssignString", v.getClass().toString());
 	        }
@@ -311,7 +332,7 @@ class Interpreter {
 
             this.setVar(this.getVar(atr[0]), atr[1]);
         }
-        else if (atr[1].matches("(true|false)( )*;")){
+        else if (atr[1].matches(boolRegex + "( )*;")){
             atr[1] = atr[1].replaceFirst("( )*;", "");
 
             this.setVar(this.getVar(atr[0]), Boolean.parseBoolean(atr[1]));
@@ -410,12 +431,12 @@ class Interpreter {
         }
         else if (t.charAt(0) == '-') {
             t = t.replace("-", "");
-            if (t.matches(nameRegex)) {
+            if (t.matches(varNameRegex)) {
                 v = this.getVar(t);
                 if (v != null) v.invert();
             }
         }
-        else if (t.matches(nameRegex)){
+        else if (t.matches(varNameRegex)){
             v = this.getVar(t);
         }
         else {
@@ -560,12 +581,6 @@ class Interpreter {
 		line = line.replaceFirst("(print|println)( )*\\(", "");
 		content = line.split("");
 
-		// System.out.println("-------------");
-		// for (i = 0; i < content.length; i++) {
-		// 	System.out.println("content[" + i + "]: " + content[i]);
-		// }
-		// System.out.println("-------------");
-
 		for (i = 0; i < content.length; i++) {
 			// \t 	Insert a tab in the text at this point.
 			// \n 	Insert a newline in the text at this point.
@@ -622,7 +637,7 @@ class Interpreter {
 		if (offset > fromIndex) {
 			// name = content.substring(fromIndex, offset);
 			name = content.substring(fromIndex + 1, offset);
-			if (name.matches(nameRegex)) {
+			if (name.matches(varNameRegex)) {
 				var = this.getVar(name);
 				if (var == null) {
 					throw new LotusException("varNotFound", name);
@@ -638,10 +653,12 @@ class Interpreter {
 	// as a string. A successfully read variable will be returned
 	// as its name between '$'.
 	private void scan(String line) throws LotusException {
-		Variable v;
-		int i, offset;
-		String[] content;
+		int i, j, max;
+		String[] input;
+		Variable v, other;
 		String lineEnding, name;
+		Scanner sc = new Scanner(System.in);
+		Matcher varMatcher, intMatcher, fpMatcher, stringMatcher;
 
 		lineEnding = line.substring(line.lastIndexOf(")"));
 		line = line.replace(lineEnding, "");
@@ -651,134 +668,36 @@ class Interpreter {
 			throw new LotusException("syntaxError", line);
 		}
 
-		content = line.split("");
-		for (i = 0; i < content.length; i++) {
-			if (content[i].equals("$")) {
-				offset = line.indexOf("$", i + 1);
-				System.out.println("{" + i + ", " + offset + "}");
-				name = line.substring(i + 1, offset);
+		max = 0;
+		varMatcher = varName.matcher(line);
+		while (varMatcher.find()) {
+			max++;
+		}
 
-				if ((v = this.getVar(name)) != null) {
-					if (v instanceof IntVar) {
-						this.scanIntTo(v);
-					}
-					else if (v instanceof DoubleVar) {
-						this.scanDoubleTo(v);
-					}
-					else if (v instanceof BoolVar) {
-						this.scanBoolTo(v);
-					}
-					else if (v instanceof StringVar) {
-						this.scanStringTo(v);
-					}
+		varMatcher = varName.matcher(line); // varMatcher = varMatcher.reset(); ?
+		input = sc.nextLine().split(" ");
+
+		for (i = 0; i < max; i++) {
+			varMatcher.find();
+			name = varMatcher.group();
+
+			if ((v = this.getVar(name)) != null) {
+				if (input[i].matches(intRegex)) {
+					other = new IntVar(Integer.parseInt(input[i]));
+				}
+				else if (input[i].matches(fpRegex)) {
+					other = new DoubleVar(Double.parseDouble(input[i]));
 				}
 				else {
-					throw new LotusException("varNotFound", content[i]);
+					other = new StringVar(input[i]);
 				}
 
-				i = offset;
+				this.setVar(v, other);
+			}
+			else {
+				throw new LotusException("varNotFound", name);
 			}
 		}
-	}
-
-	private void scanIntTo(Variable v) throws LotusException {
-		Scanner sc = new Scanner(System.in);
-
-		if (sc.hasNextInt()) {
-			this.setVar(v, sc.nextInt());
-			sc.nextLine();
-		}
-		else if (sc.hasNextDouble()) {
-			this.setVar(v, sc.nextDouble());
-			sc.nextLine();
-		}
-		else if (sc.hasNextBoolean()) {
-			this.setVar(v, sc.nextBoolean());
-			sc.nextLine();
-		}
-		else if (sc.hasNext(word)) {
-			this.setVar(v, sc.next(word));
-		}
-		else {
-			throw new LotusException("inputMismatch", sc.next());
-		}
-
-		sc = null;
-	}
-
-	private void scanDoubleTo(Variable v) throws LotusException {
-		Scanner sc = new Scanner(System.in);
-
-		if (sc.hasNextDouble()) {
-			this.setVar(v, sc.nextDouble());
-			sc.nextLine();
-		}
-		else if (sc.hasNextInt()) {
-			this.setVar(v, sc.nextInt());
-			sc.nextLine();
-		}
-		else if (sc.hasNextBoolean()) {
-			this.setVar(v, sc.nextBoolean());
-			sc.nextLine();
-		}
-		else if (sc.hasNext(word)) {
-			this.setVar(v, sc.next(word));
-		}
-		else {
-			throw new LotusException("inputMismatch", sc.next());
-		}
-
-		sc = null;
-	}
-
-	private void scanBoolTo(Variable v) throws LotusException {
-		Scanner sc = new Scanner(System.in);
-
-		if (sc.hasNextBoolean()) {
-			this.setVar(v, sc.nextBoolean());
-			sc.nextLine();
-		}
-		else if (sc.hasNextInt()) {
-			this.setVar(v, sc.nextInt());
-			sc.nextLine();
-		}
-		else if (sc.hasNextDouble()) {
-			this.setVar(v, sc.nextDouble());
-			sc.nextLine();
-		}
-		else if (sc.hasNext(word)) {
-			this.setVar(v, sc.next(word));
-		}
-		else {
-			throw new LotusException("inputMismatch", sc.next());
-		}
-
-		sc = null;
-	}
-
-	private void scanStringTo(Variable v) throws LotusException {
-		Scanner sc = new Scanner(System.in);
-
-		if (sc.hasNext(word)) {
-			this.setVar(v, sc.next(word));
-		}
-		else if (sc.hasNextBoolean()) {
-			this.setVar(v, sc.nextBoolean());
-			sc.nextLine();
-		}
-		else if (sc.hasNextInt()) {
-			this.setVar(v, sc.nextInt());
-			sc.nextLine();
-		}
-		else if (sc.hasNextDouble()) {
-			this.setVar(v, sc.nextDouble());
-			sc.nextLine();
-		}
-		else {
-			throw new LotusException("inputMismatch", sc.next());
-		}
-
-		sc = null;
 	}
 
 	private static Map<String, Boolean> mapReservedWords() {
@@ -810,17 +729,18 @@ class Interpreter {
 
 	public static final String typeRegex = "int|double|string|bool";
 	public static final String declRegex = "(let)( )+((\\w)+((,( )*(\\w)+)( )*)*)( )*:( )*(\\w)+;";
-	public static final String nameRegex = "(?!\\d)\\w+";
+	public static final String varNameRegex = "(?!\\d)\\w+";
 	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
 	public static final String stripAtrRegex = "( )*=( )*";
 	public static final String printRegex = "(print|println)( )*\\(.*\\)( )*;";
 	public static final String scanRegex = "(scan)( )*\\(.*\\)( )*;";
-	public static final String scanContentRegex = "(\\$" + nameRegex + "\\$)(( )*,( )*(\\$" + nameRegex + "\\$))*";
+	public static final String scanContentRegex = "(\\$" + varNameRegex + "\\$)(( )*,( )*(\\$" + varNameRegex + "\\$))*";
 	// public static final String printVarRegex = ".*(\\$(\\w)+\\$).*";
 	// public static final String stripNameRegex = "( )*=( )*.+;";
 	// public static final String stripExpRegex = "(\\w)+( )*=( )*";
     public static final String operRegex = "\\^|\\*|\\%|\\/|\\+|\\-|\\(|\\)";
     public static final String intRegex = "[+-]?[0-9]+";
+    public static final String boolRegex = "(true|false)";
     // public static final String zeroRegex = "0+(\\.)?0*";
     /* fpRegex taken from Java documentation */
 	private static final String Digits     = "(\\p{Digit}+)";
