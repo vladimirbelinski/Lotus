@@ -1,4 +1,22 @@
-let a, b, k: double;
+let a = 2, b = 5, k = false: double;
+let x, y, z: int;
+let s = "oi": string;
+let b = true: bool;
+println(b: $b$);
+b = false;
+println(b: $b$);
+
+println($s$);
+
+println(average a: $a$);
+println(average b: $b$);
+println(average k: $k$);
+println();
+println(average x: $x$);
+println(average y: $y$);
+println(average z: $z$);
+
+println(-------------\n);
 
 println(Binary average calculator\n);
 

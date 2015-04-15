@@ -1,5 +1,6 @@
 let x, y, z, gabriel: int;
-let k: double;
+let k = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3: double;
+println(>>> k = $k$);
 let s: string;
 
 gabriel = 7;

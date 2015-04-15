@@ -7,17 +7,18 @@ class Interpreter {
 	// look up in a hash than an array. And later on we can replace
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
-	public static Pattern word, string, type, decl, varName, atr, stripAtr, print, scan, scanContent, oper, integer, boole, fp;
+	public static Pattern word, string, type, decl, varName, atr, wholeAtr, stripAtr, print, scan, scanContent, oper, integer, boole, fp;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
 
 		word = Pattern.compile("\\w+");
-		string = Pattern.compile("\\S+");
+		string = Pattern.compile("\\\"\\S+\\\"");
 		type = Pattern.compile(typeRegex);
 		decl = Pattern.compile(declRegex);
 		varName = Pattern.compile(varNameRegex);
 		atr = Pattern.compile(atrRegex);
+		wholeAtr = Pattern.compile(wholeAtrRegex);
 		stripAtr = Pattern.compile(stripAtrRegex);
 		print = Pattern.compile(printRegex);
 		scan = Pattern.compile(scanRegex);
@@ -218,7 +219,7 @@ class Interpreter {
 		if (line.matches(declRegex)) {
 			this.let(line);
 		}
-		else if (line.matches(atrRegex)) {
+		else if (line.matches(wholeAtrRegex)) {
 			// +=, -=...?
 			this.assign(line);
 		}
@@ -236,6 +237,7 @@ class Interpreter {
 	private void let(String line) throws LotusException {
 		String[] decl = this.fixDecl(line);
 		int i, max = decl.length - 1;
+		Matcher atrMatcher, varMatcher;
 		Variable v = null;
 
 		for (i = 0; i < max; i++) {
@@ -266,8 +268,16 @@ class Interpreter {
 				break;
 			}
 			if (v != null) {
-				this.newVar(decl[i], v);
-				//v = null; // prevents from adding the same variable again (?)
+				atrMatcher = atr.matcher(decl[i]);
+				if (atrMatcher.matches()) {
+					varMatcher = varName.matcher(decl[i]);
+					varMatcher.find();
+					this.newVar(varMatcher.group(), v);
+					this.assign(decl[i] + ";");
+				}
+				else {
+					this.newVar(decl[i], v);
+				}
 			}
 			else {
 				throw new LotusException("invalidType", decl[max]);
@@ -278,20 +288,36 @@ class Interpreter {
 	// remember the Arrays!
     public String[] fixDecl(String line) throws LotusException {
         int i;
+		Matcher atrMatcher;
         String var = new String("");
         String[] t = line.replace("let ", "").replaceAll(" ", "").split("");
         ArrayList<String> tokens = new ArrayList<String>();
 
         for (i = 0; i < t.length && !t[i].equals(":"); i++) {
-            if (var.isEmpty() && t[i].matches("([^\\w]|\\d)")) {
-                throw new LotusException("invalidVarName", t[i]);
-            }
-            else if (t[i].matches("\\w")) {
+            if (t[i].matches("\\w")) {
                 var += t[i];
             }
+			else if (!var.isEmpty() && t[i].equals("=")) {
+				while (i < t.length && !t[i].equals(",") && !t[i].equals(":")) {
+					var += t[i];
+					i++;
+				}
+				i--;
+				atrMatcher = atr.matcher(var);
+				if (atrMatcher.matches()) {
+					tokens.add(var);
+					var = "";
+				}
+				else {
+					throw new LotusException("syntaxError", var);
+				}
+			}
             else if (!var.isEmpty() && (t[i].equals(" ") || t[i].equals(","))) {
                 tokens.add(var);
                 var = "";
+            }
+			else if (!t[i].equals(",")/* && t[i].matches("\\W")*/) {
+                throw new LotusException("invalidVarName", t[i]);
             }
         }
         // the last var left before ":"
@@ -324,9 +350,13 @@ class Interpreter {
 	public void assign(String line) throws LotusException {
         Variable result = null;
         Expression assign = null;
+		Matcher stringMatcher;
 		String[] atr = line.split(stripAtrRegex);
 
-        if (atr[1].matches("\\\".+\\\"( )*;")) {
+		// if it's a string (enclosed with "");
+        // if (atr[1].matches("\\\".+\\\"( )*;")) {
+		stringMatcher = string.matcher(atr[1]);
+        if (stringMatcher.find()) {
             atr[1] = atr[1].replaceFirst("\\\"", "");
             atr[1] = atr[1].replaceFirst("\\\"( )*;", "");
 
@@ -728,9 +758,10 @@ class Interpreter {
     }
 
 	public static final String typeRegex = "int|double|string|bool";
-	public static final String declRegex = "(let)( )+((\\w)+((,( )*(\\w)+)( )*)*)( )*:( )*(\\w)+;";
 	public static final String varNameRegex = "(?!\\d)\\w+";
-	public static final String atrRegex = "(\\w)+( )*=( )*.+;";
+	public static final String declRegex = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+;";
+	public static final String atrRegex = varNameRegex + "( )*=( )*.+";
+	public static final String wholeAtrRegex = atrRegex + ";";
 	public static final String stripAtrRegex = "( )*=( )*";
 	public static final String printRegex = "(print|println)( )*\\(.*\\)( )*;";
 	public static final String scanRegex = "(scan)( )*\\(.*\\)( )*;";
