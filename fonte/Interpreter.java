@@ -701,31 +701,36 @@ class Interpreter {
 		max = 0;
 		varMatcher = varName.matcher(line);
 		while (varMatcher.find()) {
-			max++;
+			max++; // counting how many matches (vars) I got inside scan
 		}
-
-		varMatcher = varName.matcher(line); // varMatcher = varMatcher.reset(); ?
-		input = sc.nextLine().split(" ");
+		// varMatcher = varName.matcher(line);
+		varMatcher = varMatcher.reset();
 
 		for (i = 0; i < max; i++) {
-			varMatcher.find();
-			name = varMatcher.group();
+			input = sc.nextLine().split(" ");
 
-			if ((v = this.getVar(name)) != null) {
-				if (input[i].matches(intRegex)) {
-					other = new IntVar(Integer.parseInt(input[i]));
-				}
-				else if (input[i].matches(fpRegex)) {
-					other = new DoubleVar(Double.parseDouble(input[i]));
+			for (j = 0; j < input.length; j++) {
+				varMatcher.find();
+				name = varMatcher.group();
+
+				if ((v = this.getVar(name)) != null) {
+					if (input[j].matches(intRegex)) {
+						other = new IntVar(Integer.parseInt(input[j]));
+					}
+					else if (input[j].matches(fpRegex)) {
+						other = new DoubleVar(Double.parseDouble(input[j]));
+					}
+					else {
+						other = new StringVar(input[j]);
+					}
+
+					this.setVar(v, other);
 				}
 				else {
-					other = new StringVar(input[i]);
+					throw new LotusException("varNotFound", name);
 				}
 
-				this.setVar(v, other);
-			}
-			else {
-				throw new LotusException("varNotFound", name);
+				if (j + 1 < input.length) i++;
 			}
 		}
 	}
