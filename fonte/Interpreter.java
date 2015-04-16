@@ -348,7 +348,7 @@ class Interpreter {
     }
 
 	public void assign(String line) throws LotusException {
-        Variable result = null;
+        Variable v = null;
         Expression assign = null;
 		String[] atr = line.split(stripAtrRegex);
 		Matcher stringAssignMatcher, boolAssignMatcher;
@@ -368,16 +368,17 @@ class Interpreter {
             this.setVar(this.getVar(atr[0]), Boolean.parseBoolean(atr[1]));
         }
         else {
-            result = this.solve(new Expression(atr[1]));
-            this.setVar(this.getVar(atr[0]), result);
+            v = this.getVar(atr[0]);
+			if (v instanceof StringVar) {
+				throw new LotusException("cantAssign", Expression.class + ";" + v.getClass());
+			}
+            this.setVar(v, this.solve(new Expression(atr[1])));
         }
     }
 
 	private Variable solve(Expression exp) throws LotusException {
         Variable answ = null, num1 = null, num2 = null;
-		System.out.println("solve exp: " + exp);
 		String tokens = exp.infixToPostfix();
-		System.out.println("solve tokens: " + tokens);
 		String t[] = tokens.split(" ");
 		String front[], back[];
 		int i = 0, offset = 0;

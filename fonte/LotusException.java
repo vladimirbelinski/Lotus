@@ -1,6 +1,8 @@
 class LotusException extends Exception {
     private String code, message;
 
+    // put the stack trace too!
+    // take off all "?
     public LotusException(String code, String line) {
         switch (code) {
         case "syntaxError":
@@ -40,7 +42,7 @@ class LotusException extends Exception {
         case "cantAssignString":
 			this.setMessage("Cannot assign a string to a variable of type: \n\"" + line + "\""); break;
         case "cantAssign":
-			this.setMessage("Cannot assign a\n\"" + line.substring(0, line.indexOf(");") - 1) + "\"\nvalue to a variable of type\n\"" + line.substring(line.indexOf(");") + 1) + "\""); break;
+			this.setMessage("Cannot assign a\n\"" + line.substring(0, line.indexOf(";")) + "\"\nvalue to a variable of type\n\"" + line.substring(line.indexOf(";") + 1) + "\""); break;
         case "inputMismatch":
 			this.setMessage("Could not read the input:\n\"" + line + "\""); break;
         }

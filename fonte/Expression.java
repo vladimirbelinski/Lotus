@@ -5,7 +5,10 @@ import java.util.regex.*;
 class Expression {
     public String value;
 
-    public Expression(String value) {
+    public Expression(String value) throws LotusException {
+        if (value.contains("\"")) {
+            throw new LotusException("syntaxError", value);
+        }
         this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
         this.fixSignals();
         this.fixSpaces();

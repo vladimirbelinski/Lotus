@@ -19,7 +19,7 @@ abstract class Variable<T> {
         return this.value.toString();
     }
 
-    public boolean setValue(Variable v) throws LotusException {
+    public void setValue(Variable v) throws LotusException {
         if (v != null) {
             if (v instanceof BoolVar) {
                 ((BoolVar)this).setValue((Boolean)v.value);
@@ -41,8 +41,6 @@ abstract class Variable<T> {
             throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString() + "\n" + (Thread.currentThread().getStackTrace()[2]).toString());
             // throw new LotusException("nullVar", (Thread.currentThread().getStackTrace().toString()));
         }
-
-        return true;
     }
 
     public abstract void invert();

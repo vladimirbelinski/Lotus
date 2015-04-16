@@ -91,9 +91,24 @@ print(\);
 print(\\n);
 println(\\n);
 
+println(x before: $x$);
+println(y before: $y$);
+println(z before: $z$);
 
 x = y;--  ;     y = z;
-print($x$, $y$\n);
+
+println(x after: $x$);
+println(y after: $y$);
+println(z before: $z$);
+-----------------------------------------
+
+let a = 2.5, b = 7, c = 11, d = 37, e = 97.1: double;
+let x = a * b - c / d + e: double;
+println($x$);
+
+let str = oi: string;
+println(str: $str$);
+
 -----------------------------------------
 println(------------);
 let s: string;
