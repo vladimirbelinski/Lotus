@@ -8,8 +8,9 @@ Copyright: Your copyleft.
 Description: Main class of Lotus, a programming language based on Java.
 *******************************************************************************/
 
-import java.util.*;
 import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 /* To execute the test, run:
  * javac *.java
@@ -21,14 +22,17 @@ class Lotus {
         File f;
         Scanner sc;
         int max, ind = 0;
+        Matcher extMatcher;
         String tmpInput, lineEnding;
         Interpreter lotus = new Interpreter();
         boolean hasParam = true, validParam = true;
+        Pattern extPattern = Pattern.compile(".+\\.lt");
         ArrayList<String> input = new ArrayList<String>();
 
         if (args.length > 0) {
             for (ind = 0; ind < args.length; ind++) {
-                if (args[ind].matches(".+\\.lt")) {
+                extMatcher = extPattern.matcher(args[ind]);
+                if (extMatcher.matches()) {
                     validParam = true;
                     break;
                 }

@@ -1,5 +1,6 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 class Expression {
     public String value;
@@ -27,23 +28,35 @@ class Expression {
         String t = new String("");
         String[] tokens = this.value.split(" ");
         ArrayList<String> ts = new ArrayList<String>();
+        Pattern helperPattern = Pattern.compile("\\w|\\."); // ?
+        Matcher opMatcher, opPrevMatcher, signMatcher, helperMatcher;
 
         for (int i = 0; i < tokens.length; i++) {
-            if (tokens[i].matches(Interpreter.operRegex)) {
-                if (tokens[i].matches("[+-]") &&
-                    i - 1 >= 0 && tokens[i - 1].matches(Interpreter.operRegex) &&
-                    i + 1 < tokens.length && tokens[i + 1].matches("\\w|\\."))
-                {
-                    t = tokens[i];
+            opMatcher = Interpreter.opPattern.matcher(tokens[i]);
+
+            if (opMatcher.matches()) {
+                if (i - 1 >= 0 && i + 1 < tokens.length) {
+                    signMatcher = Interpreter.signPattern.matcher(tokens[i]);
+                    opPrevMatcher = Interpreter.opPattern.matcher(tokens[i - 1]);
+                    helperMatcher = helperPattern.matcher(tokens[i + 1]);
+
+                    if (signMatcher.matches() && opPrevMatcher.matches() && helperMatcher.matches()) {
+                        t = tokens[i];
+                    }
+                    else {
+                        ts.add(tokens[i]);
+                    }
                 }
                 else {
                     ts.add(tokens[i]);
                 }
             }
             else {
-                while (i < tokens.length && tokens[i].matches("\\w|\\.")) {
+                helperMatcher = helperPattern.matcher(tokens[i]);
+                while (i < tokens.length && helperMatcher.matches()) {
                     t += tokens[i];
                     i++;
+                    helperMatcher = helperPattern.matcher(tokens[i]);
                 }
                 if (!t.isEmpty()) {
                     ts.add(t);

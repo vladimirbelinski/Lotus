@@ -1,3 +1,5 @@
+import java.util.regex.*;
+
 class StringVar extends Variable<String> {
 
     public StringVar(String value) {
@@ -14,7 +16,8 @@ class StringVar extends Variable<String> {
     // doesn't throw exceptions (and in the other variables
     // we don't need to throw any exception)... so I don't know.
     public int toInt() /*throws LotusException*/ {
-        if (this.value.matches(Interpreter.intRegex)) {
+        Matcher intMatcher = Interpreter.intPattern.matcher(this.value);
+        if (intMatcher.matches()) {
             return Integer.parseInt(this.value);
         }
         else {
@@ -33,7 +36,8 @@ class StringVar extends Variable<String> {
     }
 
     public double toDouble()/* throws LotusException*/ {
-        if (this.value.matches(Interpreter.fpRegex)) {
+        Matcher fpMatcher = Interpreter.fpPattern.matcher(this.value);
+        if (fpMatcher.matches()) {
             return Double.parseDouble(this.value);
         }
         else {
