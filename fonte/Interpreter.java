@@ -234,7 +234,7 @@ class Interpreter {
 	private void let(String line) throws LotusException {
 		String[] decl = this.fixDecl(line);
 		int i, max = decl.length - 1;
-		Matcher atrMatcher, varMatcher;
+		Matcher atrMatcher, varMatcher, stringMatcher;
 		Variable v = null;
 
 		for (i = 0; i < max; i++) {
@@ -269,6 +269,16 @@ class Interpreter {
 				if (atrMatcher.matches()) {
 					varMatcher = varNamePattern.matcher(decl[i]);
 					varMatcher.find();
+
+					// if the variable being declared is a string and
+					// it has an assignment, it must have ""
+					if (v instanceof StringVar) {
+						stringMatcher = stringPattern.matcher(decl[i].substring(decl[i].indexOf("=") + 1));
+						if (!stringMatcher.matches()) {
+							throw new LotusException("syntaxError", decl[i]);
+						}
+					}
+
 					this.newVar(varMatcher.group(), v);
 					this.assign(decl[i] + ";");
 				}
@@ -369,9 +379,9 @@ class Interpreter {
         }
         else {
             v = this.getVar(atr[0]);
-			if (v instanceof StringVar) {
-				throw new LotusException("cantAssign", Expression.class + ";" + v.getClass());
-			}
+			// if (v instanceof StringVar) {
+			// 	throw new LotusException("syntaxError", line);
+			// }
             this.setVar(v, this.solve(new Expression(atr[1])));
         }
     }
