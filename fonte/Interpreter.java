@@ -31,10 +31,6 @@ class Interpreter {
 	}
 
 	public void setVar(String name, Variable other) throws LotusException {
-		if (other == null) {
-			throw new LotusException("nullAssignment", name);
-		}
-
 		Variable v = this.getVar(name);
 		if (v == null){
 			throw new LotusException("varNotFound", name);
@@ -44,27 +40,22 @@ class Interpreter {
 	}
 
 	public void setVar(Variable v, Variable other) throws LotusException {
-		if (v != null && other != null) {
-			if (other instanceof IntVar) {
-				this.setVar(v, (Integer)other.value);
-			}
-			else if (other instanceof BoolVar) {
-				this.setVar(v, (Boolean)other.value);
-			}
-			else if (other instanceof DoubleVar) {
-				this.setVar(v, (Double)other.value);
-			}
-			else if (other instanceof StringVar) {
-				this.setVar(v, (String)other.value);
-			}
+		if (other instanceof IntVar) {
+			this.setVar(v, (Integer)other.value);
+		}
+		else if (other instanceof BoolVar) {
+			this.setVar(v, (Boolean)other.value);
+		}
+		else if (other instanceof DoubleVar) {
+			this.setVar(v, (Double)other.value);
+		}
+		else if (other instanceof StringVar) {
+			this.setVar(v, (String)other.value);
 		}
 	}
 
 	public void setVar(Variable v, Integer value) throws LotusException {
-		if (v == null) {
-			throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString() + "\n" + (Thread.currentThread().getStackTrace()[2]).toString());
-		}
-		else if (v instanceof IntVar) {
+		if (v instanceof IntVar) {
 			((IntVar)v).setValue(value);
 		}
 		else if (v instanceof BoolVar) {
@@ -80,15 +71,12 @@ class Interpreter {
 			((StringVar)v).setValue(value.toString());
 		}
 		else {
-			throw new LotusException("cantAssign", Integer.class + ";" + v.getClass().toString());
+			throw new LotusException("cantAssign", IntVar.class + ";" + v.getClass().toString());
 		}
 	}
 
 	public void setVar(Variable v, Boolean value) throws LotusException {
-		if (v == null) {
-			throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString() + "\n" + (Thread.currentThread().getStackTrace()[2]).toString());
-		}
-		else if (v instanceof IntVar) {
+		if (v instanceof IntVar) {
 			if (value.equals(true)) {
 				((IntVar)v).setValue(1);
 			}
@@ -111,15 +99,12 @@ class Interpreter {
 			((StringVar)v).setValue(value.toString());
 		}
 		else {
-			throw new LotusException("cantAssign", Boolean.class + ";" + v.getClass().toString());
+			throw new LotusException("cantAssign", BoolVar.class + ";" + v.getClass().toString());
 		}
 	}
 
 	public void setVar(Variable v, Double value) throws LotusException {
-		if (v == null) {
-			throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString() + "\n" + (Thread.currentThread().getStackTrace()[2]).toString());
-		}
-		else if (v instanceof IntVar) {
+		if (v instanceof IntVar) {
 			((IntVar)v).setValue(value.intValue());
 		}
 		else if (v instanceof BoolVar) {
@@ -135,17 +120,14 @@ class Interpreter {
 			((StringVar)v).setValue(value.toString());
 		}
 		else {
-			throw new LotusException("cantAssign", Double.class + ";" + v.getClass().toString());
+			throw new LotusException("cantAssign", DoubleVar.class + ";" + v.getClass().toString());
 		}
 	}
 
 	public void setVar(Variable v, String value) throws LotusException {
 		Matcher intMatcher = intPattern.matcher(value), fpMatcher = fpPattern.matcher(value);
 
-		if (v == null) {
-			throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString() + "\n" + (Thread.currentThread().getStackTrace()[2]).toString());
-		}
-		else if (v instanceof StringVar) {
+		if (v instanceof StringVar) {
 			((StringVar)v).setValue(value);
 		}
 		else if (v instanceof BoolVar) {
@@ -167,7 +149,7 @@ class Interpreter {
 				}
 			}
 	        else {
-				throw new LotusException("cantAssign", String.class + ";" + v.getClass().toString());
+				throw new LotusException("cantAssign", StringVar.class + ";" + v.getClass().toString());
 	        }
 		}
 		else if (v instanceof DoubleVar) {
@@ -183,11 +165,11 @@ class Interpreter {
 				}
 			}
 	        else {
-				throw new LotusException("cantAssign", String.class + ";" + v.getClass().toString());
+				throw new LotusException("cantAssign", StringVar.class + ";" + v.getClass().toString());
 	        }
 		}
 		else {
-			throw new LotusException("cantAssign", String.class + ";" + v.getClass().toString());
+			throw new LotusException("cantAssign", StringVar.class + ";" + v.getClass().toString());
 		}
 	}
 
@@ -634,11 +616,12 @@ class Interpreter {
 		Matcher cutPrintMatcher;
 		boolean breakLine = false;
 
-		lineEnding = line.substring(line.lastIndexOf(")"));
-		line = line.replace(lineEnding, "");
 		if (line.startsWith("println")) {
 			breakLine = true;
 		}
+
+		lineEnding = line.substring(line.lastIndexOf(")"));
+		line = line.replace(lineEnding, "");
 
 		cutPrintMatcher = cutPrintPattern.matcher(line);
 		line = cutPrintMatcher.replaceFirst("");
