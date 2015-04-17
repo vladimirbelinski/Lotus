@@ -33,14 +33,6 @@ class LotusException extends Exception {
 			this.setMessage("Trying to assign a value to a Variable pointing to null:\n" + line); break;
         case "nullToNull":
 			this.setMessage("Assigning null to null!?"); break; // stack trace?
-        case "cantAssignInt":
-			this.setMessage("Cannot assign an int to a variable of type: \n\"" + line + "\""); break;
-        case "cantAssignBool":
-			this.setMessage("Cannot assign a bool to a variable of type: \n\"" + line + "\""); break;
-        case "cantAssignDouble":
-			this.setMessage("Cannot assign a double to a variable of type: \n\"" + line + "\""); break;
-        case "cantAssignString":
-			this.setMessage("Cannot assign a string to a variable of type: \n\"" + line + "\""); break;
         case "cantAssign":
 			this.setMessage("Cannot assign a\n\"" + line.substring(0, line.indexOf(";")) + "\"\nvalue to a variable of type\n\"" + line.substring(line.indexOf(";") + 1) + "\""); break;
         case "inputMismatch":
