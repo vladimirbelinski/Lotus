@@ -1,33 +1,27 @@
 fn square(x: int): int {
-  return x * x;
+    return x * x;
 }
 
 -- this is a comment.
--- initially, we won't support block comments
 fn main(String[] args): void {
-  let x, i: int;
+    let x, i: int;
 
-  print(Oi, digite um numero: );
-  scan($x$);
+    print(Oi, digite um numero: );
+    scan(x);
 
-  print($x oioifefuefefie$var oi oi uy nj);
-  oi();
-  scan($f$); -- hey
+    for [i = 0, i < x, i++] {
+        if [i > 0 && true] {
+            println(square(i));
 
-  for [i = 0, i < x, i++] {
-    if [i > 0 && true] {
-      println(square(i));
-
-      if [i < 5] {
-        println(square(i) * square(i));
-      }
+            if [i < 5] {
+                println(square(i) * square(i));
+            }
+        else {
+            println(0);
+        }
     }
-    else {
-      println(0);
-    }
-  }
 
-  while [true] {
-    break;
-  }
+    while [true] {
+        break;
+    }
 }
