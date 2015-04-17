@@ -9,7 +9,7 @@ fn main(String[] args): void {
     print(Oi, digite um numero: );
     scan(x);
 
-    for [i = 0, i < x, i++] {
+    for [i = 0; i < x; i = i + 1] {
         if [i > 0 && true] {
             println(square(i));
 
@@ -17,7 +17,7 @@ fn main(String[] args): void {
                 println(square(i) * square(i));
             }
         else {
-            println(0);
+            println(It's getting big!);
         }
     }
 

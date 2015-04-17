@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, opPattern, signPattern, intPattern, fpPattern, boolAssignPattern, charPattern, strPattern, strAssignPattern, strEnclPattern;
+	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, opPattern, signPattern, intPattern, fpPattern, boolAssignPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -176,7 +176,7 @@ class Interpreter {
 	/* ---------------------------------------------------------------------- */
 
 	public void execute(String line) throws LotusException {
-		Matcher declMatcher, wholeAtrMatcher, wholePrintMatcher, scanMatcher, scanlnMatcher;
+		Matcher wholeDeclMatcher, wholeAtrMatcher, wholePrintMatcher, wholeScanMatcher, wholeScanlnMatcher;
 		int semicolon = line.indexOf(";");
 
 		if (semicolon < 0) {
@@ -190,26 +190,25 @@ class Interpreter {
 
 		line = line.substring(0, line.indexOf(";") + 1);
 
-		declMatcher = wholeDeclPattern.matcher(line);
+		wholeDeclMatcher = wholeDeclPattern.matcher(line);
 		wholeAtrMatcher = wholeAtrPattern.matcher(line);
 		wholePrintMatcher = wholePrintPattern.matcher(line);
-		scanMatcher = wholeScanPattern.matcher(line);
-		scanlnMatcher = wholeScanlnPattern.matcher(line);
+		wholeScanMatcher = wholeScanPattern.matcher(line);
+		wholeScanlnMatcher = wholeScanlnPattern.matcher(line);
 
-		if (declMatcher.matches()) {
+		if (wholeDeclMatcher.matches()) {
 			this.let(line);
 		}
 		else if (wholeAtrMatcher.matches()) {
-			// +=, -=...?
 			this.assign(line);
 		}
 		else if (wholePrintMatcher.matches()) {
 			this.print(line);
 		}
-		else if (scanMatcher.matches()) {
+		else if (wholeScanMatcher.matches()) {
 			this.scan(line);
 		}
-		else if (scanlnMatcher.matches()) {
+		else if (wholeScanlnMatcher.matches()) {
 			this.scanln(line);
 		}
 		else {
@@ -252,6 +251,7 @@ class Interpreter {
 			}
 			if (v != null) {
 				atrMatcher = atrPattern.matcher(decl[i]);
+
 				if (atrMatcher.matches()) {
 					varMatcher = varNamePattern.matcher(decl[i]);
 					varMatcher.find();
@@ -347,14 +347,16 @@ class Interpreter {
         Variable v = null;
         Expression assign = null;
 		String[] atr = line.split(stripAtrRegex);
-		Matcher strEnclMatcher, semicMatcher, strAssignMatcher, boolAssignMatcher;
+		Matcher quotMarkMatcher, strBackMatcher, semicMatcher, strAssignMatcher, boolAssignMatcher;
 
 		// if it's a string (enclosed with "");
 		strAssignMatcher = strAssignPattern.matcher(atr[1]);
 		boolAssignMatcher = boolAssignPattern.matcher(atr[1]);
         if (strAssignMatcher.matches()) {
-			strEnclMatcher = strEnclPattern.matcher(atr[1]);
-			atr[1] = strEnclMatcher.replaceFirst("");
+			quotMarkMatcher = quotMarkPattern.matcher(atr[1]);
+			atr[1] = quotMarkMatcher.replaceFirst("");
+			strBackMatcher = strBackPattern.matcher(atr[1]);
+			atr[1] = strBackMatcher.replaceFirst("");
             // atr[1] = atr[1].replaceFirst("\\\"", "");
             // atr[1] = atr[1].replaceFirst("\\\"( )*;", "");
 
@@ -369,9 +371,6 @@ class Interpreter {
         }
         else {
             v = this.getVar(atr[0]);
-			// if (v instanceof StringVar) {
-			// 	throw new LotusException("syntaxError", line);
-			// }
             this.setVar(v, this.solve(new Expression(atr[1])));
         }
     }
@@ -816,18 +815,19 @@ class Interpreter {
         result.put("continue", true);
 
         result.put("fn", true);
-        // result.put("main", true); // ?
+        result.put("main", true);
         return Collections.unmodifiableMap(result);
     }
 
+	public static final String semicRegex = "( )*;";
 	public static final String typeRegex = "int|double|string|bool";
 	public static final String varNameRegex = "(?!\\d)\\w+";
-	public static final String wholeDeclRegex = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+;";
+	public static final String wholeDeclRegex = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+" + semicRegex;
+	public static final String opRegex = "\\^|\\*|\\%|\\/|\\+|\\-";
 	public static final String atrRegex = varNameRegex + "( )*=( )*.+";
-	public static final String wholeAtrRegex = atrRegex + ";";
+	public static final String wholeAtrRegex = atrRegex + semicRegex;
 	public static final String stripAtrRegex = "( )*=( )*";
 
-	public static final String semicRegex = "( )*;";
 	public static final String fnParentheses = "( )*\\(.*\\)" + semicRegex;
 	public static final String printRegex = "(print|println)";
 	public static final String wholePrintRegex = printRegex + fnParentheses;
@@ -837,9 +837,8 @@ class Interpreter {
 
 	public static final String quotMarkRegex = "\\\"";
 	public static final String strBackRegex = quotMarkRegex + semicRegex;
-	public static final String strEnclRegex = "(" + quotMarkRegex + "|" + strBackRegex + ")";
 
-    public static final String opRegex = "\\^|\\*|\\%|\\/|\\+|\\-|\\(|\\)";
+    public static final String wholeOpRegex = opRegex + "|\\(|\\)";
     public static final String signRegex = "[+-]";
     public static final String intRegex = signRegex + "?[0-9]+";
     public static final String boolRegex = "(true|false)";
@@ -888,13 +887,14 @@ class Interpreter {
 		typePattern = Pattern.compile(typeRegex);
 		atrPattern = Pattern.compile(atrRegex);
 
-		opPattern = Pattern.compile(opRegex);
+		opPattern = Pattern.compile(wholeOpRegex);
 		signPattern = Pattern.compile(signRegex);
 		intPattern = Pattern.compile(intRegex);
 		fpPattern = Pattern.compile(fpRegex);
 		charPattern = Pattern.compile("\\w");
 		strPattern = Pattern.compile(strRegex);
-		strEnclPattern = Pattern.compile(strEnclRegex);
+		quotMarkPattern = Pattern.compile(quotMarkRegex);
+		strBackPattern = Pattern.compile(strBackRegex);
 
 		boolAssignPattern = Pattern.compile(boolRegex + semicRegex);
 		strAssignPattern = Pattern.compile(strRegex + semicRegex);
