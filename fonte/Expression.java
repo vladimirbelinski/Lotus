@@ -12,7 +12,6 @@ class Expression {
         this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
         this.fixSignals();
         this.fixSpaces();
-        System.out.println("fixed exp: " + this.value);
     }
 
     private void fixSignals() {
@@ -37,8 +36,12 @@ class Expression {
 
         for (int i = 0; i < tokens.length; i++) {
             wholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i]);
+            signMatcher = Interpreter.signPattern.matcher(tokens[i]);
 
-            if (wholeOpMatcher.matches()) {
+            if (i == 0 && signMatcher.matches()) {
+                t = tokens[i];
+            }
+            else if (wholeOpMatcher.matches()) {
                 if (i - 1 >= 0 && i + 1 < tokens.length) {
                     signMatcher = Interpreter.signPattern.matcher(tokens[i]);
                     prevWholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i - 1]);

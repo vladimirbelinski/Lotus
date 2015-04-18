@@ -378,10 +378,10 @@ class Interpreter {
 	private Variable solve(Expression exp) throws LotusException {
         Variable answ = null, num1 = null, num2 = null;
 		String tokens = exp.infixToPostfix();
-		String t[] = tokens.split(" ");
-		String front[], back[];
+		String[] t = tokens.split(" ");
+		Matcher wholeOpMatcher;
 		int i = 0, offset = 0;
-		Matcher opMatcher;
+		String[] front, back;
 		String op;
 
         if (t.length == 1) {
@@ -390,11 +390,11 @@ class Interpreter {
 
 		while (t.length > 1) {
 
-			opMatcher = wholeOpPattern.matcher(t[i]);
+			wholeOpMatcher = wholeOpPattern.matcher(t[i]);
 			// advance until you don't find an operation to perform
-			while (i < t.length && !opMatcher.matches()) {
+			while (i < t.length && !wholeOpMatcher.matches()) {
 				i++;
-				if (i < t.length) opMatcher = wholeOpPattern.matcher(t[i]);
+				if (i < t.length) wholeOpMatcher = wholeOpPattern.matcher(t[i]);
 			}
 
 			// then, the operation char is at i's position in the array
@@ -411,12 +411,6 @@ class Interpreter {
 			else {
                 num1 = null;
             }
-
-            // if (num1 == null && num2 == null) {
-			// 	// throw Exception?
-            //     answ = new StringVar("undefined");
-            //     break;
-            // }
 
             if (num2 instanceof DoubleVar || (num1 != null && num1 instanceof DoubleVar)) {
                 answ = new DoubleVar(0.0);
@@ -458,6 +452,7 @@ class Interpreter {
 		return answ;
 	}
 
+	// Treat signed vars... fix all those ifs
     private Variable getOperand(String t) throws LotusException {
 		Matcher intMatcher, fpMatcher, varNameMatcher;
         Variable v = null;
@@ -472,13 +467,35 @@ class Interpreter {
         else if (fpMatcher.matches()) {
             v = new DoubleVar(Double.parseDouble(t));
         }
-        else if (t.charAt(0) == '-') {
+        else if (t.startsWith("-")) {
             t = t.replace("-", "");
+
+			varNameMatcher = varNamePattern.matcher(t);
             if (varNameMatcher.matches()) {
                 v = this.getVar(t);
                 if (v != null) v.invert();
+				else {
+					throw new LotusException("varNotFound", t);
+				}
             }
+			else {
+				throw new LotusException("unknownSymbol", t);
+			}
         }
+		else if (t.startsWith("+")) {
+			t = t.replace("+", "");
+
+			varNameMatcher = varNamePattern.matcher(t);
+            if (varNameMatcher.matches()) {
+                v = this.getVar(t);
+                if (v == null) {
+					throw new LotusException("varNotFound", t);
+				}
+            }
+			else {
+				throw new LotusException("unknownSymbol", t);
+			}
+		}
         else if (varNameMatcher.matches()){
             v = this.getVar(t);
         }
