@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, opPattern, signPattern, intPattern, fpPattern, boolAssignPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern;
+	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, opPattern, wholeOpPattern, signPattern, intPattern, fpPattern, boolAssignPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern, parenPattern;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -390,11 +390,11 @@ class Interpreter {
 
 		while (t.length > 1) {
 
-			opMatcher = opPattern.matcher(t[i]);
+			opMatcher = wholeOpPattern.matcher(t[i]);
 			// advance until you don't find an operation to perform
 			while (i < t.length && !opMatcher.matches()) {
 				i++;
-				if (i < t.length) opMatcher = opPattern.matcher(t[i]);
+				if (i < t.length) opMatcher = wholeOpPattern.matcher(t[i]);
 			}
 
 			// then, the operation char is at i's position in the array
@@ -453,6 +453,9 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
+		System.out.println(">>>> exp:    " + exp);
+		System.out.println(">>>> result: " + answ);
+
 		return answ;
 	}
 
@@ -490,7 +493,7 @@ class Interpreter {
 	private Variable calculate(Variable v1, Variable v2, String op) throws LotusException {
 		boolean intOpns = true;
 		Variable answ = null;
-		Matcher opMatcher = opPattern.matcher(op);
+		Matcher opMatcher = wholeOpPattern.matcher(op);
 
 		if (v2 instanceof DoubleVar || (v1 != null && v1 instanceof DoubleVar)) {
 			intOpns = false;
@@ -697,7 +700,7 @@ class Interpreter {
 	}
 
 	// directly assigns the input read into the requested variable(s)
-	// interprets mutiple inputs as separated by spaces or '\n'
+	// interprets mutiple inputs as separated by spaces or line breaks.
 	// to read a full line, use scanln
 	private void scan(String line) throws LotusException {
 		int i, j, max;
@@ -823,7 +826,7 @@ class Interpreter {
 	public static final String typeRegex = "int|double|string|bool";
 	public static final String varNameRegex = "(?!\\d)\\w+";
 	public static final String wholeDeclRegex = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+" + semicRegex;
-	public static final String opRegex = "\\^|\\*|\\%|\\/|\\+|\\-";
+	public static final String opRegex = "\\-|\\+|\\/|\\%|\\*|\\^";
 	public static final String atrRegex = varNameRegex + "( )*=( )*.+";
 	public static final String wholeAtrRegex = atrRegex + semicRegex;
 	public static final String stripAtrRegex = "( )*=( )*";
@@ -887,7 +890,8 @@ class Interpreter {
 		typePattern = Pattern.compile(typeRegex);
 		atrPattern = Pattern.compile(atrRegex);
 
-		opPattern = Pattern.compile(wholeOpRegex);
+		opPattern = Pattern.compile(opRegex);
+		wholeOpPattern = Pattern.compile(wholeOpRegex);
 		signPattern = Pattern.compile(signRegex);
 		intPattern = Pattern.compile(intRegex);
 		fpPattern = Pattern.compile(fpRegex);
@@ -909,6 +913,8 @@ class Interpreter {
 		cutPrintPattern = Pattern.compile(printRegex + "( )*\\(");
 		cutScanPattern = Pattern.compile("(scan|scanln)( )*\\(");
 		scanContentPattern = Pattern.compile(scanContentRegex);
+
+		parenPattern = Pattern.compile("[()]");
 
 		patternsInitd = true;
 	}
