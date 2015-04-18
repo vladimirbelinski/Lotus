@@ -12,6 +12,7 @@ class Expression {
         this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
         this.fixSignals();
         this.fixSpaces();
+        System.out.println("fixed exp: " + this.value);
     }
 
     private void fixSignals() {
@@ -31,19 +32,19 @@ class Expression {
         String t = new String("");
         String[] tokens = this.value.split(" ");
         ArrayList<String> ts = new ArrayList<String>();
-        Pattern helperPattern = Pattern.compile("\\w|\\."); // ?
-        Matcher opMatcher, opPrevMatcher, signMatcher, helperMatcher;
+        Pattern helperPattern = Pattern.compile("\\w|\\.");
+        Matcher wholeOpMatcher, prevWholeOpMatcher, signMatcher, helperMatcher;
 
         for (int i = 0; i < tokens.length; i++) {
-            opMatcher = Interpreter.opPattern.matcher(tokens[i]);
+            wholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i]);
 
-            if (opMatcher.matches()) {
+            if (wholeOpMatcher.matches()) {
                 if (i - 1 >= 0 && i + 1 < tokens.length) {
                     signMatcher = Interpreter.signPattern.matcher(tokens[i]);
-                    opPrevMatcher = Interpreter.opPattern.matcher(tokens[i - 1]);
+                    prevWholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i - 1]);
                     helperMatcher = helperPattern.matcher(tokens[i + 1]);
 
-                    if (signMatcher.matches() && opPrevMatcher.matches() && helperMatcher.matches()) {
+                    if (signMatcher.matches() && prevWholeOpMatcher.matches() && helperMatcher.matches()) {
                         t = tokens[i];
                     }
                     else {

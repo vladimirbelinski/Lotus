@@ -453,7 +453,6 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		System.out.println(">>>> exp:    " + exp);
 		System.out.println(">>>> result: " + answ);
 
 		return answ;
@@ -841,7 +840,7 @@ class Interpreter {
 	public static final String quotMarkRegex = "\\\"";
 	public static final String strBackRegex = quotMarkRegex + semicRegex;
 
-    public static final String wholeOpRegex = opRegex + "|\\(|\\)";
+    public static final String wholeOpRegex = "\\(|\\)|" + opRegex;
     public static final String signRegex = "[+-]";
     public static final String intRegex = signRegex + "?[0-9]+";
     public static final String boolRegex = "(true|false)";
