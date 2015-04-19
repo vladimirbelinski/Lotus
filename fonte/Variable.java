@@ -43,9 +43,9 @@ abstract class Variable<T> {
         }
     }
 
-    public abstract void invert();
-    public abstract int toInt();
-    public abstract boolean toBool();
-    public abstract double toDouble();
-    public abstract boolean equals(Object value);
+    public abstract Variable inverted();
+    public abstract Integer toInt();
+    public abstract Boolean toBool();
+    public abstract Double toDouble();
+    public abstract Variable equals(Variable other);
 }
