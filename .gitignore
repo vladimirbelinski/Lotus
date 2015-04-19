@@ -4,4 +4,7 @@
 *.war
 *.ear
 
-fpRegex.txt
+*.aux
+*.dvi
+*.log
+*.ps
