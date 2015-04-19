@@ -73,5 +73,24 @@ class Lotus {
         else if (!validParam) {
             System.out.println("Invalid input file.");
         }
+
+        /*System.out.println("\n-----------------\n");
+
+        Expression e = new Expression("(-37+41* 2/ (- (1 -5)%2) ^2^    3) < 2 || (x >= 25)");
+
+        System.out.println(e);
+
+        e = new Expression("(-oi+41* x/ (- (fn(10) - 4)%2) ^x^    3) + Math.PI + (+x * 25)");
+        System.out.println(e);
+
+        e = new Expression("a + b * c || x - y * z");
+        System.out.println(e.toPostfix());
+
+        e = new Expression("- 3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3");
+        System.out.println(e.toPostfix());
+
+        // this works! \o/
+        e = new Expression("(x < y || (square(2) >= 4)) && (25 == 5 * 5)"); // true!
+        System.out.println(e.toPostfix());*/
     }
 }
