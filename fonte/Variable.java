@@ -15,37 +15,65 @@ abstract class Variable<T> {
         this.value = value;
     }
 
+    public void setValue(Variable v) throws LotusException {
+        if (v instanceof BoolVar) {
+            ((BoolVar)this).setValue((Boolean)v.value);
+        }
+        else if (v instanceof IntVar) {
+			((IntVar)this).setValue((Integer)v.value);
+		}
+        else if (v instanceof DoubleVar) {
+			((DoubleVar)this).setValue((Double)v.value);
+		}
+        else if (v instanceof StringVar) {
+			((StringVar)this).setValue((String)v.value);
+		}
+		else {
+			throw new LotusException("cantAssign", v.getClass() + ";" + this.getClass());
+		}
+    }
+
     public String toString() {
         return this.value.toString();
     }
 
-    public void setValue(Variable v) throws LotusException {
-        if (v != null) {
-            if (v instanceof BoolVar) {
-                ((BoolVar)this).setValue((Boolean)v.value);
-            }
-            else if (v instanceof IntVar) {
-    			((IntVar)this).setValue((Integer)v.value);
-    		}
-            else if (v instanceof DoubleVar) {
-    			((DoubleVar)this).setValue((Double)v.value);
-    		}
-            else if (v instanceof StringVar) {
-    			((StringVar)this).setValue((String)v.value);
-    		}
-    		else {
-    			throw new LotusException("cantAssign", v.getClass() + ";" + this.getClass());
-    		}
-        }
-        else {
-            throw new LotusException("nullVar", (Thread.currentThread().getStackTrace()[1]).toString() + "\n" + (Thread.currentThread().getStackTrace()[2]).toString());
-            // throw new LotusException("nullVar", (Thread.currentThread().getStackTrace().toString()));
-        }
-    }
-
-    public abstract Variable inverted();
     public abstract Integer toInt();
     public abstract Boolean toBool();
     public abstract Double toDouble();
+    public abstract Variable inverted();
+    public abstract Variable plus(Variable other);
+    public abstract Variable minus(Variable other);
+    public abstract Variable times(Variable other);
+    public abstract Variable pow(Variable other) throws LotusException;
+    public abstract Variable divided(Variable other) throws LotusException;
+    public abstract Variable mod(Variable other) throws LotusException;
     public abstract Variable equals(Variable other);
+    public abstract Variable lessThan(Variable other);
+    public abstract Variable lessEquals(Variable other);
+    public abstract Variable greaterThan(Variable other);
+    public abstract Variable greaterEquals(Variable other);
+
+    public BoolVar toBoolVar() {
+        return new BoolVar(this.toBool());
+    }
+
+    public IntVar toIntVar() {
+        return new IntVar(this.toInt());
+    }
+
+    public DoubleVar toDoubleVar() {
+        return new DoubleVar(this.toDouble());
+    }
+
+    public StringVar toStringVar() {
+        return new StringVar(this.toString());
+    }
+
+    public Variable and(Variable other) {
+        return this.toBoolVar().and(other);
+    }
+
+    public Variable or(Variable other) {
+        return this.toBoolVar().or(other);
+    }
 }

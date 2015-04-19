@@ -6,23 +6,37 @@ class StringVar extends Variable<String> {
         super(value);
     }
 
-    // what should we do here? Flip all the chars?
     public Variable inverted() {
-        return null;
+        Matcher fpMatcher = Interpreter.fpPattern.matcher(this.value);
+        Matcher boolMatcher = Interpreter.boolPattern.matcher(this.value);
+        Matcher upperCaseMatcher = Interpreter.upperCasePattern.matcher(this.value);
+
+        if (fpMatcher.matches()) {
+            return new StringVar("-" + this.value);
+        }
+        else if (boolMatcher.matches()) {
+            if (this.value.equals("true")) {
+                return new StringVar("false");
+            }
+            else {
+                return new StringVar("true");
+            }
+        }
+        else if (upperCaseMatcher.matches()) {
+            return new StringVar(this.value.toLowerCase());
+        }
+        else {
+            return new StringVar(this.value.toUpperCase());
+        }
     }
 
-    // cannot throw exception because this method
-    // should override the one from Variable. But that one
-    // doesn't throw exceptions (and in the other variables
-    // we don't need to throw any exception)... so I don't know.
-    public Integer toInt() /*throws LotusException*/ {
+    public Integer toInt() {
         Matcher intMatcher = Interpreter.intPattern.matcher(this.value);
         if (intMatcher.matches()) {
             return Integer.valueOf(this.value);
         }
         else {
-            return new Integer(0);
-            //throw new LotusException("Cannot convert \"" + this.value + "\" to int");
+            return new Integer(this.value.length());
         }
     }
 
@@ -35,18 +49,74 @@ class StringVar extends Variable<String> {
         }
     }
 
-    public Double toDouble()/* throws LotusException*/ {
+    public Double toDouble() {
         Matcher fpMatcher = Interpreter.fpPattern.matcher(this.value);
         if (fpMatcher.matches()) {
             return Double.valueOf(this.value);
         }
         else {
-            return new Double(0.0);
-            //throw new LotusException("Cannot convert \"" + this.value + "\" to double");
+            return new Double(this.value.length());
         }
+    }
+
+    // appending
+    public Variable plus(Variable other) {
+        return new StringVar(this.value + other.toString());
+    }
+
+    // replaces first occurrence
+    public Variable minus(Variable other) {
+        return new StringVar(this.value.replaceFirst(other.toString(), ""));
+    }
+
+    // adds other.toString() between every char
+    public Variable times(Variable other) {
+        return new StringVar(this.value.replaceAll("", other.toString()));
+    }
+
+    // removes all other.toString() occurrences from this.toString()
+    public Variable divided(Variable other) throws LotusException {
+        return new StringVar(this.value.replaceAll(other.toString(), ""));
+    }
+
+    // removes all this.toString() occurrences from other.toString()
+    public Variable mod(Variable other) throws LotusException {
+        return new StringVar(other.toString().replaceAll(this.toString(), ""));
+    }
+
+    // cannot do a pow
+    public Variable pow(Variable other) throws LotusException {
+        throw new LotusException("stringPow", this.toString());
+    }
+
+    // && and || convert the String to Boolean and then check
+    public Variable and(Variable other) {
+        return new BoolVar(this.toBool() && other.toBool());
+    }
+
+    public Variable or(Variable other) {
+        return new BoolVar(this.toBool() || other.toBool());
     }
 
     public Variable equals(Variable other) {
         return new BoolVar(this.value.equals(other.toString()));
+    }
+
+    // checks if this comes lexicographically before other
+    public Variable lessThan(Variable other) {
+        return new BoolVar(this.value.compareTo(other.toString()) < 0);
+    }
+
+    public Variable lessEquals(Variable other) {
+        return ((BoolVar)this.lessThan(other)).or(this.equals(other));
+    }
+
+    // checks if this comes lexicographically after other
+    public Variable greaterThan(Variable other) {
+        return new BoolVar(this.value.compareTo(other.toString()) > 0);
+    }
+
+    public Variable greaterEquals(Variable other) {
+        return ((BoolVar)this.greaterThan(other)).or(this.equals(other));
     }
 }

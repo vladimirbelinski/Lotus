@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, wholeOpPattern, signPattern, intPattern, fpPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern, parenPattern, numBuildPattern, boolPattern;
+	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, wholeOpPattern, signPattern, intPattern, fpPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern, parenPattern, numBuildPattern, boolPattern, upperCasePattern, strExpPattern;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -371,29 +371,40 @@ class Interpreter {
 			atr[1] = semicMatcher.replaceFirst("");
             v = this.getVar(atr[0]);
 
-			System.out.println("atr[0]: " + atr[0]);
-			System.out.println("atr[1]: " + atr[1]);
-
 			this.setVar(v, this.solve(new Expression(atr[1])));
         }
     }
 
 	public Variable solve(Expression exp) throws LotusException {
         Variable answ = null, num1 = null, num2 = null;
+		Matcher wholeOpMatcher, strExpMatcher;
 		String tokens = exp.toPostfix();
-		String[] t = tokens.split(" ");
-		Matcher wholeOpMatcher;
+		String[] t, front, back;
 		int i = 0, offset = 0;
-		String[] front, back;
 		String op;
 
-		System.out.println("solve exp: " + exp);
+		// strExpMatcher = strExpPattern.matcher(tokens);
+		// if (strExpMatcher.matches()) {
+		// 	t = tokens.split("\"");
+		// }
+		// else {
+		// 	t = tokens.split(" ");
+		// }
+
+		t = tokens.split(" ");
 
         if (t.length == 1) {
             answ = this.getOperand(t[0]);
         }
 
 		while (t.length > 1) {
+
+			System.out.println();
+			for (String s: t) {
+				System.out.print("[" + s + "]");
+			} System.out.println();
+			System.out.println();
+
 			wholeOpMatcher = wholeOpPattern.matcher(t[i]);
 			// advance until you don't find an operation to perform
 			while (i < t.length && !wholeOpMatcher.matches()) {
@@ -460,13 +471,13 @@ class Interpreter {
         Matcher intMatcher, fpMatcher, boolMatcher, stringMatcher, varNameMatcher;
         Variable v = null;
 
-		System.out.println("get: " + t);
-
         intMatcher = intPattern.matcher(t);
         fpMatcher = fpPattern.matcher(t);
 		boolMatcher = boolPattern.matcher(t);
 		stringMatcher = strPattern.matcher(t);
         varNameMatcher = varNamePattern.matcher(t);
+
+		System.out.println("getOperand t: " + t);
 
         if (intMatcher.matches()) {
             v = new IntVar(Integer.parseInt(t));
@@ -526,24 +537,14 @@ class Interpreter {
     }
 
     private Variable calculate(Variable v1, Variable v2, String op) throws LotusException {
-        boolean intOpns = true;
         Variable answ = null;
         Matcher opMatcher = wholeOpPattern.matcher(op);
-
-        if (v2 instanceof DoubleVar || (v1 != null && v1 instanceof DoubleVar)) {
-            intOpns = false;
-        }
 
         // If it doesn't have 2 operands and the
         // operation is a '-', simply return -v2.
         if (v1 == null) {
             if (op.equals("-")) {
-                if (intOpns) {
-                    answ = new IntVar(0 - v2.toInt());
-                }
-                else {
-                    answ = new DoubleVar(0.0 - v2.toDouble());
-                }
+                answ = v2.inverted();
             }
             else if (op.equals("+")) {
                 answ = v2;
@@ -561,114 +562,57 @@ class Interpreter {
                  * a binary exponentiation later...
                  */
                 case "^":
-                answ = new DoubleVar(Math.pow(v1.toDouble(), v2.toDouble()));
+                answ = v1.pow(v2);
                 break;
 
                 case "*":
-                if (intOpns) answ = new IntVar(v1.toInt() * v2.toInt());
-                else answ = new DoubleVar(v1.toDouble() * v2.toDouble());
+				answ = v1.times(v2);
+                // if (intOpns) answ = new IntVar(v1.toInt() * v2.toInt());
+                // else answ = new DoubleVar(v1.toDouble() * v2.toDouble());
+                break;
+
+				case "/":
+                answ = v1.divided(v2);
                 break;
 
                 case "%":
-				if (intOpns) {
-					if (!v2.equals(0)) {
-						answ = new IntVar(v1.toInt() % v2.toInt());
-	                }
-					else {
-	                    throw new LotusException("divisionByZero", v1 + " / " + v2);
-	                }
-				}
-				else {
-					throw new LotusException("nonIntMod", v1 + " % " + v2);
-				}
-                break;
-
-                case "/":
-                /* if v2 is not zero, then I can properly divide...
-                 * I think this regex works as it should, identifying
-                 * integer zeroes and floating point zeroes, but needs
-                 * more testing (or a different, better way lol)
-                 */
-                if (v2 instanceof IntVar && !v2.equals(0) ||
-                    v2 instanceof DoubleVar && !v2.equals(0.0))
-                {
-                    if (intOpns) {
-                        answ = new IntVar(v1.toInt() / v2.toInt());
-                    }
-                    else {
-                        answ = new DoubleVar(v1.toDouble() / v2.toDouble());
-                    }
-                }
-                else {
-                    throw new LotusException("divisionByZero", v1 + " / " + v2);
-                }
+				answ = v1.mod(v2);
                 break;
 
                 case "+":
-                if (intOpns) {
-                    answ = new IntVar(v1.toInt() + v2.toInt());
-                }
-                else {
-                    answ = new DoubleVar(v1.toDouble() + v2.toDouble());
-                }
+                answ = v1.plus(v2);
                 break;
 
                 case "-":
-                if (intOpns) {
-                    answ = new IntVar(v1.toInt() - v2.toInt());
-                }
-                else {
-                    answ = new DoubleVar(v1.toDouble() - v2.toDouble());
-                }
+                answ = v1.minus(v2);
                 break;
 
 				case "&&":
-				answ = new BoolVar(v1.toBool() && v2.toBool());
+				answ = v1.and(v2);
 				break;
 
 				case "||":
-				answ = new BoolVar(v1.toBool() || v2.toBool());
+				answ = v1.or(v2);
 				break;
 
 				case "<":
-				if (intOpns) {
-					answ = new BoolVar(v1.toInt() < v2.toInt());
-				}
-				else {
-					answ = new BoolVar(v1.toDouble().compareTo(v2.toDouble()) < 0);
-				}
+				answ = v1.lessThan(v2);
 				break;
 
 				case "<=":
-				if (intOpns) {
-					answ = new BoolVar(v1.toInt() < v2.toInt());
-				}
-				else {
-					answ = new BoolVar(v1.toDouble().compareTo(v2.toDouble()) <= 0);
-				}
+				answ = v1.lessEquals(v2);
 				break;
 
 				case "==":
-				System.out.println("v1: " + v1 + ", v2: " + v2);
 				answ = v1.equals(v2);
 				break;
 
 				case ">=":
-				if (intOpns) {
-					answ = new BoolVar(v1.toInt() < v2.toInt());
-				}
-				else {
-					answ = new BoolVar(v1.toDouble().compareTo(v2.toDouble()) >= 0);
-				}
+				answ = v1.greaterEquals(v2);
 				break;
 
 				case ">":
-				if (intOpns) {
-					answ = new BoolVar(v1.toInt() > v2.toInt());
-				}
-				else {
-					answ = new BoolVar(v1.toDouble().compareTo(v2.toDouble()) > 0);
-				}
+				answ = v1.greaterThan(v2);
 				break;
 
 				case "!=":
@@ -774,6 +718,7 @@ class Interpreter {
 
 		if (offset > fromIndex) {
 			name = content.substring(fromIndex + 1, offset);
+
 			varNameMatcher = varNamePattern.matcher(name);
 			if (varNameMatcher.matches()) {
 				var = this.getVar(name);
@@ -781,9 +726,9 @@ class Interpreter {
 					throw new LotusException("varNotFound", name);
 				}
 			}
-			else {
-				throw new LotusException("invalidVarName", name);
-			}
+			// if does not follow the pattern for a variable name
+			// in a print command, it doesn't matter, as that
+			// variable doesn't exist anyways
 		}
 
 		return var;
@@ -926,6 +871,10 @@ class Interpreter {
 
 	public static final String wholeOpRegex = parenRegex + "|" + boolOpRegex + "|" + compOpRegex + "|" + mathOpRegex;
 
+	public static final String strRegex = "\\\"\\S+\\\"";
+
+	public static final String strExpRegex = "(" + strRegex + wholeOpRegex + strRegex + ")+";
+
 	public static final String atrRegex = varNameRegex + "( )*=( )*.+";
 	public static final String wholeAtrRegex = atrRegex + semicRegex;
 	public static final String stripAtrRegex = "( )*=( )*";
@@ -944,7 +893,6 @@ class Interpreter {
 	public static final String intRegex = signRegex + "?[0-9]+";
 	public static final String boolRegex = "(true|false)";
 
-    public static final String strRegex = "\\\"\\S+\\\"";
     // public static final String zeroRegex = "0+(\\.)?0*";
     /* fpRegex taken from Java documentation */
 	private static final String Digits     = "(\\p{Digit}+)";
@@ -1004,7 +952,10 @@ class Interpreter {
 		quotMarkPattern = Pattern.compile(quotMarkRegex);
 		strBackPattern = Pattern.compile(strBackRegex);
 
+		strExpPattern = Pattern.compile(strExpRegex);
+
 		strAssignPattern = Pattern.compile(strRegex + semicRegex);
+		upperCasePattern = Pattern.compile("[A-Z]+");
 
 		wholeDeclPattern = Pattern.compile(wholeDeclRegex);
 		wholeAtrPattern = Pattern.compile(wholeAtrRegex);

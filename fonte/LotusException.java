@@ -21,6 +21,8 @@ class LotusException extends Exception {
 			this.setMessage("Could not find variable: \"" + line + "\""); break;
         case "unknownSymbol":
 			this.setMessage("Unknown symbol: '" + line + "'"); break;
+        case "stringPow":
+			this.setMessage("Cannot calculate the power of a string: \"" + line + "\""); break;
         case "nonIntMod":
 			this.setMessage("Cannot calculate remainder of a division between non-integer operands: \"" + line + "\""); break;
         case "divisionByZero":
@@ -32,7 +34,7 @@ class LotusException extends Exception {
         case "inputMismatch":
 			this.setMessage("Could not read the input: \"" + line + "\""); break;
         case "missingParen":
-      this.setMessage("Missing parenthesis in the expression: \"" + line + "\""); break;
+            this.setMessage("Missing parenthesis in the expression: \"" + line + "\""); break;
         }
         this.setCode(code);
     }
@@ -50,8 +52,4 @@ class LotusException extends Exception {
     public String getMessage() {
         return this.message;
     }
-
-    // public String toString() {
-    //     return this.message;
-    // }
 }

@@ -88,8 +88,8 @@ println(s || false: $b$);
 b = "true" || false;
 println("true" || false: $b$);
 
-d = "7.11" + 1.5;
-println("7.11" + 1.5: $d$);
+--d = "7.11" + 1.5;
+--println("7.11" + 1.5: $d$);
 
 b = !false;
 println(!false: $b$);
@@ -107,3 +107,5 @@ println($b$);
 b = true;
 b = !b;
 println($b$);
+
+b = "Gabriel" < "Ana";
