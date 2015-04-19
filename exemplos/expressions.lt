@@ -85,8 +85,8 @@ s = "true";
 b = s || false;
 println(s || false: $b$);
 
-b = "true" || false;
-println("true" || false: $b$);
+--b = "true" || false;
+--println("true" || false: $b$);
 
 --d = "7.11" + 1.5;
 --println("7.11" + 1.5: $d$);
@@ -100,12 +100,17 @@ println(!true: $b$);
 b = 1 > -2;
 println(1 > -2: $b$);
 
-s = "Gabriel";
-b = s == "Gabriel";
-println($b$);
-
 b = true;
 b = !b;
 println($b$);
 
+let s: string;
+s = "Gabriel";
+println({$s$});
+
+--b = s == "Gabriel";
+
 b = "Gabriel" < "Ana";
+
+let x: int;
+x = +- 5;
