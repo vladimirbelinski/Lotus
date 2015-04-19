@@ -1,0 +1,109 @@
+let x: double;
+
+x = -3 * -3;
+x = -  300+     200;
+x = -3-4;
+x = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3;
+x = 3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3 ;
+x = 10^-2;
+x = 10^(-2);
+x = (+3-+4);
+x = (-3+-4);
+x = 3--4;
+x = -1+5 - 5 + 4 *-2; -- -9
+x = 3 ^ -2;
+x = + 2 ^ - 4 + -0 / + 5; -- 0.0625
+x = - 3 ^ - 3 + - 1;
+x = -(3 + 2);
+x = - 5 * - 2+ -(3 + 2); -- 5
+x = -10 + -(-3 + - 2); -- -5
+x = -       (   3 +2  );
+x = -.5 * 2;
+x = -1. * 2;
+x = -   1 . *2;
+x = -.   5*2;
+x = (9*(3+2)); -- 45
+x = (9*((5-(7-3))*(2+1))); -- 27
+x = (2^2)^3; -- 64
+x=2^2^3; -- 256
+x=-(2^2);
+x=-(2)^2;
+x=-2^2;
+x=3 .1  4/ 2     .; -- 1.57
+x=1 00/ 2   0;
+x = + + + + + 5;
+x = + - + - + - 5;
+x = - - 5;
+x = - - + 5;
+x = + - - + - - 5;
+x = - - + - 5;
+x = - - 5 + - + 4;
+x = + + + + - 5 - - - - 4;
+x = - - x + - 1; -- -2
+x = - - - -  5; --oi
+x = -       5;
+x = - - - - - 5; -- oi fj e8f u3284 r2389 r2\ --
+x = - ( 2-0) * (- 5 - - 2) / 1 + + + - 7; -- -1
+x = + 2;
+
+let b: bool;
+let i: int;
+let d: double;
+let s: string;
+
+b = 1 < 5;
+println(1 < 5?: $b$);
+
+b = (x < 5 || (2^2 >= 4)) && (25 == 5 * 5); -- true
+println(exp: $b$);
+
+i = 1 + true;
+println(i: $i$);
+
+d = 2.5 + true;
+println(d: $d$);
+
+b = i == d;
+println(i == d: $b$);
+
+b = 1 + 2 + 3 > false;
+println(1 + 2 + 3 > false: $b$);
+
+i = 1;
+b = i || false;
+println(i || false: $b$);
+
+d = 1.0;
+
+b = d;
+println(b = d: $b$);
+
+b = d || false;
+println(d || false: $b$);
+
+s = "true";
+b = s || false;
+println(s || false: $b$);
+
+b = "true" || false;
+println("true" || false: $b$);
+
+d = "7.11" + 1.5;
+println("7.11" + 1.5: $d$);
+
+b = !false;
+println(!false: $b$);
+
+b = !true;
+println(!true: $b$);
+
+b = 1 > -2;
+println(1 > -2: $b$);
+
+s = "Gabriel";
+b = s == "Gabriel";
+println($b$);
+
+b = true;
+b = !b;
+println($b$);
