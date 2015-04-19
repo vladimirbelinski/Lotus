@@ -58,9 +58,9 @@ class BoolVar extends Variable<Boolean> {
         return this.and(other).inverted();
     }
 
-    // cannot do a mod
+    // xnor
     public Variable mod(Variable other) throws LotusException {
-        return this.toIntVar().mod(other);
+        return this.pow(other).inverted();
     }
 
     // xor
