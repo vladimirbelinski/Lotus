@@ -4,33 +4,33 @@ class BoolVar extends Variable<Boolean> {
         super(value);
     }
 
-    public void invert() {
-        this.value = (!this.value);
+    public Variable inverted() {
+        return new BoolVar(!this.value);
     }
 
-    public boolean toBool() {
+    public Boolean toBool() {
         return this.value;
     }
 
-    public int toInt() {
-        if (this.toBool() == true) {
-            return 1;
+    public Integer toInt() {
+        if (this.toBool().equals(true)) {
+            return new Integer(1);
         }
         else {
-            return 0;
+            return new Integer(0);
         }
     }
 
-    public double toDouble() {
-        if (this.toBool() == true) {
-            return 1.0;
+    public Double toDouble() {
+        if (this.toBool().equals(true)) {
+            return new Double(1.0);
         }
         else {
-            return 0.0;
+            return new Double(0.0);
         }
     }
 
-    public boolean equals(Object value) {
-        return this.value.equals(value);
+    public Variable equals(Variable other) {
+        return new BoolVar(this.value.equals(other.toBool()));
     }
 }
