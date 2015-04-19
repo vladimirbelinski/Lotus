@@ -4,28 +4,28 @@ class DoubleVar extends Variable<Double> {
         super(value);
     }
 
-    public void invert() {
-        this.value = (-this.value);
+    public Variable inverted() {
+        return new DoubleVar(-this.value);
     }
 
-    public double toDouble() {
+    public Double toDouble() {
         return this.value;
     }
 
-    public int toInt() {
-        return this.value.intValue();
+    public Integer toInt() {
+        return new Integer(this.value.intValue());
     }
 
-    public boolean toBool() {
+    public Boolean toBool() {
         if (this.equals(0.0)) {
-            return false;
+            return new Boolean(false);
         }
         else {
-            return true;
+            return new Boolean(true);
         }
     }
 
-    public boolean equals(Object value) {
-        return this.value.equals(value);
+    public Variable equals(Variable other) {
+        return new BoolVar(this.value.equals(other.toDouble()));
     }
 }
