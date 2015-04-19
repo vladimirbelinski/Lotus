@@ -379,19 +379,10 @@ class Interpreter {
         Variable answ = null, num1 = null, num2 = null;
 		Matcher wholeOpMatcher, strExpMatcher;
 		String tokens = exp.toPostfix();
-		String[] t, front, back;
+		String[] t = tokens.split(" ");
+		String[] front, back;
 		int i = 0, offset = 0;
 		String op;
-
-		// strExpMatcher = strExpPattern.matcher(tokens);
-		// if (strExpMatcher.matches()) {
-		// 	t = tokens.split("\"");
-		// }
-		// else {
-		// 	t = tokens.split(" ");
-		// }
-
-		t = tokens.split(" ");
 
         if (t.length == 1) {
             answ = this.getOperand(t[0]);
@@ -399,11 +390,11 @@ class Interpreter {
 
 		while (t.length > 1) {
 
-			System.out.println();
-			for (String s: t) {
-				System.out.print("[" + s + "]");
-			} System.out.println();
-			System.out.println();
+			// System.out.println();
+			// for (String s: t) {
+			// 	System.out.print("[" + s + "]");
+			// } System.out.println();
+			// System.out.println();
 
 			wholeOpMatcher = wholeOpPattern.matcher(t[i]);
 			// advance until you don't find an operation to perform
@@ -477,8 +468,6 @@ class Interpreter {
 		stringMatcher = strPattern.matcher(t);
         varNameMatcher = varNamePattern.matcher(t);
 
-		System.out.println("getOperand t: " + t);
-
         if (intMatcher.matches()) {
             v = new IntVar(Integer.parseInt(t));
         }
@@ -528,6 +517,9 @@ class Interpreter {
 		}
         else if (varNameMatcher.matches()) {
             v = this.getVar(t);
+			if (v == null) {
+				throw new LotusException("varNotFound", t);
+			}
         }
         else {
             throw new LotusException("unknownSymbol", t);
@@ -871,7 +863,7 @@ class Interpreter {
 
 	public static final String wholeOpRegex = parenRegex + "|" + boolOpRegex + "|" + compOpRegex + "|" + mathOpRegex;
 
-	public static final String strRegex = "\\\"\\S+\\\"";
+	public static final String strRegex = "\\\".+\\\"";
 
 	public static final String strExpRegex = "(" + strRegex + wholeOpRegex + strRegex + ")+";
 
