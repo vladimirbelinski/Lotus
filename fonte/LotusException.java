@@ -31,6 +31,8 @@ class LotusException extends Exception {
 			this.setMessage("Cannot assign a \"" + line.substring(0, line.indexOf(";")) + "\" value to a variable of type \"" + line.substring(line.indexOf(";") + 1) + "\""); break;
         case "inputMismatch":
 			this.setMessage("Could not read the input: \"" + line + "\""); break;
+        case "missingParen":
+      this.setMessage("Missing parenthesis in the expression: \"" + line + "\""); break;
         }
         this.setCode(code);
     }
