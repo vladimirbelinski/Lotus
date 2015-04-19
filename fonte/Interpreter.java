@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, wholeOpPattern, signPattern, intPattern, fpPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern, parenPattern, numBuildPattern, boolPattern, upperCasePattern, strExpPattern;
+	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, wholeOpPattern, signPattern, intPattern, fpPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern, parenPattern, numBuildPattern, boolPattern, upperCasePattern, wholeMathExpPattern, strNotEmptyPattern, opGroupPattern, ufpPattern;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -366,7 +366,7 @@ class Interpreter {
 
 			this.setVar(this.getVar(atr[0]), atr[1]);
         }
-        else {
+		else {
 			semicMatcher = semicPattern.matcher(atr[1]);
 			atr[1] = semicMatcher.replaceFirst("");
             v = this.getVar(atr[0]);
@@ -828,6 +828,8 @@ class Interpreter {
         result.put("double", true);
         result.put("string", true);
         result.put("bool", true);
+        result.put("true", true);
+        result.put("false", true);
 
         result.put("print", true);
         result.put("println", true);
@@ -852,7 +854,7 @@ class Interpreter {
 	public static final String semicRegex = "( )*;";
 
 	public static final String typeRegex = "int|double|string|bool";
-	public static final String varNameRegex = "(?!\\d)\\w+";
+	public static final String varNameRegex = "(?<!\\d)\\w+";
 	public static final String wholeDeclRegex = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+" + semicRegex;
 
 	public static final String parenRegex = "\\(|\\)";
@@ -863,9 +865,8 @@ class Interpreter {
 
 	public static final String wholeOpRegex = parenRegex + "|" + boolOpRegex + "|" + compOpRegex + "|" + mathOpRegex;
 
-	public static final String strRegex = "\\\".+\\\"";
-
-	public static final String strExpRegex = "(" + strRegex + wholeOpRegex + strRegex + ")+";
+	// strings with any character enclosed with "". Supports escaped " too.
+	public static final String strRegex = "\\\"(?:\\\\.|[^\\\"\\\\])*\\\"";
 
 	public static final String atrRegex = varNameRegex + "( )*=( )*.+";
 	public static final String wholeAtrRegex = atrRegex + semicRegex;
@@ -885,49 +886,10 @@ class Interpreter {
 	public static final String intRegex = signRegex + "?[0-9]+";
 	public static final String boolRegex = "(true|false)";
 
-    // public static final String zeroRegex = "0+(\\.)?0*";
-    /* fpRegex taken from Java documentation */
-	private static final String Digits     = "(\\p{Digit}+)";
-	private static final String HexDigits  = "(\\p{XDigit}+)";
-	// an exponent is 'e' or 'E' followed by an optionally
-	// signed decimal integer.
-	private static final String Exp        = "[eE][+-]?"+Digits;
-	public static final String fpRegex    =
-		signRegex + "?(" + // Optional sign character
-		"NaN|" +           // "NaN" string
-		"Infinity|" +      // "Infinity" string
+	public static final String fpRegex = signRegex + "?( )*(\\d*\\.)?\\d+";
+	public static final String ufpRegex = "\\d+(\\.\\d*)?|(\\d*\\.)?\\d+";
 
-		// A decimal floating-point string representing a finite positive
-		// number without a leading sign has at most five basic pieces:
-		// Digits . Digits ExponentPart FloatTypeSuffix
-		//
-		// Since this method allows integer-only strings as input
-		// in addition to strings of floating-point literals, the
-		// two sub-patterns below are simplifications of the grammar
-		// productions from section 3.10.2 of
-		// The Java™ Language Specification.
-
-		// Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
-		"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
-
-		// . Digits ExponentPart_opt FloatTypeSuffix_opt
-		"(\\.("+Digits+")("+Exp+")?)|"+
-
-		// Hexadecimal strings
-		"((" +
-		// 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
-		"(0[xX]" + HexDigits + "(\\.)?)|" +
-
-		// 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
-		"(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
-
-		")[pP][+-]?" + Digits + "))" +
-		"[fFdD]?))";
-
-	public static final String boolAtrRegex =
-		"(" + varNameRegex + "|" + boolRegex + "|" + fpRegex + ")( )*" +
-		"((" + compOpRegex + ")|(" + boolOpRegex + "))( )*" +
-		"(" + varNameRegex + "|" + boolRegex + "|" + fpRegex + ")( )*";
+	public static final String wholeMathExpRegex = "(" + varNameRegex + "|" + fpRegex + ")( )*(" + wholeOpRegex + ")( )*(" + varNameRegex + "|" + fpRegex + ")" + semicRegex;
 
 	private static void initPatterns() {
 		varNamePattern = Pattern.compile(varNameRegex);
@@ -938,13 +900,17 @@ class Interpreter {
 		signPattern = Pattern.compile(signRegex);
 		intPattern = Pattern.compile(intRegex);
 		fpPattern = Pattern.compile(fpRegex);
+		ufpPattern = Pattern.compile(ufpRegex);
 		boolPattern = Pattern.compile(boolRegex);
 		charPattern = Pattern.compile("\\w");
 		strPattern = Pattern.compile(strRegex);
 		quotMarkPattern = Pattern.compile(quotMarkRegex);
 		strBackPattern = Pattern.compile(strBackRegex);
+		strNotEmptyPattern = Pattern.compile("\\S");
+		opGroupPattern = Pattern.compile(signRegex + "(( )*" + signRegex + ")+");
+		// "((" + signRegex + "+)(( )*(" + signRegex + "+))*)+"
 
-		strExpPattern = Pattern.compile(strExpRegex);
+		wholeMathExpPattern = Pattern.compile(wholeMathExpRegex);
 
 		strAssignPattern = Pattern.compile(strRegex + semicRegex);
 		upperCasePattern = Pattern.compile("[A-Z]+");

@@ -17,6 +17,8 @@ class LotusException extends Exception {
 			this.setMessage("Invalid type: \"" + line + "\""); break;
         case "invalidVarName":
 			this.setMessage("Variable names cannot start with numbers or special characters:\n'" + line + "'"); break;
+        case "invalidExp":
+            this.setMessage("You cannot operate strings with numbers directly:\n\"" + line + "\""); break;
         case "varNotFound":
 			this.setMessage("Could not find variable: \"" + line + "\""); break;
         case "unknownSymbol":

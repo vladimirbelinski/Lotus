@@ -74,11 +74,17 @@ class Lotus {
             System.out.println("Invalid input file.");
         }
 
-        /*System.out.println("\n-----------------\n");
+        System.out.println("\n-----------------\n");
 
-        Expression e = new Expression("(-37+41* 2/ (- (1 -5)%2) ^2^    3) < 2 || (x >= 25)");
+        AltExpression a = new AltExpression("(----37.5+41* 2./ (- (gabriel -5)%2) ^2^    3) < 2 || (\"julia\" >= \"Gabriel\")");
+        System.out.println("\n------->> a: " + a);
 
-        System.out.println(e);
+        // AltExpression aa = new AltExpression("a + a +b*c/d % 1 ^ 2");
+
+        Expression b = new Expression("(-37+41* 2/ (- (1 -5)%2) ^2^    3) < 2 || (x >= 25)");
+        System.out.println("\n------->> b: " + b);
+
+        /*System.out.println(e);
 
         e = new Expression("(-oi+41* x/ (- (fn(10) - 4)%2) ^x^    3) + Math.PI + (+x * 25)");
         System.out.println(e);

@@ -10,7 +10,7 @@ class Expression {
         Matcher stringMatcher = Interpreter.strPattern.matcher(value);
 
         if (stringMatcher.find()) {
-            this.value = value.trim();
+            throw new LotusException("invalidExp", value);
         }
         else {
             this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
@@ -53,8 +53,6 @@ class Expression {
         Matcher wholeOpMatcher, numBuildMatcher;
         String[] tokens = this.value.split(" ");
         ArrayList<String> ts = new ArrayList<String>();
-
-        // tratar strings aqui!
 
         for (i = 0; i < tokens.length; i++) {
             wholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i]);
