@@ -4,14 +4,24 @@ import java.util.regex.*;
 
 class Expression {
     public String value;
+    private static final Map<String, Integer> precedence = mapPrecedence();
 
     public Expression(String value) throws LotusException {
-        if (value.contains("\"")) {
-            throw new LotusException("syntaxError", value);
+        Matcher stringMatcher = Interpreter.strPattern.matcher(value);
+
+        if (stringMatcher.find()) {
+            this.value = value.trim();
         }
-        this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
-        this.fixSignals();
-        this.fixSpaces();
+        else {
+            this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
+            this.fixSignals();
+            this.fixOperands();
+            this.fixSpaces();
+        }
+    }
+
+    public String toString() {
+        return this.value;
     }
 
     private void fixSignals() {
@@ -26,44 +36,47 @@ class Expression {
         } while (aux.isEmpty());
     }
 
+    private void fixOperands() {
+        this.value = this.value.replaceAll("\\| \\|", "\\|\\|");
+        this.value = this.value.replaceAll("\\& \\&", "\\&\\&");
+
+        this.value = this.value.replaceAll("\\< \\=", "\\<\\=");
+        this.value = this.value.replaceAll("\\= \\=", "\\=\\=");
+        this.value = this.value.replaceAll("\\> \\=", "\\>\\=");
+        this.value = this.value.replaceAll("\\! \\=", "\\!\\=");
+    }
+
     private void fixSpaces() {
-        int max;
+        int i, max;
+        boolean next;
         String t = new String("");
+        Matcher wholeOpMatcher, numBuildMatcher;
         String[] tokens = this.value.split(" ");
         ArrayList<String> ts = new ArrayList<String>();
-        Pattern helperPattern = Pattern.compile("\\w|\\.");
-        Matcher wholeOpMatcher, prevWholeOpMatcher, signMatcher, helperMatcher;
 
-        for (int i = 0; i < tokens.length; i++) {
+        // tratar strings aqui!
+
+        for (i = 0; i < tokens.length; i++) {
             wholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i]);
-            signMatcher = Interpreter.signPattern.matcher(tokens[i]);
 
-            if (i == 0 && signMatcher.matches()) {
+            if (isSignal(tokens, i)) {
                 t = tokens[i];
             }
+            // if it's not a signal, it's an operation.
+            // So we just add it to the ouput
             else if (wholeOpMatcher.matches()) {
-                if (i - 1 >= 0 && i + 1 < tokens.length) {
-                    signMatcher = Interpreter.signPattern.matcher(tokens[i]);
-                    prevWholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i - 1]);
-                    helperMatcher = helperPattern.matcher(tokens[i + 1]);
-
-                    if (signMatcher.matches() && prevWholeOpMatcher.matches() && helperMatcher.matches()) {
-                        t = tokens[i];
-                    }
-                    else {
-                        ts.add(tokens[i]);
-                    }
-                }
-                else {
-                    ts.add(tokens[i]);
-                }
+                ts.add(tokens[i]);
             }
             else {
-                helperMatcher = helperPattern.matcher(tokens[i]);
-                while (i < tokens.length && helperMatcher.matches()) {
+                // building a number/variable...
+                numBuildMatcher = Interpreter.numBuildPattern.matcher(tokens[i]);
+                while (i < tokens.length && numBuildMatcher.matches()) {
                     t += tokens[i];
                     i++;
-                    helperMatcher = helperPattern.matcher(tokens[i]);
+
+                    if (i < tokens.length) {
+                        numBuildMatcher = Interpreter.numBuildPattern.matcher(tokens[i]);
+                    }
                 }
                 if (!t.isEmpty()) {
                     ts.add(t);
@@ -73,9 +86,10 @@ class Expression {
             }
         }
 
+        // building the resulting string from the ArrayList
         t = "";
         max = ts.size();
-        for (int i = 0; i < max; i++) {
+        for (i = 0; i < max; i++) {
             t += ts.get(i);
             if (i < max - 1) t += " ";
         }
@@ -83,56 +97,121 @@ class Expression {
         this.value = t;
     }
 
-    public String toString() {
-        return this.value;
-    }
+    private static boolean isSignal(String[] tokens, int i) {
+        boolean result = false;
+        Matcher numBuildMatcher, signMatcher, opBeforeMatcher;
 
-    /* Dijkstra's Shunting Yard algorithm. Taken from Rosetta Code
-	 * It needs an expression with everything separated by spaces
-	 * and that's why it calls the fixExp() monster method ;x
-	 */
-	public String infixToPostfix() {
-        final String ops = "-+/%*^";
-        StringBuilder sb = new StringBuilder();
-        Stack<Integer> s = new Stack<>();
-        String[] tokens = this.value.split(" ");
+        // (if the current token is + or -) && (the next token is a
+        // number) && (either we are looking at the first token ||
+        // we are looking at a token that comes right after a '(' ||
+        // we are looking at a token that comes right after another
+        // token that is not a + or -)...
+        // then, it's a signal, not an operation :)
+        signMatcher = Interpreter.signPattern.matcher(tokens[i]);
+        if (signMatcher.matches() && i + 1 < tokens.length) {
+            numBuildMatcher = Interpreter.numBuildPattern.matcher(tokens[i + 1]);
 
-        for (String token: tokens) {
-            char c = token.charAt(0);
-            int idx = ops.indexOf(c);
+            if (numBuildMatcher.matches()) {
+                if (i == 0) {
+                    result = true;
+                }
+                else if (i - 1 >= 0) {
+                    // as we treated all the cases with duplicated +/- signs,
+                    // is there's any operation token right before a +/-, it
+                    // is obviously not a + or - and thus this operator is indeed
+                    // a number sign. Because if it was a normal operator, the
+                    // previous token would be a number.
+                    opBeforeMatcher = Interpreter.wholeOpPattern.matcher(tokens[i - 1]);
 
-            // check for operator
-            if (idx != -1 && token.length() == 1) {
-                if (s.isEmpty()) {
-                    s.push(idx);
-				}
-                else {
-                    while (!s.isEmpty()) {
-                        int prec2 = s.peek() / 2;
-                        int prec1 = idx / 2;
-                        if (prec2 > prec1 || (prec2 == prec1 && c != '^'))
-                            sb.append(ops.charAt(s.pop())).append(' ');
-                        else break;
+                    if (opBeforeMatcher.matches()) {
+                        result = true;
                     }
-                    s.push(idx);
                 }
             }
-            else if (c == '(') {
-                s.push(-2); // -2 stands for '('
+        }
+
+        return result;
+    }
+
+    // our implementation of Dijkstra's Shunting Yard algorithm
+	public String toPostfix() throws LotusException {
+        int i, pt, ps;
+        String rpn = new String("");
+        Matcher wholeOpMatcher, parenMatcher;
+        String[] tokens = this.value.split(" ");
+        Stack<String> op = new Stack<String>();
+
+        for (String t: tokens) {
+            wholeOpMatcher = Interpreter.wholeOpPattern.matcher(t);
+
+            if (t.equals("(")) {
+                op.push(t);
             }
-            else if (c == ')') {
-                // until '(' on stack, pop operators.
-                while (s.peek() != -2)
-                    sb.append(ops.charAt(s.pop())).append(' ');
-                s.pop();
+            else if (t.equals(")")) {
+                // pop everything until you find the '('
+                while (!op.peek().equals("(")) {
+                    rpn += op.pop() + " ";
+                }
+
+                op.pop(); // discard the "("
+            }
+            else if (wholeOpMatcher.matches()) {
+                while (!op.isEmpty()) {
+
+					pt = precedence.get(t);
+                    ps = precedence.get(op.peek());
+
+                    if ((!t.equals("^") && pt <= ps) || (t.equals("^") && pt < ps)) {
+                        rpn += op.pop() + " ";
+                    }
+                    else break;
+                }
+
+                op.push(t);
             }
             else {
-                sb.append(token).append(' ');
+                rpn += t + " ";
             }
         }
-        while (!s.isEmpty()) {
-            sb.append(ops.charAt(s.pop())).append(' ');
+
+        while (!op.isEmpty()) {
+            parenMatcher = Interpreter.parenPattern.matcher(op.peek());
+
+            if (parenMatcher.matches()) {
+                throw new LotusException("missingParen", this.value);
+            }
+
+            rpn += op.pop() + " ";
         }
-        return sb.toString();
+
+        return rpn;
+    }
+
+    private static Map<String, Integer> mapPrecedence() {
+        Map<String, Integer> result = new HashMap<String, Integer>();
+        result.put("^", 3);
+
+        result.put("*", 2);
+        result.put("/", 2);
+        result.put("%", 2);
+
+        result.put("+", 1);
+        result.put("-", 1);
+
+        result.put("<", 0);
+        result.put(">", 0);
+        result.put("<=", 0);
+        result.put("==", 0);
+        result.put(">=", 0);
+        result.put("!=", 0);
+
+        result.put("!", 0);
+        result.put("&&", 0);
+        result.put("||", 0);
+
+        result.put("(", -1);
+        result.put(")", -1);
+
+        return Collections.unmodifiableMap(result);
     }
 }
