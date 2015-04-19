@@ -7,46 +7,46 @@ class StringVar extends Variable<String> {
     }
 
     // what should we do here? Flip all the chars?
-    public void invert() {
-        return;
+    public Variable inverted() {
+        return null;
     }
 
     // cannot throw exception because this method
     // should override the one from Variable. But that one
     // doesn't throw exceptions (and in the other variables
     // we don't need to throw any exception)... so I don't know.
-    public int toInt() /*throws LotusException*/ {
+    public Integer toInt() /*throws LotusException*/ {
         Matcher intMatcher = Interpreter.intPattern.matcher(this.value);
         if (intMatcher.matches()) {
-            return Integer.parseInt(this.value);
+            return Integer.valueOf(this.value);
         }
         else {
-            return 0;
+            return new Integer(0);
             //throw new LotusException("Cannot convert \"" + this.value + "\" to int");
         }
     }
 
-    public boolean toBool() {
+    public Boolean toBool() {
         if (this.value.isEmpty() || this.value.equals("false")) {
-            return false;
+            return new Boolean(false);
         }
         else {
-            return true;
+            return new Boolean(true);
         }
     }
 
-    public double toDouble()/* throws LotusException*/ {
+    public Double toDouble()/* throws LotusException*/ {
         Matcher fpMatcher = Interpreter.fpPattern.matcher(this.value);
         if (fpMatcher.matches()) {
-            return Double.parseDouble(this.value);
+            return Double.valueOf(this.value);
         }
         else {
-            return 0.0;
+            return new Double(0.0);
             //throw new LotusException("Cannot convert \"" + this.value + "\" to double");
         }
     }
 
-    public boolean equals(Object value) {
-        return this.value.equals(value);
+    public Variable equals(Variable other) {
+        return new BoolVar(this.value.equals(other.toString()));
     }
 }
