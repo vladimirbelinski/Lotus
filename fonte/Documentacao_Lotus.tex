@@ -8,6 +8,7 @@
 \usepackage{xspace}
 \usepackage{epsfig}
 \usepackage{ulem}
+\usepackage[pdftex]{hyperref}
 \usepackage{amssymb}
 \usepackage[fixlanguage]{babelbib} % arruma pra português a automatização das referências e tal...
 \selectbiblanguage{portuguese}
@@ -31,4 +32,31 @@
 {\large 2015}
 \end{center}
 \end{titlepage}
+
+A linguagem de programação Lotus é uma linguagem desenvolvida com base em Java com as seguintes características e funcionalidades:\\
+
+\begin{itemize}
+\item \hyperlink{label}{Declaração de variáveis}
+\item Atribuições de valores
+\item Operações aritméticas
+\item Desvios condicionais
+\item Laços de repetição\\[15.4cm]
+\end{itemize}
+
+\hypertarget{label}{\Large{Declaração de variáveis}}\\[0.3cm]
+\normalsize
+
+A sintaxe de declaração de variável funciona da seguinte forma:\\
+
+let nome\_variavel: tipo\_variavel;\\
+
+Sendo obrigatório o uso de "let "\ antes de qualquer declaração e o uso de ";"\ ao final dela. É permitida a criação de várias variáveis do mesmo tipo em apenas uma linha, desde que separadas por vírgulas, exemplo:\\
+
+let x, y, z: int;\\
+
+Também é permitida a atribuição de valores às variáveis no momento da declaração. Exemplo:\\
+
+let x = "Oi": string;\\
+
+ 
 \end{document}
