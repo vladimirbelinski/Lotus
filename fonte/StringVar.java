@@ -7,32 +7,28 @@ class StringVar extends Variable<String> {
     }
 
     public Variable inverted() {
-        Matcher fpMatcher = Interpreter.fpPattern.matcher(this.value);
-        Matcher boolMatcher = Interpreter.boolPattern.matcher(this.value);
-        Matcher upperCaseMatcher = Interpreter.upperCasePattern.matcher(this.value);
+        Matcher boolM = Interpreter.boolP.matcher(this.value);
+        Matcher upperCaseM = Interpreter.upperCaseP.matcher(this.value);
 
-        if (fpMatcher.matches()) {
-            return new StringVar("-" + this.value);
-        }
-        else if (boolMatcher.matches()) {
+        if (boolM.matches()) {
             if (this.value.equals("true")) {
-                return new StringVar("false");
+                return new StringVar("\"" + "false" + "\"");
             }
             else {
-                return new StringVar("true");
+                return new StringVar("\"" + "true" + "\"");
             }
         }
-        else if (upperCaseMatcher.matches()) {
-            return new StringVar(this.value.toLowerCase());
+        else if (upperCaseM.matches()) {
+            return new StringVar("\"" + this.value.toLowerCase() + "\"");
         }
         else {
-            return new StringVar(this.value.toUpperCase());
+            return new StringVar("\"" + this.value.toUpperCase() + "\"");
         }
     }
 
     public Integer toInt() {
-        Matcher intMatcher = Interpreter.intPattern.matcher(this.value);
-        if (intMatcher.matches()) {
+        Matcher intM = Interpreter.intP.matcher(this.value);
+        if (intM.matches()) {
             return Integer.valueOf(this.value);
         }
         else {
@@ -50,8 +46,8 @@ class StringVar extends Variable<String> {
     }
 
     public Double toDouble() {
-        Matcher fpMatcher = Interpreter.fpPattern.matcher(this.value);
-        if (fpMatcher.matches()) {
+        Matcher fpM = Interpreter.fpP.matcher(this.value);
+        if (fpM.matches()) {
             return Double.valueOf(this.value);
         }
         else {
@@ -61,27 +57,27 @@ class StringVar extends Variable<String> {
 
     // appending
     public Variable plus(Variable other) {
-        return new StringVar(this.value + other.toString());
+        return new StringVar("\"" + this.value + other.toString() + "\"");
     }
 
     // replaces first occurrence
     public Variable minus(Variable other) {
-        return new StringVar(this.value.replaceFirst(other.toString(), ""));
+        return new StringVar("\"" + this.value.replaceFirst(other.toString(), "") + "\"");
     }
 
     // adds other.toString() between every char
     public Variable times(Variable other) {
-        return new StringVar(this.value.replaceAll("", other.toString()));
+        return new StringVar("\"" + this.value.replaceAll("", other.toString()) + "\"");
     }
 
     // removes all other.toString() occurrences from this.toString()
     public Variable divided(Variable other) throws LotusException {
-        return new StringVar(this.value.replaceAll(other.toString(), ""));
+        return new StringVar("\"" + this.value.replaceAll(other.toString(), "") + "\"");
     }
 
     // removes all this.toString() occurrences from other.toString()
     public Variable mod(Variable other) throws LotusException {
-        return new StringVar(other.toString().replaceAll(this.toString(), ""));
+        return new StringVar("\"" + other.toString().replaceAll(this.toString(), "") + "\"");
     }
 
     // cannot do a pow

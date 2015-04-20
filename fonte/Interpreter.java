@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typePattern, wholeDeclPattern, varNamePattern, atrPattern, wholeAtrPattern, semicPattern, wholePrintPattern, wholeScanPattern, wholeScanlnPattern, cutPrintPattern, cutScanPattern, scanContentPattern, wholeOpPattern, signPattern, intPattern, fpPattern, charPattern, strPattern, strAssignPattern, quotMarkPattern, strBackPattern, parenPattern, numBuildPattern, boolPattern, upperCasePattern, wholeMathExpPattern, strNotEmptyPattern, opGroupPattern, ufpPattern;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -125,7 +125,7 @@ class Interpreter {
 	}
 
 	public void setVar(Variable v, String value) throws LotusException {
-		Matcher intMatcher = intPattern.matcher(value), fpMatcher = fpPattern.matcher(value);
+		Matcher intM = intP.matcher(value), fpM = fpP.matcher(value);
 
 		if (v instanceof StringVar) {
 			((StringVar)v).setValue(value);
@@ -134,10 +134,10 @@ class Interpreter {
 			((BoolVar)v).setValue(Boolean.valueOf(value));
 		}
 		else if (v instanceof IntVar) {
-			if (intMatcher.matches()) {
+			if (intM.matches()) {
 				((IntVar)v).setValue(Integer.parseInt(value));
 	        }
-			else if (fpMatcher.matches()) {
+			else if (fpM.matches()) {
 				((IntVar)v).setValue((int)Double.parseDouble(value));
 	        }
 			else if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
@@ -153,7 +153,7 @@ class Interpreter {
 	        }
 		}
 		else if (v instanceof DoubleVar) {
-			if (fpMatcher.matches()) {
+			if (fpM.matches()) {
 				((DoubleVar)v).setValue(Double.parseDouble(value));
 	        }
 			else if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
@@ -176,7 +176,7 @@ class Interpreter {
 	/* ---------------------------------------------------------------------- */
 
 	public void execute(String line) throws LotusException {
-		Matcher wholeDeclMatcher, wholeAtrMatcher, wholePrintMatcher, wholeScanMatcher, wholeScanlnMatcher;
+		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM;
 		int semicolon = line.indexOf(";");
 
 		if (semicolon < 0) {
@@ -190,25 +190,25 @@ class Interpreter {
 
 		line = line.substring(0, line.indexOf(";") + 1);
 
-		wholeDeclMatcher = wholeDeclPattern.matcher(line);
-		wholeAtrMatcher = wholeAtrPattern.matcher(line);
-		wholePrintMatcher = wholePrintPattern.matcher(line);
-		wholeScanMatcher = wholeScanPattern.matcher(line);
-		wholeScanlnMatcher = wholeScanlnPattern.matcher(line);
+		wholeDeclM = wholeDeclP.matcher(line);
+		wholeAtrM = wholeAtrP.matcher(line);
+		wholePrintM = wholePrintP.matcher(line);
+		wholeScanM = wholeScanP.matcher(line);
+		wholeScanlnM = wholeScanlnP.matcher(line);
 
-		if (wholeDeclMatcher.matches()) {
+		if (wholeDeclM.matches()) {
 			this.let(line);
 		}
-		else if (wholeAtrMatcher.matches()) {
+		else if (wholeAtrM.matches()) {
 			this.assign(line);
 		}
-		else if (wholePrintMatcher.matches()) {
+		else if (wholePrintM.matches()) {
 			this.print(line);
 		}
-		else if (wholeScanMatcher.matches()) {
+		else if (wholeScanM.matches()) {
 			this.scan(line);
 		}
-		else if (wholeScanlnMatcher.matches()) {
+		else if (wholeScanlnM.matches()) {
 			this.scanln(line);
 		}
 		else {
@@ -219,7 +219,7 @@ class Interpreter {
 	private void let(String line) throws LotusException {
 		String[] decl = this.fixDecl(line);
 		int i, max = decl.length - 1;
-		Matcher atrMatcher, varMatcher, strMatcher;
+		Matcher atrM, varM, strM;
 		Variable v = null;
 
 		for (i = 0; i < max; i++) {
@@ -250,22 +250,22 @@ class Interpreter {
 				break;
 			}
 			if (v != null) {
-				atrMatcher = atrPattern.matcher(decl[i]);
+				atrM = atrP.matcher(decl[i]);
 
-				if (atrMatcher.matches()) {
-					varMatcher = varNamePattern.matcher(decl[i]);
-					varMatcher.find();
+				if (atrM.matches()) {
+					varM = varNameP.matcher(decl[i]);
+					varM.find();
 
 					// if the variable being declared is a string and
 					// it has an assignment, it must have ""
 					if (v instanceof StringVar) {
-						strMatcher = strPattern.matcher(decl[i].substring(decl[i].indexOf("=") + 1));
-						if (!strMatcher.matches()) {
+						strM = strP.matcher(decl[i].substring(decl[i].indexOf("=") + 1));
+						if (!strM.matches()) {
 							throw new LotusException("syntaxError", decl[i]);
 						}
 					}
 
-					this.newVar(varMatcher.group(), v);
+					this.newVar(varM.group(), v);
 					this.assign(decl[i] + ";");
 				}
 				else {
@@ -282,13 +282,13 @@ class Interpreter {
     public String[] fixDecl(String line) throws LotusException {
         int i;
         String var = new String("");
-		Matcher atrMatcher, charMatcher, typeMatcher;
+		Matcher atrM, charM, typeM;
         String[] t = line.replace("let ", "").replaceAll(" ", "").split("");
         ArrayList<String> tokens = new ArrayList<String>();
 
         for (i = 0; i < t.length && !t[i].equals(":"); i++) {
-			charMatcher = charPattern.matcher(t[i]);
-            if (charMatcher.matches()) {
+			charM = charP.matcher(t[i]);
+            if (charM.matches()) {
                 var += t[i];
             }
 			else if (!var.isEmpty() && t[i].equals("=")) {
@@ -297,8 +297,8 @@ class Interpreter {
 					i++;
 				}
 				i--;
-				atrMatcher = atrPattern.matcher(var);
-				if (atrMatcher.matches()) {
+				atrM = atrP.matcher(var);
+				if (atrM.matches()) {
 					tokens.add(var);
 					var = "";
 				}
@@ -322,15 +322,15 @@ class Interpreter {
 
         // type
         while (i < t.length) {
-			charMatcher = charPattern.matcher(t[i]);
-            if (charMatcher.matches()) {
+			charM = charP.matcher(t[i]);
+            if (charM.matches()) {
                 var += t[i];
             }
             i++;
         }
 
-		typeMatcher = typePattern.matcher(var);
-        if (typeMatcher.matches()) {
+		typeM = typeP.matcher(var);
+        if (typeM.matches()) {
             tokens.add(var);
         }
         else {
@@ -348,28 +348,42 @@ class Interpreter {
         Variable v = null;
         Expression assign = null;
 		String[] atr = new String[2];
-		Matcher quotMarkMatcher, strBackMatcher, semicMatcher, strAssignMatcher;
+		Matcher quotMarkM, strBackM, semicM, strAssignM, quotInStrM;
 
 		equalsIndex = line.indexOf("=");
 		atr[0] = line.substring(0, equalsIndex).trim();
 		atr[1] = line.substring(equalsIndex + 1).trim();
 
 		// if it's a string (enclosed with "");
-		strAssignMatcher = strAssignPattern.matcher(atr[1]);
+		strAssignM = strAssignP.matcher(atr[1]);
 
-        if (strAssignMatcher.matches()) {
-			quotMarkMatcher = quotMarkPattern.matcher(atr[1]);
-			atr[1] = quotMarkMatcher.replaceFirst("");
+		System.out.println("atr[1]: " + atr[1]);
 
-			strBackMatcher = strBackPattern.matcher(atr[1]);
-			atr[1] = strBackMatcher.replaceFirst("");
+        if (strAssignM.matches()) {
+			// removing first "
+			quotMarkM = quotMarkP.matcher(atr[1]);
+			atr[1] = quotMarkM.replaceFirst("");
+
+			// removing ";
+			strBackM = strBackP.matcher(atr[1]);
+			atr[1] = strBackM.replaceFirst("");
+
+			quotInStrM = Interpreter.quotInStrP.matcher(atr[1]);
+	        atr[1] = quotInStrM.replaceAll("\"");
+
+			System.out.println("str atr[1]: "+ atr[1]);
 
 			this.setVar(this.getVar(atr[0]), atr[1]);
         }
 		else {
-			semicMatcher = semicPattern.matcher(atr[1]);
-			atr[1] = semicMatcher.replaceFirst("");
+			semicM = semicP.matcher(atr[1]);
+			atr[1] = semicM.replaceFirst("");
             v = this.getVar(atr[0]);
+
+			System.out.println("else atr[1]: " + atr[1]);
+
+			quotInStrM = Interpreter.quotInStrP.matcher(atr[1]);
+	        atr[1] = quotInStrM.replaceAll("\"");
 
 			this.setVar(v, this.solve(new Expression(atr[1])));
         }
@@ -377,11 +391,11 @@ class Interpreter {
 
 	public Variable solve(Expression exp) throws LotusException {
         Variable answ = null, num1 = null, num2 = null;
-		Matcher wholeOpMatcher, strExpMatcher;
 		String tokens = exp.toPostfix();
-		String[] t = tokens.split(" ");
-		String[] front, back;
+		String[] t = tokens.split(Expression.SEP.toString());
 		int i = 0, offset = 0;
+		String[] front, back;
+		Matcher wholeOpM;
 		String op;
 
         if (t.length == 1) {
@@ -390,17 +404,17 @@ class Interpreter {
 
 		while (t.length > 1) {
 
-			// System.out.println();
+			// System.out.println("-------------");
 			// for (String s: t) {
-			// 	System.out.print("[" + s + "]");
-			// } System.out.println();
-			// System.out.println();
+			// 	System.out.println(s);
+			// }
+			// System.out.println("-------------");
 
-			wholeOpMatcher = wholeOpPattern.matcher(t[i]);
+			wholeOpM = wholeOpP.matcher(t[i]);
 			// advance until you don't find an operation to perform
-			while (i < t.length && !wholeOpMatcher.matches()) {
+			while (i < t.length && !wholeOpM.matches()) {
 				i++;
-				if (i < t.length) wholeOpMatcher = wholeOpPattern.matcher(t[i]);
+				if (i < t.length) wholeOpM = wholeOpP.matcher(t[i]);
 			}
 
 			// then, the operation char is at i's position in the array
@@ -449,6 +463,8 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
+			System.out.println("answ = " + num1 + "[" + op + "]" + num2);
+
 			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
 		}
@@ -459,51 +475,32 @@ class Interpreter {
 	}
 
     private Variable getOperand(String t) throws LotusException {
-        Matcher intMatcher, fpMatcher, boolMatcher, stringMatcher, varNameMatcher;
+        Matcher intM, fpM, boolM, stringM;
         Variable v = null;
+		int index;
 
-        intMatcher = intPattern.matcher(t);
-        fpMatcher = fpPattern.matcher(t);
-		boolMatcher = boolPattern.matcher(t);
-		stringMatcher = strPattern.matcher(t);
-        varNameMatcher = varNamePattern.matcher(t);
+        intM = intP.matcher(t);
+        fpM = fpP.matcher(t);
+		boolM = boolP.matcher(t);
+		stringM = strP.matcher(t);
 
-        if (intMatcher.matches()) {
+        if (intM.matches()) {
             v = new IntVar(Integer.parseInt(t));
         }
-        else if (fpMatcher.matches()) {
+        else if (fpM.matches()) {
             v = new DoubleVar(Double.parseDouble(t));
         }
         else if (t.startsWith("-")) {
             t = t.replace("-", "");
 
-            varNameMatcher = varNamePattern.matcher(t);
-            if (varNameMatcher.matches()) {
-                v = this.getVar(t);
-                if (v != null) v = v.inverted();
-                else {
-                    throw new LotusException("varNotFound", t);
-                }
-            }
-            else {
-                throw new LotusException("unknownSymbol", t);
-            }
+            v = checkAndGetVar(t, true);
         }
         else if (t.startsWith("+")) {
             t = t.replace("+", "");
 
-            varNameMatcher = varNamePattern.matcher(t);
-            if (varNameMatcher.matches()) {
-                v = this.getVar(t);
-                if (v == null) {
-                    throw new LotusException("varNotFound", t);
-                }
-            }
-            else {
-                throw new LotusException("unknownSymbol", t);
-            }
+            v = checkAndGetVar(t, false);
         }
-		else if (boolMatcher.matches()) {
+		else if (boolM.matches()) {
 			if (t.equals("true")) {
 				v = new BoolVar(true);
 			}
@@ -511,26 +508,49 @@ class Interpreter {
 				v = new BoolVar(false);
 			}
 		}
-		else if (stringMatcher.matches()) {
+		else if (stringM.matches()) {
+			System.out.println("get t: " + t);
 			t = t.substring(t.indexOf("\"") + 1);
-			v = new StringVar(t.substring(0, t.indexOf("\"")));
-		}
-        else if (varNameMatcher.matches()) {
-            v = this.getVar(t);
-			if (v == null) {
-				throw new LotusException("varNotFound", t);
+
+			index = t.indexOf("\"");
+			while (t.indexOf("\"") > index) {
+				index = t.indexOf("\"");
 			}
-        }
-        else {
-            throw new LotusException("unknownSymbol", t);
-        }
+
+			v = new StringVar(t.substring(0, index));
+		}
+		else {
+			v = checkAndGetVar(t, false);
+		}
 
         return v;
     }
 
+	private Variable checkAndGetVar(String t, boolean neg) throws LotusException {
+		Variable v = null;
+		Matcher varNameM = varNameP.matcher(t);
+
+		if (varNameM.matches()) {
+			v = this.getVar(t);
+
+			if (v != null) {
+				if (neg) v = v.inverted();
+			}
+			else {
+				throw new LotusException("varNotFound", t);
+			}
+		}
+		else {
+			System.out.println("HERE 1");
+			throw new LotusException("invalidExp", t);
+		}
+
+		return v;
+	}
+
     private Variable calculate(Variable v1, Variable v2, String op) throws LotusException {
         Variable answ = null;
-        Matcher opMatcher = wholeOpPattern.matcher(op);
+        Matcher opM = wholeOpP.matcher(op);
 
         // If it doesn't have 2 operands and the
         // operation is a '-', simply return -v2.
@@ -544,7 +564,7 @@ class Interpreter {
 			else if (op.equals("!")) {
 				answ = new BoolVar(!v2.toBool());
 			}
-            else if (opMatcher.matches()) {
+            else if (opM.matches()) {
                 throw new LotusException("syntaxError", v1 + " " + op + " " + v2);
             }
         }
@@ -639,7 +659,7 @@ class Interpreter {
 		String text = "";
 		Variable v = null;
 		String lineEnding;
-		Matcher cutPrintMatcher;
+		Matcher cutPrintM;
 		boolean breakLine = false;
 
 		if (line.startsWith("println")) {
@@ -649,9 +669,8 @@ class Interpreter {
 		lineEnding = line.substring(line.lastIndexOf(")"));
 		line = line.replace(lineEnding, "");
 
-		cutPrintMatcher = cutPrintPattern.matcher(line);
-		line = cutPrintMatcher.replaceFirst("");
-		// line = line.replaceFirst(printRegex + "( )*\\(", "");
+		cutPrintM = cutPrintP.matcher(line);
+		line = cutPrintM.replaceFirst("");
 
 		content = line.split("");
 		for (i = 0; i < content.length; i++) {
@@ -705,14 +724,14 @@ class Interpreter {
 	private Variable whatVar(String content, int fromIndex) throws LotusException {
 		String name;
 		Variable var = null;
-		Matcher varNameMatcher;
+		Matcher varNameM;
 		int offset = content.indexOf("$", fromIndex + 1);
 
 		if (offset > fromIndex) {
 			name = content.substring(fromIndex + 1, offset);
 
-			varNameMatcher = varNamePattern.matcher(name);
-			if (varNameMatcher.matches()) {
+			varNameM = varNameP.matcher(name);
+			if (varNameM.matches()) {
 				var = this.getVar(name);
 				if (var == null) {
 					throw new LotusException("varNotFound", name);
@@ -735,42 +754,42 @@ class Interpreter {
 		Variable v, other;
 		String lineEnding, name;
 		Scanner sc = new Scanner(System.in);
-		Matcher cutScanMatcher, scanContentMatcher, varMatcher, intMatcher, fpMatcher, strMatcher;
+		Matcher cutScanM, scanContentM, varM, intM, fpM, strM;
 
 		lineEnding = line.substring(line.lastIndexOf(")"));
 		line = line.replace(lineEnding, "");
 
-		cutScanMatcher = cutScanPattern.matcher(line);
-		line = cutScanMatcher.replaceFirst("");
+		cutScanM = cutScanP.matcher(line);
+		line = cutScanM.replaceFirst("");
 		// line = line.replaceFirst("(scan)( )*\\(", "");
 
-		scanContentMatcher = scanContentPattern.matcher(line);
-		if (!scanContentMatcher.find()) {
+		scanContentM = scanContentP.matcher(line);
+		if (!scanContentM.find()) {
 			throw new LotusException("syntaxError", line);
 		}
 
 		max = 0;
-		varMatcher = varNamePattern.matcher(line);
-		while (varMatcher.find()) {
+		varM = varNameP.matcher(line);
+		while (varM.find()) {
 			max++; // counting how many matches (vars) I got inside scan
 		}
-		varMatcher = varMatcher.reset();
+		varM = varM.reset();
 
 		for (i = 0; i < max; i++) {
 			input = sc.nextLine().split(" ");
 
 			for (j = 0; j < input.length; j++) {
-				if (varMatcher.find()) {
-					name = varMatcher.group();
+				if (varM.find()) {
+					name = varM.group();
 
 					if ((v = this.getVar(name)) != null) {
-						intMatcher = intPattern.matcher(input[j]);
-						fpMatcher = fpPattern.matcher(input[j]);
+						intM = intP.matcher(input[j]);
+						fpM = fpP.matcher(input[j]);
 
-						if (intMatcher.matches()) {
+						if (intM.matches()) {
 							other = new IntVar(Integer.parseInt(input[j]));
 						}
-						else if (fpMatcher.matches()) {
+						else if (fpM.matches()) {
 							other = new DoubleVar(Double.parseDouble(input[j]));
 						}
 						else {
@@ -793,24 +812,24 @@ class Interpreter {
 		Variable v;
 		String lineEnding, name, input;
 		Scanner sc = new Scanner(System.in);
-		Matcher cutScanMatcher, scanContentMatcher, varMatcher, strMatcher;
+		Matcher cutScanM, scanContentM, varM, strM;
 
 		lineEnding = line.substring(line.lastIndexOf(")"));
 		line = line.replace(lineEnding, "");
 
-		cutScanMatcher = cutScanPattern.matcher(line);
-		line = cutScanMatcher.replaceFirst("");
+		cutScanM = cutScanP.matcher(line);
+		line = cutScanM.replaceFirst("");
 		// line = line.replaceFirst("(scanln)( )*\\(", "");
 
-		scanContentMatcher = scanContentPattern.matcher(line);
-		if (!scanContentMatcher.find()) {
+		scanContentM = scanContentP.matcher(line);
+		if (!scanContentM.find()) {
 			throw new LotusException("syntaxError", line);
 		}
 
-		varMatcher = varNamePattern.matcher(line);
-		while (varMatcher.find()) {
+		varM = varNameP.matcher(line);
+		while (varM.find()) {
 			input = sc.nextLine();
-			name = varMatcher.group();
+			name = varM.group();
 
 			if ((v = this.getVar(name)) != null) {
 				this.setVar(v, input);
@@ -851,83 +870,89 @@ class Interpreter {
         return Collections.unmodifiableMap(result);
     }
 
-	public static final String semicRegex = "( )*;";
+	public static final String semicR = "( )*;";
 
-	public static final String typeRegex = "int|double|string|bool";
-	public static final String varNameRegex = "(?<!\\d)\\w+";
-	public static final String wholeDeclRegex = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+" + semicRegex;
+	public static final String typeR = "int|double|string|bool";
+	public static final String varNameR = "[A-Za-z_][A-Za-z_0-9]*";
+	public static final String wholeDeclR = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+" + semicR;
 
-	public static final String parenRegex = "\\(|\\)";
-	public static final String boolOpRegex = "\\!|\\&\\&|\\|\\|";
-	public static final String compOpRegex = "\\<|\\<\\=|\\=\\=|\\>\\=|\\>|\\!\\=";
-	public static final String compOrBoolRegex = compOpRegex + "|" + boolOpRegex;
-	public static final String mathOpRegex = "\\-|\\+|\\/|\\%|\\*|\\^";
+	public static final String parenR = "\\(|\\)";
+	public static final String boolOpR = "\\!|\\&\\&|\\|\\|";
+	public static final String compOpR = "\\<|\\<\\=|\\=\\=|\\>\\=|\\>|\\!\\=";
+	public static final String compOrBoolR = compOpR + "|" + boolOpR;
+	public static final String mathOpR = "\\-|\\+|\\/|\\%|\\*|\\^";
 
-	public static final String wholeOpRegex = parenRegex + "|" + boolOpRegex + "|" + compOpRegex + "|" + mathOpRegex;
+	public static final String wholeOpR = parenR + "|" + boolOpR + "|" + compOpR + "|" + mathOpR;
+
+	public static final String atrR = varNameR + "( )*=( )*.+";
+	public static final String wholeAtrR = atrR + semicR;
+	public static final String stripAtrR = "( )*=( )*";
+
+	public static final String fnParentheses = "( )*\\(.*\\)" + semicR;
+	public static final String printR = "(print|println)";
+	public static final String wholePrintR = printR + fnParentheses;
+	public static final String wholeScanR = "(scan)" + fnParentheses;
+	public static final String wholeScanlnR = "(scanln)" + fnParentheses;
+	public static final String scanContentR = "(" + varNameR + ")(( )*,( )*(" + varNameR + "))*";
+
+	public static final String quotMarkR = "\\\"";
+	public static final String quotInStrR = "\\\\" + quotMarkR;
+	public static final String strBackR = quotMarkR + semicR;
 
 	// strings with any character enclosed with "". Supports escaped " too.
-	public static final String strRegex = "\\\"(?:\\\\.|[^\\\"\\\\])*\\\"";
+	public static final String strR = quotMarkR + "(?:\\\\.|[^" + quotMarkR + "\\\\])*" + quotMarkR;
+	// "(?:\\.|[^"\\])*"
+	// matches 0 or more of the following, enclosed with "
+	// matches a \ followed by any character, or...
+	// doesn't match a " or a \
 
-	public static final String atrRegex = varNameRegex + "( )*=( )*.+";
-	public static final String wholeAtrRegex = atrRegex + semicRegex;
-	public static final String stripAtrRegex = "( )*=( )*";
+	public static final String signR = "[+-]";
+	public static final String intR = signR + "?[0-9]+";
+	public static final String boolR = "(true|false)";
 
-	public static final String fnParentheses = "( )*\\(.*\\)" + semicRegex;
-	public static final String printRegex = "(print|println)";
-	public static final String wholePrintRegex = printRegex + fnParentheses;
-	public static final String wholeScanRegex = "(scan)" + fnParentheses;
-	public static final String wholeScanlnRegex = "(scanln)" + fnParentheses;
-	public static final String scanContentRegex = "(" + varNameRegex + ")(( )*,( )*(" + varNameRegex + "))*";
+	public static final String ufpR = "(\\d+(\\.\\d*)?|(\\d*\\.)?\\d+)";
+	public static final String fpR = "(" + signR + "( )*)?" + ufpR;
+	public static final String invalidFpR = "([+-]( )*)?(\\d+( )+\\.(( )*\\d)*|(\\d( )*)*\\.( )+\\d+)";
 
-	public static final String quotMarkRegex = "\\\"";
-	public static final String strBackRegex = quotMarkRegex + semicRegex;
-
-	public static final String signRegex = "[+-]";
-	public static final String intRegex = signRegex + "?[0-9]+";
-	public static final String boolRegex = "(true|false)";
-
-	public static final String fpRegex = signRegex + "?( )*(\\d*\\.)?\\d+";
-	public static final String ufpRegex = "\\d+(\\.\\d*)?|(\\d*\\.)?\\d+";
-
-	public static final String wholeMathExpRegex = "(" + varNameRegex + "|" + fpRegex + ")( )*(" + wholeOpRegex + ")( )*(" + varNameRegex + "|" + fpRegex + ")" + semicRegex;
+	// public static final String wholeExpR = "(" + varNameR + "|" + fpR + "|" + strR + "|" + boolR + "|" + wholeOpR + ")";
 
 	private static void initPatterns() {
-		varNamePattern = Pattern.compile(varNameRegex);
-		typePattern = Pattern.compile(typeRegex);
-		atrPattern = Pattern.compile(atrRegex);
+		varNameP = Pattern.compile(varNameR);
+		typeP = Pattern.compile(typeR);
+		atrP = Pattern.compile(atrR);
 
-		wholeOpPattern = Pattern.compile(wholeOpRegex);
-		signPattern = Pattern.compile(signRegex);
-		intPattern = Pattern.compile(intRegex);
-		fpPattern = Pattern.compile(fpRegex);
-		ufpPattern = Pattern.compile(ufpRegex);
-		boolPattern = Pattern.compile(boolRegex);
-		charPattern = Pattern.compile("\\w");
-		strPattern = Pattern.compile(strRegex);
-		quotMarkPattern = Pattern.compile(quotMarkRegex);
-		strBackPattern = Pattern.compile(strBackRegex);
-		strNotEmptyPattern = Pattern.compile("\\S");
-		opGroupPattern = Pattern.compile(signRegex + "(( )*" + signRegex + ")+");
-		// "((" + signRegex + "+)(( )*(" + signRegex + "+))*)+"
+		wholeOpP = Pattern.compile(wholeOpR);
+		signP = Pattern.compile(signR);
+		intP = Pattern.compile(intR);
+		ufpP = Pattern.compile(ufpR);
+		fpP = Pattern.compile(fpR);
+		invalidFpP = Pattern.compile(invalidFpR);
+		boolP = Pattern.compile(boolR);
+		charP = Pattern.compile("\\w");
+		strP = Pattern.compile(strR);
+		quotMarkP = Pattern.compile(quotMarkR);
+		quotInStrP = Pattern.compile(quotInStrR);
+		strBackP = Pattern.compile(strBackR);
+		strNotEmptyP = Pattern.compile("\\S");
+		opGroupP = Pattern.compile(signR + "(( )*" + signR + ")+");
+		// "((" + signR + "+)(( )*(" + signR + "+))*)+"
 
-		wholeMathExpPattern = Pattern.compile(wholeMathExpRegex);
+		strAssignP = Pattern.compile(strR + semicR);
+		upperCaseP = Pattern.compile("[A-Z]+");
 
-		strAssignPattern = Pattern.compile(strRegex + semicRegex);
-		upperCasePattern = Pattern.compile("[A-Z]+");
+		wholeDeclP = Pattern.compile(wholeDeclR);
+		wholeAtrP = Pattern.compile(wholeAtrR);
 
-		wholeDeclPattern = Pattern.compile(wholeDeclRegex);
-		wholeAtrPattern = Pattern.compile(wholeAtrRegex);
+		semicP = Pattern.compile(semicR);
+		wholePrintP = Pattern.compile(wholePrintR);
+		wholeScanP = Pattern.compile(wholeScanR);
+		wholeScanlnP = Pattern.compile(wholeScanlnR);
+		cutPrintP = Pattern.compile(printR + "( )*\\(");
+		cutScanP = Pattern.compile("(scan|scanln)( )*\\(");
+		scanContentP = Pattern.compile(scanContentR);
 
-		semicPattern = Pattern.compile(semicRegex);
-		wholePrintPattern = Pattern.compile(wholePrintRegex);
-		wholeScanPattern = Pattern.compile(wholeScanRegex);
-		wholeScanlnPattern = Pattern.compile(wholeScanlnRegex);
-		cutPrintPattern = Pattern.compile(printRegex + "( )*\\(");
-		cutScanPattern = Pattern.compile("(scan|scanln)( )*\\(");
-		scanContentPattern = Pattern.compile(scanContentRegex);
-
-		parenPattern = Pattern.compile("[()]");
-		numBuildPattern = Pattern.compile("\\w|\\.");
+		parenP = Pattern.compile("[()]");
+		numBuildP = Pattern.compile("(\\w|\\.)+");
 
 		patternsInitd = true;
 	}
