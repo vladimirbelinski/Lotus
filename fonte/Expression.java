@@ -8,11 +8,11 @@ class Expression {
 
 	public Expression(String value) throws LotusException {
         this.value = value;
-		System.out.println("Expression 1: " + this.value);
+		// System.out.println("Expression 1: " + this.value);
 		this.fixSpaces();
-		System.out.println("Expression 2: " + this.value);
+		// System.out.println("Expression 2: " + this.value);
 		this.fixSignals();
-		System.out.println("Expression 3: " + this.value);
+		// System.out.println("Expression 3: " + this.value);
     }
 
 	public String toString() {
@@ -24,10 +24,10 @@ class Expression {
 		String[] output;
 		String aux = this.value, tmp = "", fixed = "";
 		TreeMap<Integer, String> tokens = new TreeMap<Integer, String>();
-		Matcher notEmptyM, opGroupM, wholeOpM, ufpM, strM, varNameM, invalidFp;
+		Matcher notEmptyM, opGroupM, wholeOpM, ufpM, strM, varNameM, invalidFpM;
 
-		invalidFp = Interpreter.invalidFpP.matcher(aux);
-		if (invalidFp.find()) {
+		invalidFpM = Interpreter.invalidFpP.matcher(aux);
+		if (invalidFpM.find()) {
 			throw new LotusException("invalidExp", aux);
 		}
 
@@ -73,7 +73,6 @@ class Expression {
 				aux = varNameM.replaceFirst(this.replacement(tmp));
 			}
 			else {
-				System.out.println("HERE 2");
 				throw new LotusException("invalidExp", this.value);
 			}
 

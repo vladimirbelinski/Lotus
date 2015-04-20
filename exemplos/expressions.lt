@@ -1,48 +1,48 @@
 let x: double;
 
-x = -3 * -3;
-x = -  300+     200;
-x = -3-4;
-x = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3;
-x = 3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3 ;
-x = 10^-2;
-x = 10^(-2);
-x = (+3-+4);
-x = (-3+-4);
-x = 3--4;
+x = -3 * -3; -- 9
+x = -  300+     200; -- -100
+x = -3-4; -- -7
+x = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3; -- -3 pra int
+x = 3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3 ; -- 3 pra int
+x = 10^-2; -- 0 pra int
+x = 10^(-2); -- 0 pra int
+x = (+3-+4); -- -1
+x = (-3+-4); -- -7
+x = 3--4; -- 7
 x = -1+5 - 5 + 4 *-2; -- -9
-x = 3 ^ -2;
-x = + 2 ^ - 4 + -0 / + 5; -- 0.0625
-x = - 3 ^ - 3 + - 1;
-x = -(3 + 2);
+x = 3 ^ -2; -- 0 pra int
+x = + 2 ^ - 4 + -0 / + 5; -- 0.0625, 0 pra int
+x = - 3 ^ - 3 + - 1; -- -1 pra int
+x = -(3 + 2); -- -5
 x = - 5 * - 2+ -(3 + 2); -- 5
 x = -10 + -(-3 + - 2); -- -5
-x = -       (   3 +2  );
-x = -.5 * 2;
-x = -1. * 2;
-x = -   1 . *2;
-x = -.   5*2;
+x = -       (   3 +2  ); -- -5
+x = -.5 * 2; -- -1.0
+x = -1.* 2; -- -2.0
+x = -   1.*2; -- -2.0
 x = (9*(3+2)); -- 45
 x = (9*((5-(7-3))*(2+1))); -- 27
 x = (2^2)^3; -- 64
 x=2^2^3; -- 256
-x=-(2^2);
-x=-(2)^2;
-x=-2^2;
-x=3 .1  4/ 2     .; -- 1.57
-x=1 00/ 2   0;
-x = + + + + + 5;
-x = + - + - + - 5;
-x = - - 5;
-x = - - + 5;
-x = + - - + - - 5;
-x = - - + - 5;
-x = - - 5 + - + 4;
-x = + + + + - 5 - - - - 4;
+x=-(2^2); -- -4
+x=-(2)^2; -- -4
+x = (-2)^2; -- 4
+x=-2^2; -- -4
+x=3.14/ 2.; -- 1.57
+x=100/ 20; -- 5
+x = + + + + + 5; -- 5
+x = + - + - + - 5; -- -5
+x = - - 5; -- 5
+x = - - + 5; -- 5
+x = + - - + - - 5; -- 5
+x = - - + - 5; -- -5
+x = - - 5 + - + 4; -- 1
+x = + + + + - 5 - - - - 4; -- -1
 x = - - x + - 1; -- -2
-x = - - - -  5; --oi
-x = -       5;
-x = - - - - - 5; -- oi fj e8f u3284 r2389 r2\ --
+x = - - - -  5; -- 5
+x = -       5; -- -5
+x = - - - - - 5; -- -5
 x = - ( 2-0) * (- 5 - - 2) / 1 + + + - 7; -- -1
 x = + 2;
 
@@ -52,65 +52,65 @@ let d: double;
 let s: string;
 
 b = 1 < 5;
-println(1 < 5?: $b$);
 
 b = (x < 5 || (2^2 >= 4)) && (25 == 5 * 5); -- true
-println(exp: $b$);
 
-i = 1 + true;
-println(i: $i$);
+i = 1 + true; -- true
 
-d = 2.5 + true;
-println(d: $d$);
+d = 2.5 + true; -- true
 
-b = i == d;
-println(i == d: $b$);
+b = i == d; -- 1 == 1.0? true, pq converteu pra bool
 
-b = 1 + 2 + 3 > false;
-println(1 + 2 + 3 > false: $b$);
+b = 1 + 2 + 3 > false; -- true
 
 i = 1;
-b = i || false;
-println(i || false: $b$);
+b = i || false; -- true
 
 d = 1.0;
 
 b = d;
-println(b = d: $b$);
 
 b = d || false;
-println(d || false: $b$);
 
 s = "true";
 b = s || false;
-println(s || false: $b$);
 
---b = "true" || false;
---println("true" || false: $b$);
+b = "true" || false;
 
---d = "7.11" + 1.5;
---println("7.11" + 1.5: $d$);
+s = "7.11" + 1.5;
 
 b = !false;
-println(!false: $b$);
 
 b = !true;
-println(!true: $b$);
 
 b = 1 > -2;
-println(1 > -2: $b$);
 
 b = true;
 b = !b;
-println($b$);
 
 let s: string;
-s = "Gabriel";
+s = " Gabriel ";
 println({$s$});
-
---b = s == "Gabriel";
 
 b = "Gabriel" < "Ana";
 
 let x: int;
 x = +- 5;
+
+b = s == " Gabriel ";
+
+s = "oi\"";
+println(s: $s$);
+
+b = "Gabriel" + " Galli" < "Vladimir " + "Belinski";
+
+b = " false " || false;
+b = !1 && true;
+
+s = "Ana Carolina" / "a";
+s = "Ana Carolina" % "a";
+s = "Ana Carolina" * "a";
+
+s = "\"oi\"";
+s = s / "\"";
+println($s$);

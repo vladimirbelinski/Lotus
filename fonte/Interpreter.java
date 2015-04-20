@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -357,8 +357,6 @@ class Interpreter {
 		// if it's a string (enclosed with "");
 		strAssignM = strAssignP.matcher(atr[1]);
 
-		System.out.println("atr[1]: " + atr[1]);
-
         if (strAssignM.matches()) {
 			// removing first "
 			quotMarkM = quotMarkP.matcher(atr[1]);
@@ -368,10 +366,9 @@ class Interpreter {
 			strBackM = strBackP.matcher(atr[1]);
 			atr[1] = strBackM.replaceFirst("");
 
-			quotInStrM = Interpreter.quotInStrP.matcher(atr[1]);
+			// replacing all \" for an actual "
+			quotInStrM = quotInStrP.matcher(atr[1]);
 	        atr[1] = quotInStrM.replaceAll("\"");
-
-			System.out.println("str atr[1]: "+ atr[1]);
 
 			this.setVar(this.getVar(atr[0]), atr[1]);
         }
@@ -379,11 +376,6 @@ class Interpreter {
 			semicM = semicP.matcher(atr[1]);
 			atr[1] = semicM.replaceFirst("");
             v = this.getVar(atr[0]);
-
-			System.out.println("else atr[1]: " + atr[1]);
-
-			quotInStrM = Interpreter.quotInStrP.matcher(atr[1]);
-	        atr[1] = quotInStrM.replaceAll("\"");
 
 			this.setVar(v, this.solve(new Expression(atr[1])));
         }
@@ -403,12 +395,6 @@ class Interpreter {
         }
 
 		while (t.length > 1) {
-
-			// System.out.println("-------------");
-			// for (String s: t) {
-			// 	System.out.println(s);
-			// }
-			// System.out.println("-------------");
 
 			wholeOpM = wholeOpP.matcher(t[i]);
 			// advance until you don't find an operation to perform
@@ -463,8 +449,6 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
-			System.out.println("answ = " + num1 + "[" + op + "]" + num2);
-
 			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
 		}
@@ -475,14 +459,16 @@ class Interpreter {
 	}
 
     private Variable getOperand(String t) throws LotusException {
-        Matcher intM, fpM, boolM, stringM;
+        Matcher intM, fpM, boolM, strM, quotInStrM, intStrM, varNameM;
         Variable v = null;
 		int index;
 
         intM = intP.matcher(t);
         fpM = fpP.matcher(t);
 		boolM = boolP.matcher(t);
-		stringM = strP.matcher(t);
+		strM = strP.matcher(t);
+		intStrM = intStrP.matcher(t);
+		varNameM = varNameP.matcher(t);
 
         if (intM.matches()) {
             v = new IntVar(Integer.parseInt(t));
@@ -508,19 +494,32 @@ class Interpreter {
 				v = new BoolVar(false);
 			}
 		}
-		else if (stringM.matches()) {
-			System.out.println("get t: " + t);
+		else if (strM.matches()) {
 			t = t.substring(t.indexOf("\"") + 1);
 
+			// needs to the the index of the last quotation mark
 			index = t.indexOf("\"");
-			while (t.indexOf("\"") > index) {
-				index = t.indexOf("\"");
+			while (t.indexOf("\"", index + 1) > index) {
+				index = t.indexOf("\"", index + 1);
 			}
 
-			v = new StringVar(t.substring(0, index));
+			t = t.substring(0, index);
+			// replacing all \" for an actual "
+			quotInStrM = quotInStrP.matcher(t);
+			t = quotInStrM.replaceAll("\"");
+
+			v = new StringVar(t);
+		}
+		else if (intStrM.matches()) {
+			if (varNameM.matches()) {
+				v = this.getVar(t);
+			}
+			else {
+				v = new StringVar(t);
+			}
 		}
 		else {
-			v = checkAndGetVar(t, false);
+			throw new LotusException("invalidExp", t);
 		}
 
         return v;
@@ -541,7 +540,6 @@ class Interpreter {
 			}
 		}
 		else {
-			System.out.println("HERE 1");
 			throw new LotusException("invalidExp", t);
 		}
 
@@ -929,6 +927,7 @@ class Interpreter {
 		invalidFpP = Pattern.compile(invalidFpR);
 		boolP = Pattern.compile(boolR);
 		charP = Pattern.compile("\\w");
+		intStrP = Pattern.compile(".+");
 		strP = Pattern.compile(strR);
 		quotMarkP = Pattern.compile(quotMarkR);
 		quotInStrP = Pattern.compile(quotInStrR);

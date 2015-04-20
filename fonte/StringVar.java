@@ -12,17 +12,17 @@ class StringVar extends Variable<String> {
 
         if (boolM.matches()) {
             if (this.value.equals("true")) {
-                return new StringVar("\"" + "false" + "\"");
+                return new StringVar("false");
             }
             else {
-                return new StringVar("\"" + "true" + "\"");
+                return new StringVar("true");
             }
         }
         else if (upperCaseM.matches()) {
-            return new StringVar("\"" + this.value.toLowerCase() + "\"");
+            return new StringVar(this.value.toLowerCase());
         }
         else {
-            return new StringVar("\"" + this.value.toUpperCase() + "\"");
+            return new StringVar(this.value.toUpperCase());
         }
     }
 
@@ -37,11 +37,11 @@ class StringVar extends Variable<String> {
     }
 
     public Boolean toBool() {
-        if (this.value.isEmpty() || this.value.equals("false")) {
-            return new Boolean(false);
+        if (!this.value.isEmpty() && this.value.equalsIgnoreCase("true")) {
+            return new Boolean(true);
         }
         else {
-            return new Boolean(true);
+            return new Boolean(false);
         }
     }
 
@@ -57,27 +57,28 @@ class StringVar extends Variable<String> {
 
     // appending
     public Variable plus(Variable other) {
-        return new StringVar("\"" + this.value + other.toString() + "\"");
+        return new StringVar(this.value + other.toString());
     }
 
     // replaces first occurrence
     public Variable minus(Variable other) {
-        return new StringVar("\"" + this.value.replaceFirst(other.toString(), "") + "\"");
+        return new StringVar(this.value.replaceFirst(other.toString(), ""));
     }
 
     // adds other.toString() between every char
     public Variable times(Variable other) {
-        return new StringVar("\"" + this.value.replaceAll("", other.toString()) + "\"");
+        return new StringVar(this.value.replaceAll("", other.toString()));
     }
 
     // removes all other.toString() occurrences from this.toString()
     public Variable divided(Variable other) throws LotusException {
-        return new StringVar("\"" + this.value.replaceAll(other.toString(), "") + "\"");
+        System.out.println(this + " / " + other);
+        return new StringVar(this.value.replaceAll(other.toString(), ""));
     }
 
     // removes all this.toString() occurrences from other.toString()
     public Variable mod(Variable other) throws LotusException {
-        return new StringVar("\"" + other.toString().replaceAll(this.toString(), "") + "\"");
+        return new StringVar(other.toString().replaceAll(this.toString(), ""));
     }
 
     // cannot do a pow
