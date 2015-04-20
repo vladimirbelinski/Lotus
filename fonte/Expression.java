@@ -1,86 +1,142 @@
-import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
 class Expression {
-    public String value;
+	public String value;
+	public static final Character SEP = 96; // 31, 96 to test
     private static final Map<String, Integer> precedence = mapPrecedence();
 
-    public Expression(String value) throws LotusException {
-        Matcher stringMatcher = Interpreter.strPattern.matcher(value);
-
-        if (stringMatcher.find()) {
-            throw new LotusException("invalidExp", value);
-        }
-        else {
-            this.value = value.replaceAll("", " ").replaceAll("( )+", " ").trim();
-            this.fixSignals();
-            this.fixOperands();
-            this.fixSpaces();
-        }
+	public Expression(String value) throws LotusException {
+        this.value = value;
+		System.out.println("Expression 1: " + this.value);
+		this.fixSpaces();
+		System.out.println("Expression 2: " + this.value);
+		this.fixSignals();
+		System.out.println("Expression 3: " + this.value);
     }
 
-    public String toString() {
+	public String toString() {
         return this.value;
     }
 
-    private void fixSignals() {
+	private void fixSpaces() throws LotusException {
+		int index = 0;
+		String[] output;
+		String aux = this.value, tmp = "", fixed = "";
+		TreeMap<Integer, String> tokens = new TreeMap<Integer, String>();
+		Matcher notEmptyM, opGroupM, wholeOpM, ufpM, strM, varNameM, invalidFp;
+
+		invalidFp = Interpreter.invalidFpP.matcher(aux);
+		if (invalidFp.find()) {
+			throw new LotusException("invalidExp", aux);
+		}
+
+		ufpM = Interpreter.ufpP.matcher(aux);
+		strM = Interpreter.strP.matcher(aux);
+		opGroupM = Interpreter.opGroupP.matcher(aux);
+		wholeOpM = Interpreter.wholeOpP.matcher(aux);
+		varNameM = Interpreter.varNameP.matcher(aux);
+		notEmptyM = Interpreter.strNotEmptyP.matcher(aux);
+
+		while (notEmptyM.find()) {
+
+			if (opGroupM.find()) {
+				tmp = opGroupM.group();
+				aux = opGroupM.replaceFirst(this.fixRepSign(tmp));
+			}
+			else if (wholeOpM.find()) {
+				tmp = wholeOpM.group();
+				index = wholeOpM.start();
+
+				tokens.put(index, tmp);
+				aux = wholeOpM.replaceFirst(this.replacement(tmp));
+			}
+			else if (strM.find()) {
+				tmp = strM.group();
+				index = strM.start();
+
+				tokens.put(index, tmp);
+				aux = strM.replaceFirst(this.replacement(tmp));
+			}
+			else if (ufpM.find()) {
+				tmp = ufpM.group();
+				index = ufpM.start();
+
+				tokens.put(index, tmp);
+				aux = ufpM.replaceFirst(this.replacement(tmp));
+			}
+			else if (varNameM.find()) {
+				tmp = varNameM.group();
+				index = varNameM.start();
+
+				tokens.put(index, tmp);
+				aux = varNameM.replaceFirst(this.replacement(tmp));
+			}
+			else {
+				System.out.println("HERE 2");
+				throw new LotusException("invalidExp", this.value);
+			}
+
+			ufpM = Interpreter.ufpP.matcher(aux);
+			strM = Interpreter.strP.matcher(aux);
+			opGroupM = Interpreter.opGroupP.matcher(aux);
+			wholeOpM = Interpreter.wholeOpP.matcher(aux);
+			varNameM = Interpreter.varNameP.matcher(aux);
+			notEmptyM = Interpreter.strNotEmptyP.matcher(aux);
+		}
+
+		output = new String[tokens.size()];
+		tokens.values().toArray(output);
+
+		for (String s: output) {
+			fixed += s + SEP;
+		}
+
+		this.value = fixed;
+	}
+
+	private String replacement(String token) {
+		int i, max = token.length();
+		String repl = "";
+
+		for (i = 0; i < max; i++) {
+			repl += " ";
+		}
+
+		return repl;
+	}
+
+	private String fixRepSign(String value) {
         String aux;
         do {
-            aux = this.value.replaceAll("\\+( )+\\-|\\-( )+\\+", "-").replaceAll("\\-( )+\\-", "+").replaceAll("\\+( )+\\+", "+");
+            aux = value.replaceAll("\\+( )*\\-|\\-( )*\\+", "-").replaceAll("\\-( )*\\-", "+").replaceAll("\\+( )*\\+", "+");
 
-            if (!this.value.equals(aux)) {
-                this.value = aux;
+            if (!value.equals(aux)) {
+                value = aux;
                 aux = "";
             }
         } while (aux.isEmpty());
+
+		return value;
     }
 
-    private void fixOperands() {
-        this.value = this.value.replaceAll("\\| \\|", "\\|\\|");
-        this.value = this.value.replaceAll("\\& \\&", "\\&\\&");
-
-        this.value = this.value.replaceAll("\\< \\=", "\\<\\=");
-        this.value = this.value.replaceAll("\\= \\=", "\\=\\=");
-        this.value = this.value.replaceAll("\\> \\=", "\\>\\=");
-        this.value = this.value.replaceAll("\\! \\=", "\\!\\=");
-    }
-
-    private void fixSpaces() {
+	private void fixSignals() {
         int i, max;
         boolean next;
         String t = new String("");
-        Matcher wholeOpMatcher, numBuildMatcher;
-        String[] tokens = this.value.split(" ");
+        Matcher wholeOpM, numBuildM;
         ArrayList<String> ts = new ArrayList<String>();
+        String[] tokens = this.value.split(SEP.toString());
 
         for (i = 0; i < tokens.length; i++) {
-            wholeOpMatcher = Interpreter.wholeOpPattern.matcher(tokens[i]);
+            wholeOpM = Interpreter.wholeOpP.matcher(tokens[i]);
 
             if (isSignal(tokens, i)) {
-                t = tokens[i];
-            }
-            // if it's not a signal, it's an operation.
-            // So we just add it to the ouput
-            else if (wholeOpMatcher.matches()) {
-                ts.add(tokens[i]);
+				ts.add(tokens[i] + tokens[i + 1]);
+				i++;
             }
             else {
-                // building a number/variable...
-                numBuildMatcher = Interpreter.numBuildPattern.matcher(tokens[i]);
-                while (i < tokens.length && numBuildMatcher.matches()) {
-                    t += tokens[i];
-                    i++;
-
-                    if (i < tokens.length) {
-                        numBuildMatcher = Interpreter.numBuildPattern.matcher(tokens[i]);
-                    }
-                }
-                if (!t.isEmpty()) {
-                    ts.add(t);
-                    t = "";
-                    i--;
-                }
+                ts.add(tokens[i]);
             }
         }
 
@@ -89,15 +145,15 @@ class Expression {
         max = ts.size();
         for (i = 0; i < max; i++) {
             t += ts.get(i);
-            if (i < max - 1) t += " ";
+            if (i < max - 1) t += SEP;
         }
 
         this.value = t;
     }
 
-    private static boolean isSignal(String[] tokens, int i) {
+	private static boolean isSignal(String[] tokens, int i) {
         boolean result = false;
-        Matcher numBuildMatcher, signMatcher, opBeforeMatcher;
+        Matcher numBuildM, signM, opBeforeM;
 
         // (if the current token is + or -) && (the next token is a
         // number) && (either we are looking at the first token ||
@@ -105,13 +161,18 @@ class Expression {
         // we are looking at a token that comes right after another
         // token that is not a + or -)...
         // then, it's a signal, not an operation :)
-        signMatcher = Interpreter.signPattern.matcher(tokens[i]);
-        if (signMatcher.matches() && i + 1 < tokens.length) {
-            numBuildMatcher = Interpreter.numBuildPattern.matcher(tokens[i + 1]);
+        signM = Interpreter.signP.matcher(tokens[i]);
+        if (signM.matches() && i + 1 < tokens.length) {
+            numBuildM = Interpreter.ufpP.matcher(tokens[i + 1]);
 
-            if (numBuildMatcher.matches()) {
+            if (numBuildM.matches()) {
                 if (i == 0) {
-                    result = true;
+					if (i + 2 < tokens.length && tokens[i + 2].equals("^")) {
+						result = false;
+					}
+					else {
+						result = true;
+					}
                 }
                 else if (i - 1 >= 0) {
                     // as we treated all the cases with duplicated +/- signs,
@@ -119,9 +180,9 @@ class Expression {
                     // is obviously not a + or - and thus this operator is indeed
                     // a number sign. Because if it was a normal operator, the
                     // previous token would be a number.
-                    opBeforeMatcher = Interpreter.wholeOpPattern.matcher(tokens[i - 1]);
+                    opBeforeM = Interpreter.wholeOpP.matcher(tokens[i - 1]);
 
-                    if (opBeforeMatcher.matches()) {
+                    if (opBeforeM.matches()) {
                         result = true;
                     }
                 }
@@ -135,12 +196,12 @@ class Expression {
 	public String toPostfix() throws LotusException {
         int i, pt, ps;
         String rpn = new String("");
-        Matcher wholeOpMatcher, parenMatcher;
-        String[] tokens = this.value.split(" ");
+        Matcher wholeOpM, parenM;
+        String[] tokens = this.value.split(SEP.toString());
         Stack<String> op = new Stack<String>();
 
         for (String t: tokens) {
-            wholeOpMatcher = Interpreter.wholeOpPattern.matcher(t);
+            wholeOpM = Interpreter.wholeOpP.matcher(t);
 
             if (t.equals("(")) {
                 op.push(t);
@@ -148,19 +209,19 @@ class Expression {
             else if (t.equals(")")) {
                 // pop everything until you find the '('
                 while (!op.peek().equals("(")) {
-                    rpn += op.pop() + " ";
+                    rpn += op.pop() + SEP;
                 }
 
                 op.pop(); // discard the "("
             }
-            else if (wholeOpMatcher.matches()) {
+            else if (wholeOpM.matches()) {
                 while (!op.isEmpty()) {
 
 					pt = precedence.get(t);
                     ps = precedence.get(op.peek());
 
                     if ((!t.equals("^") && pt <= ps) || (t.equals("^") && pt < ps)) {
-                        rpn += op.pop() + " ";
+                        rpn += op.pop() + SEP;
                     }
                     else break;
                 }
@@ -168,18 +229,18 @@ class Expression {
                 op.push(t);
             }
             else {
-                rpn += t + " ";
+                rpn += t + SEP;
             }
         }
 
         while (!op.isEmpty()) {
-            parenMatcher = Interpreter.parenPattern.matcher(op.peek());
+            parenM = Interpreter.parenP.matcher(op.peek());
 
-            if (parenMatcher.matches()) {
+            if (parenM.matches()) {
                 throw new LotusException("missingParen", this.value);
             }
 
-            rpn += op.pop() + " ";
+            rpn += op.pop() + SEP;
         }
 
         return rpn;
