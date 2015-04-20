@@ -25,18 +25,6 @@ class DoubleVar extends Variable<Double> {
         }
     }
 
-    public BoolVar toBoolVar() {
-        return new BoolVar(this.toBool());
-    }
-
-    public IntVar toIntVar() {
-        return new IntVar(this.toInt());
-    }
-
-    public StringVar toStringVar() {
-        return new StringVar(this.toString());
-    }
-
     public Variable plus(Variable other) {
         if (other instanceof DoubleVar) {
             return new DoubleVar(this.value + other.toDouble());
@@ -108,7 +96,7 @@ class DoubleVar extends Variable<Double> {
                 return new DoubleVar(0.0);
             }
             else {
-                throw new LotusException("divisionByZero", this + " / " + other);
+                throw new LotusException("divisionByZero", this + " % " + other);
             }
         }
         else if (other instanceof IntVar) {
@@ -116,7 +104,7 @@ class DoubleVar extends Variable<Double> {
                 return new DoubleVar(this.value % other.toInt());
             }
             else {
-                throw new LotusException("divisionByZero", this + " / " + other);
+                throw new LotusException("divisionByZero", this + " % " + other);
             }
         }
         else if (other instanceof BoolVar) {

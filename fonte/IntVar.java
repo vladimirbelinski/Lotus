@@ -33,7 +33,7 @@ class IntVar extends Variable<Integer> {
             return this.toDoubleVar().plus(other);
         }
         else if (other instanceof BoolVar) {
-            return this.toBoolVar().or(other);
+            return this.toBoolVar().plus(other);
         }
         else {
             return this.toStringVar().plus(other);
@@ -96,7 +96,7 @@ class IntVar extends Variable<Integer> {
                 return new IntVar(this.value % other.toInt());
             }
             else {
-                throw new LotusException("divisionByZero", this.toString() + " / " + other.toString());
+                throw new LotusException("divisionByZero", this.toString() + " % " + other.toString());
             }
         }
         else if (other instanceof DoubleVar) {

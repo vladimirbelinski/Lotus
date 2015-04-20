@@ -74,7 +74,7 @@ class BoolVar extends Variable<Boolean> {
 
     // <, <=, >= and > converts to int and then do the normal comparison
     public Variable lessThan(Variable other) {
-        return new BoolVar(this.toInt() < other.toInt());
+        return this.toIntVar().lessThan(other.toIntVar());
     }
 
     public Variable lessEquals(Variable other) {
@@ -82,7 +82,7 @@ class BoolVar extends Variable<Boolean> {
     }
 
     public Variable greaterThan(Variable other) {
-        return new BoolVar(this.toInt() > other.toInt());
+        return this.toIntVar().greaterThan(other.toIntVar());
     }
 
     public Variable greaterEquals(Variable other) {

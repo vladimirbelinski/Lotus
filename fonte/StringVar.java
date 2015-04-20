@@ -11,7 +11,7 @@ class StringVar extends Variable<String> {
         Matcher upperCaseM = Interpreter.upperCaseP.matcher(this.value);
 
         if (boolM.matches()) {
-            if (this.value.equals("true")) {
+            if (this.value.equalsIgnoreCase("true")) {
                 return new StringVar("false");
             }
             else {
@@ -84,15 +84,6 @@ class StringVar extends Variable<String> {
     // cannot do a pow
     public Variable pow(Variable other) throws LotusException {
         throw new LotusException("stringPow", this.toString());
-    }
-
-    // && and || convert the String to Boolean and then check
-    public Variable and(Variable other) {
-        return new BoolVar(this.toBool() && other.toBool());
-    }
-
-    public Variable or(Variable other) {
-        return new BoolVar(this.toBool() || other.toBool());
     }
 
     public Variable equals(Variable other) {
