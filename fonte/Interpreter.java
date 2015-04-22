@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP, ifP, commP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP, ifP, elsifP, elseP, commP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -176,11 +176,12 @@ class Interpreter {
 	/* ---------------------------------------------------------------------- */
 
 	public void execute(ArrayList<String> code) throws LotusException {
-		Matcher commM, wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, ifM;
+		Matcher commM, wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, ifM, elsifM, elseM;
 		int i, j, max, semicolon, bracket, clBracket;
+		ArrayList<ArrayList<String>> ifChain;
+		boolean endOfChain, endOfBlock;
 		ArrayList<String> codeBlock;
 		String line, lineEnding;
-		boolean endOfBlock;
 
 		max = code.size();
 		for (i = 0; i < max; i++) {
@@ -224,42 +225,73 @@ class Interpreter {
 					this.scanln(line);
 				}
 				else if (ifM.matches()) {
-					endOfBlock = false;
+					ifChain = new ArrayList<ArrayList<String>>();
+					endOfChain = false;
 
-					codeBlock = new ArrayList<String>();
-					codeBlock.add(line);
-					j = i + 1;
+					while (!endOfChain) {
+						endOfBlock = false;
 
-					while (j < max && !endOfBlock) {
-						line = code.get(j);
-						clBracket = line.lastIndexOf("}");
+						codeBlock = new ArrayList<String>();
+						codeBlock.add(line);
+						j = i + 1;
 
-						if (clBracket >= 0) {
-							lineEnding = line.substring(clBracket + 1);
-							commM = commP.matcher(lineEnding);
-							if (lineEnding.isEmpty() || commM.matches()) {
-								endOfBlock = true;
+						while (j < max && !endOfBlock) {
+							line = code.get(j);
+							clBracket = line.lastIndexOf("}");
+
+							if (clBracket >= 0) {
+								lineEnding = line.substring(clBracket + 1);
+								commM = commP.matcher(lineEnding);
+								if (lineEnding.isEmpty() || commM.matches()) {
+									endOfBlock = true;
+								}
+							}
+
+							if (!endOfBlock) {
+								codeBlock.add(line);
+								j++;
 							}
 						}
 
-						if (!endOfBlock) {
-							codeBlock.add(line);
-							j++;
+						if (endOfBlock) {
+							System.out.println("****    IF BLOCK:   ****");
+							for (int p = 0; p < codeBlock.size(); p++) {
+								System.out.println(codeBlock.get(p));
+							}
+
+							ifChain.add(codeBlock);
+
+							if (j + 1 < max) {
+								i = j + 1;
+								line = code.get(i);
+
+								elsifM = elsifP.matcher(line);
+								elseM = elseP.matcher(line);
+
+								if (!elsifM.matches() && !elseM.matches()) {
+									endOfChain = true;
+								}
+							}
+							else {
+								endOfChain = true;
+								i = j;
+							}
+
+							// this.ifBlock(codeBlock);
+						}
+						else {
+							throw new LotusException("bracketNotFound", codeBlock.get(0));
 						}
 					}
 
-					if (endOfBlock) {
-						System.out.println("****    IF BLOCK:   ****");
-						for (int p = 0; p < codeBlock.size(); p++) {
-							System.out.println(codeBlock.get(p));
+					System.out.println("****    IF CHAIN:   ****");
+					for (int p = 0; p < ifChain.size(); p++) {
+						codeBlock = ifChain.get(p);
+						System.out.println("BLOCK:");
+						for (int q = 0; q < codeBlock.size(); q++) {
+							System.out.println(codeBlock.get(q));
 						}
-
-						// this.ifBlock(codeBlock);
-
-						i = j;
-					}
-					else {
-						throw new LotusException("bracketNotFound", codeBlock.get(0));
+						System.out.println();
 					}
 				}
 				else {
@@ -950,6 +982,8 @@ class Interpreter {
 	public static final String wholeScanlnR = "(scanln)" + fnParentheses;
 	public static final String scanContentR = "(" + varNameR + ")(( )*,( )*(" + varNameR + "))*";
 	public static final String ifR = "(if)( )*\\(( )*(.+)( )*\\)( )*\\{";
+	public static final String elsifR = "(elsif)( )*\\(( )*(.+)( )*\\)( )*\\{";
+	public static final String elseR = "(else)( )*\\{";
 	// public static final String blockEnd = "";
 
 	public static final String quotMarkR = "\\\"";
@@ -1011,6 +1045,8 @@ class Interpreter {
 		cutScanP = Pattern.compile("(scan|scanln)( )*\\(");
 		scanContentP = Pattern.compile(scanContentR);
 		ifP = Pattern.compile(ifR);
+		elsifP = Pattern.compile(elsifR);
+		elseP = Pattern.compile(elseR);
 
 		parenP = Pattern.compile("[()]");
 		numBuildP = Pattern.compile("(\\w|\\.)+");

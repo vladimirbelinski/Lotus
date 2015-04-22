@@ -121,3 +121,11 @@ x = .9   ^2;
 if (1 < 2) {
 	println(1 < 2 dentro do if :P);
 }
+elsif (agora tem mais um!) {
+}
+elsif (x + 2 || oi) {
+	println(Here is the elsif);
+}
+else {
+	println(And the else :));
+}
