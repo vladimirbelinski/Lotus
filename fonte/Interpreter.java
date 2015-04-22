@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP, ifP, commP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -176,9 +176,11 @@ class Interpreter {
 	/* ---------------------------------------------------------------------- */
 
 	public void execute(ArrayList<String> code) throws LotusException {
-		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM;
+		Matcher commM, wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, ifM;
+		int i, j, max, semicolon, bracket, clBracket;
+		ArrayList<String> codeBlock;
 		String line, lineEnding;
-		int i, max, semicolon;
+		boolean endOfBlock;
 
 		max = code.size();
 		for (i = 0; i < max; i++) {
@@ -188,23 +190,22 @@ class Interpreter {
 			        continue; // ignoring commented and blank lines
 			    }
 
-				semicolon = line.indexOf(";");
+				semicolon = line.lastIndexOf(";");
+				bracket = line.lastIndexOf("{");
 
-				if (semicolon < 0) {
-					throw new LotusException("syntaxError", line);
+				// line = line.substring(0, line.indexOf(";") + 1);
+				if (semicolon > bracket) {
+					line = line.substring(0, semicolon + 1);
+				}
+				else if (bracket > 0) {
+					line = line.substring(0, bracket + 1);
 				}
 
-				lineEnding = line.substring(semicolon + 1).trim();
-				if (!lineEnding.isEmpty() && !lineEnding.startsWith("--")) {
-					throw new LotusException("multipleCommands", line);
-				}
-
-				line = line.substring(0, line.indexOf(";") + 1);
-
-				wholeDeclM = wholeDeclP.matcher(line);
+				ifM = ifP.matcher(line);
 				wholeAtrM = wholeAtrP.matcher(line);
-				wholePrintM = wholePrintP.matcher(line);
+				wholeDeclM = wholeDeclP.matcher(line);
 				wholeScanM = wholeScanP.matcher(line);
+				wholePrintM = wholePrintP.matcher(line);
 				wholeScanlnM = wholeScanlnP.matcher(line);
 
 				if (wholeDeclM.matches()) {
@@ -221,6 +222,45 @@ class Interpreter {
 				}
 				else if (wholeScanlnM.matches()) {
 					this.scanln(line);
+				}
+				else if (ifM.matches()) {
+					endOfBlock = false;
+
+					codeBlock = new ArrayList<String>();
+					codeBlock.add(line);
+					j = i + 1;
+
+					while (j < max && !endOfBlock) {
+						line = code.get(j);
+						clBracket = line.lastIndexOf("}");
+
+						if (clBracket >= 0) {
+							lineEnding = line.substring(clBracket + 1);
+							commM = commP.matcher(lineEnding);
+							if (lineEnding.isEmpty() || commM.matches()) {
+								endOfBlock = true;
+							}
+						}
+
+						if (!endOfBlock) {
+							codeBlock.add(line);
+							j++;
+						}
+					}
+
+					if (endOfBlock) {
+						System.out.println("****    IF BLOCK:   ****");
+						for (int p = 0; p < codeBlock.size(); p++) {
+							System.out.println(codeBlock.get(p));
+						}
+
+						// this.ifBlock(codeBlock);
+
+						i = j;
+					}
+					else {
+						throw new LotusException("bracketNotFound", codeBlock.get(0));
+					}
 				}
 				else {
 					throw new LotusException("unknownCommand", line);
@@ -885,6 +925,7 @@ class Interpreter {
     }
 
 	public static final String semicR = "( )*;";
+	public static final String commR = "( )*--\\.*";
 
 	public static final String typeR = "int|double|string|bool";
 	public static final String varNameR = "[A-Za-z_][A-Za-z_0-9]*";
@@ -908,6 +949,8 @@ class Interpreter {
 	public static final String wholeScanR = "(scan)" + fnParentheses;
 	public static final String wholeScanlnR = "(scanln)" + fnParentheses;
 	public static final String scanContentR = "(" + varNameR + ")(( )*,( )*(" + varNameR + "))*";
+	public static final String ifR = "(if)( )*\\(( )*(.+)( )*\\)( )*\\{";
+	// public static final String blockEnd = "";
 
 	public static final String quotMarkR = "\\\"";
 	public static final String quotInStrR = "\\\\" + quotMarkR;
@@ -935,6 +978,7 @@ class Interpreter {
 		varNameP = Pattern.compile(varNameR);
 		typeP = Pattern.compile(typeR);
 		atrP = Pattern.compile(atrR);
+		commP = Pattern.compile(commR);
 
 		wholeOpP = Pattern.compile(wholeOpR);
 		signP = Pattern.compile(signR);
@@ -966,6 +1010,7 @@ class Interpreter {
 		cutPrintP = Pattern.compile(printR + "( )*\\(");
 		cutScanP = Pattern.compile("(scan|scanln)( )*\\(");
 		scanContentP = Pattern.compile(scanContentR);
+		ifP = Pattern.compile(ifR);
 
 		parenP = Pattern.compile("[()]");
 		numBuildP = Pattern.compile("(\\w|\\.)+");

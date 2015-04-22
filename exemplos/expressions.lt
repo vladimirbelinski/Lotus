@@ -114,3 +114,10 @@ s = "Ana Carolina" * "a";
 s = "\"oi\"";
 s = s / "\"";
 println($s$);
+
+--x = 2. 5 * 9;
+x = .9   ^2;
+
+if (1 < 2) {
+	println(1 < 2 dentro do if :P);
+}

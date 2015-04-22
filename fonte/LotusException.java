@@ -7,9 +7,11 @@ class LotusException extends Exception {
         case "syntaxError":
 			this.setException(code, "Syntax error: \"" + info + "\""); break;
         case "multipleCommands":
-			this.setException(code, "You can only have one command per info:\n\"" + info + "\""); break;
+			this.setException(code, "You can only have one command per line:\n\"" + info + "\""); break;
         case "unknownCommand":
 			this.setException(code, "Unknown command: \"" + info + "\""); break;
+        case "bracketNotFound":
+            this.setException(code, "Could not find closing bracket for command:\n\"" + info + "\""); break;
         case "usingReservedWords":
 			this.setException(code, "You cannot use Lotus' reserved words as variable names:\n\"" + info + "\""); break;
         case "invalidType":
