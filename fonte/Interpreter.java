@@ -175,44 +175,60 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
-	public void execute(String line) throws LotusException {
+	public void execute(ArrayList<String> code) throws LotusException {
 		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM;
-		int semicolon = line.indexOf(";");
+		String line, lineEnding;
+		int i, max, semicolon;
 
-		if (semicolon < 0) {
-			throw new LotusException("syntaxError", line);
-		}
+		max = code.size();
+		for (i = 0; i < max; i++) {
+			try {
+				line = code.get(i);
+			    if (line.isEmpty() || line.startsWith("--")) {
+			        continue; // ignoring commented and blank lines
+			    }
 
-		String lineEnding = line.substring(semicolon + 1).trim();
-		if (!lineEnding.isEmpty() && !lineEnding.startsWith("--")) {
-			throw new LotusException("multipleCommands", line);
-		}
+				semicolon = line.indexOf(";");
 
-		line = line.substring(0, line.indexOf(";") + 1);
+				if (semicolon < 0) {
+					throw new LotusException("syntaxError", line);
+				}
 
-		wholeDeclM = wholeDeclP.matcher(line);
-		wholeAtrM = wholeAtrP.matcher(line);
-		wholePrintM = wholePrintP.matcher(line);
-		wholeScanM = wholeScanP.matcher(line);
-		wholeScanlnM = wholeScanlnP.matcher(line);
+				lineEnding = line.substring(semicolon + 1).trim();
+				if (!lineEnding.isEmpty() && !lineEnding.startsWith("--")) {
+					throw new LotusException("multipleCommands", line);
+				}
 
-		if (wholeDeclM.matches()) {
-			this.let(line);
-		}
-		else if (wholeAtrM.matches()) {
-			this.assign(line);
-		}
-		else if (wholePrintM.matches()) {
-			this.print(line);
-		}
-		else if (wholeScanM.matches()) {
-			this.scan(line);
-		}
-		else if (wholeScanlnM.matches()) {
-			this.scanln(line);
-		}
-		else {
-			throw new LotusException("unknownCommand", line);
+				line = line.substring(0, line.indexOf(";") + 1);
+
+				wholeDeclM = wholeDeclP.matcher(line);
+				wholeAtrM = wholeAtrP.matcher(line);
+				wholePrintM = wholePrintP.matcher(line);
+				wholeScanM = wholeScanP.matcher(line);
+				wholeScanlnM = wholeScanlnP.matcher(line);
+
+				if (wholeDeclM.matches()) {
+					this.let(line);
+				}
+				else if (wholeAtrM.matches()) {
+					this.assign(line);
+				}
+				else if (wholePrintM.matches()) {
+					this.print(line);
+				}
+				else if (wholeScanM.matches()) {
+					this.scan(line);
+				}
+				else if (wholeScanlnM.matches()) {
+					this.scanln(line);
+				}
+				else {
+					throw new LotusException("unknownCommand", line);
+				}
+			} catch (LotusException e) {
+				e.setLine(i + 1);
+				throw e;
+			}
 		}
 	}
 
@@ -910,6 +926,7 @@ class Interpreter {
 
 	public static final String ufpR = "(\\d+(\\.\\d*)?|(\\d*\\.)?\\d+)";
 	public static final String fpR = "(" + signR + "( )*)?" + ufpR;
+
 	public static final String invalidFpR = "([+-]( )*)?(\\d+( )+\\.(( )*\\d)*|(\\d( )*)*\\.( )+\\d+)";
 
 	// public static final String wholeExpR = "(" + varNameR + "|" + fpR + "|" + strR + "|" + boolR + "|" + wholeOpR + ")";

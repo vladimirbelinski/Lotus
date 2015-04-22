@@ -1,57 +1,67 @@
 class LotusException extends Exception {
     private String code, message;
+    private Integer line;
 
-    // put the stack trace too!
-    // take off all "?
-    public LotusException(String code, String line) {
+    public LotusException(String code, String info) {
         switch (code) {
         case "syntaxError":
-			this.setMessage("Syntax error: \"" + line + "\""); break;
+			this.setException(code, "Syntax error: \"" + info + "\""); break;
         case "multipleCommands":
-			this.setMessage("You can only have one command per line:\n\"" + line + "\""); break;
+			this.setException(code, "You can only have one command per info:\n\"" + info + "\""); break;
         case "unknownCommand":
-			this.setMessage("Unknown command: \"" + line + "\""); break;
+			this.setException(code, "Unknown command: \"" + info + "\""); break;
         case "usingReservedWords":
-			this.setMessage("You cannot use Lotus' reserved words as variable names:\n\"" + line + "\""); break;
+			this.setException(code, "You cannot use Lotus' reserved words as variable names:\n\"" + info + "\""); break;
         case "invalidType":
-			this.setMessage("Invalid type: \"" + line + "\""); break;
+			this.setException(code, "Invalid type: \"" + info + "\""); break;
         case "invalidVarName":
-			this.setMessage("Variable names cannot start with numbers or special characters:\n'" + line + "'"); break;
+			this.setException(code, "Variable names cannot start with numbers or special characters:\n'" + info + "'"); break;
         case "invalidExp":
-            this.setMessage("Invalid expression:\n\"" + line + "\""); break;
+            this.setException(code, "Invalid expression:\n\"" + info + "\""); break;
         case "varNotFound":
-			this.setMessage("Could not find variable: \"" + line + "\""); break;
+			this.setException(code, "Could not find variable: \"" + info + "\""); break;
         case "unknownSymbol":
-			this.setMessage("Unknown symbol: '" + line + "'"); break;
+			this.setException(code, "Unknown symbol: '" + info + "'"); break;
         case "stringPow":
-			this.setMessage("Cannot calculate the power of a string: \"" + line + "\""); break;
+			this.setException(code, "Cannot calculate the power of a string: \"" + info + "\""); break;
         case "nonIntMod":
-			this.setMessage("Cannot calculate remainder of a division between non-integer operands: \"" + line + "\""); break;
+			this.setException(code, "Cannot calculate remainder of a division between non-integer operands: \"" + info + "\""); break;
         case "divisionByZero":
-			this.setMessage("Division by zero: \"" + line + "\""); break;
+			this.setException(code, "Division by zero: \"" + info + "\""); break;
         case "unknownEscape":
-			this.setMessage("Unknown escape sequence: \"" + line + "\""); break;
+			this.setException(code, "Unknown escape sequence: \"" + info + "\""); break;
         case "cantAssign":
-			this.setMessage("Cannot assign a \"" + line.substring(0, line.indexOf(";")) + "\" value to a variable of type \"" + line.substring(line.indexOf(";") + 1) + "\""); break;
+			this.setException(code, "Cannot assign a \"" + info.substring(0, info.indexOf(";")) + "\" value to a variable of type \"" + info.substring(info.indexOf(";") + 1) + "\""); break;
         case "inputMismatch":
-			this.setMessage("Could not read the input: \"" + line + "\""); break;
+			this.setException(code, "Could not read the input: \"" + info + "\""); break;
         case "missingParen":
-            this.setMessage("Missing parenthesis in the expression: \"" + line + "\""); break;
+            this.setException(code, "Missing parenthesis in the expression: \"" + info + "\""); break;
         }
+    }
+
+    private void setException(String code, String message) {
         this.setCode(code);
+        this.setMessage(message);
     }
 
     private void setCode(String code) {
         this.code = code;
     }
-    private void setMessage(String message) {
-        this.message = message;
-    }
-
     public String getCode() {
         return this.code;
     }
+
+    private void setMessage(String message) {
+        this.message = message;
+    }
     public String getMessage() {
         return this.message;
+    }
+
+    public void setLine(int i) {
+        this.line = i;
+    }
+    public Integer getLine() {
+        return this.line;
     }
 }

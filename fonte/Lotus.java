@@ -55,19 +55,11 @@ class Lotus {
             }
             sc.close();
 
-            max = input.size();
-            for (int i = 0; i < max; i++) {
-                tmpInput = input.get(i);
-                if (tmpInput.isEmpty() || tmpInput.startsWith("--")) {
-                    continue; // ignoring commented and blank lines
-                }
-
-                try {
-                    lotus.execute(tmpInput);
-                } catch (LotusException e) {
-                    System.out.println("\n# " + e.getMessage() + "\n@ line " + (i + 1));
-                    System.exit(1);
-                }
+            try {
+                lotus.execute(input);
+            } catch (LotusException e) {
+                System.out.println("\n# " + e.getMessage() + "\n@ line " + e.getLine());
+                System.exit(1);
             }
         }
         else if (!validParam) {
