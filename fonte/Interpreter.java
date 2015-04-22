@@ -226,21 +226,27 @@ class Interpreter {
 				}
 				else if (ifM.matches()) {
 					ifChain = new ArrayList<ArrayList<String>>();
-					endOfChain = false;
+					endOfChain = endOfBlock = false;
+
+					codeBlock = new ArrayList<String>();
+					codeBlock.add(line);
+					j = i + 1;
 
 					while (!endOfChain) {
 						endOfBlock = false;
 
-						codeBlock = new ArrayList<String>();
-						codeBlock.add(line);
-						j = i + 1;
-
 						while (j < max && !endOfBlock) {
 							line = code.get(j);
-							clBracket = line.lastIndexOf("}");
 
+							if (line.isEmpty() || line.startsWith("--")) {
+								j++;
+						        continue; // ignoring commented and blank lines
+						    }
+
+							clBracket = line.lastIndexOf("}");
 							if (clBracket >= 0) {
 								lineEnding = line.substring(clBracket + 1);
+
 								commM = commP.matcher(lineEnding);
 								if (lineEnding.isEmpty() || commM.matches()) {
 									endOfBlock = true;
@@ -254,35 +260,41 @@ class Interpreter {
 						}
 
 						if (endOfBlock) {
-							System.out.println("****    IF BLOCK:   ****");
-							for (int p = 0; p < codeBlock.size(); p++) {
-								System.out.println(codeBlock.get(p));
-							}
-
 							ifChain.add(codeBlock);
 
-							if (j + 1 < max) {
+							if (j + 1 >= max) {
+								endOfChain = true;
+								i = j;
+							}
+							else {
 								i = j + 1;
+
 								line = code.get(i);
+								while (i < max && (line.isEmpty() || line.startsWith("--"))) {
+									i++;
+									line = code.get(i);
+							    }
 
 								elsifM = elsifP.matcher(line);
 								elseM = elseP.matcher(line);
 
-								if (!elsifM.matches() && !elseM.matches()) {
+								if (elsifM.matches() || elseM.matches()) {
+									codeBlock = new ArrayList<String>();
+									codeBlock.add(line);
+									j = i + 1;
+								}
+								else {
 									endOfChain = true;
+									i = j;
 								}
 							}
-							else {
-								endOfChain = true;
-								i = j;
-							}
-
-							// this.ifBlock(codeBlock);
 						}
 						else {
 							throw new LotusException("bracketNotFound", codeBlock.get(0));
 						}
 					}
+
+					// this.if(ifChain); // name?
 
 					System.out.println("****    IF CHAIN:   ****");
 					for (int p = 0; p < ifChain.size(); p++) {

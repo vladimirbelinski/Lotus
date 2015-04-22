@@ -122,10 +122,20 @@ if (1 < 2) {
 	println(1 < 2 dentro do if :P);
 }
 elsif (agora tem mais um!) {
+	oi :)
 }
+
+
 elsif (x + 2 || oi) {
 	println(Here is the elsif);
 }
+
 else {
-	println(And the else :));
+	scan(oi);
 }
+
+if(aqui devia ser outra chain!){
+	x = 2;
+}
+
+println(Tudo funcionando ainda?);
