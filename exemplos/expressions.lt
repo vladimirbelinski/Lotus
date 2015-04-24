@@ -118,28 +118,33 @@ println($s$);
 --x = 2. 5 * 9;
 x = .9   ^2;
 
-if (1 < 2) {
-	println(1 < 2 dentro do if :P);
+let b: bool;
 
-	if (um if dentro de outro agora...) {
-		oi();
+b = 1 != 2;
+
+if (1 < 2) {
+	println(>>> 1);
+
+	if (3 < 0) {
+		println(>>> 2);
 	}
-	elsif (pleeease continua funcionando! T_T) {
-		println(fuck yeah!);
+	elsif (1 + 1 != 2) {
+		println(>>> 3);
 	}
 }
-elseif (agora tem mais um!) {
-	oi :)
+elsif (false) {
+	println(>>> 4);
 }
-elsif (x + 2 || oi) {
-	println(Here is the elsif);
+elsif (false) {
+	println(>>> 5);
 }
 else {
-	scan(oi);
+	println(>>> 6);
 }
 
-if (aqui é outra chain!) {
-	x = 2;
+if ("Gabriel" > "Vladimir") {
+	println(>>> 7);
 }
-
-println(Tudo funcionando ainda?);
+else {
+	println(>>> 8);
+}
