@@ -72,7 +72,6 @@ class StringVar extends Variable<String> {
 
     // removes all other.toString() occurrences from this.toString()
     public Variable divided(Variable other) throws LotusException {
-        System.out.println(this + " / " + other);
         return new StringVar(this.value.replaceAll(other.toString(), ""));
     }
 
