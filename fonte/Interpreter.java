@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP, ifP, elsifP, elseP, commP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -203,7 +203,7 @@ class Interpreter {
 					line = line.substring(0, bracket + 1);
 				}
 
-				ifM = ifP.matcher(line);
+				ifM = wholeIfP.matcher(line);
 				wholeAtrM = wholeAtrP.matcher(line);
 				wholeDeclM = wholeDeclP.matcher(line);
 				wholeScanM = wholeScanP.matcher(line);
@@ -242,32 +242,41 @@ class Interpreter {
 							ifChain.add(codeBlock);
 							i += codeBlock.size();
 
-							line = code.get(i);
-							while (line.isEmpty() || line.startsWith("--")) {
-								i++;
+							if (i < max) {
 								line = code.get(i);
-							}
+								while (i < max && (line.isEmpty() || line.startsWith("--"))) {
+									i++;
+									line = code.get(i);
+								}
 
-							elsifM = elsifP.matcher(line);
-							elseM = elseP.matcher(line);
-							if (!elsifM.matches() && !elseM.matches()) {
+								elsifM = wholeElsifP.matcher(line);
+								elseM = wholeElseP.matcher(line);
+								if (!elsifM.matches() && !elseM.matches()) {
+									endOfChain = true;
+									i -= 1;
+								}
+							}
+							else {
 								endOfChain = true;
 								i -= 1;
 							}
 						}
 					}
 
-					// this.if(ifChain); // name?
+					// System.out.println("\n****    IF CHAIN:   ****");
+					// for (int p = 0; p < ifChain.size(); p++) {
+					// 	codeBlock = ifChain.get(p);
+					//
+					// 	System.out.println("> BLOCK");
+					// 	for (int q = 0; q < codeBlock.size(); q++) {
+					// 		System.out.println(codeBlock.get(q));
+					// 	}
+					// }
+					// System.out.println();
+					//
+					this.runIfChain(ifChain);
 
-					System.out.println("\n****    IF CHAIN:   ****");
-					for (int p = 0; p < ifChain.size(); p++) {
-						codeBlock = ifChain.get(p);
-
-						for (int q = 0; q < codeBlock.size(); q++) {
-							System.out.println(codeBlock.get(q));
-						}
-					}
-					System.out.println();
+					// System.out.println(i + " ~> line: " + code.get(i));
 				}
 				else {
 					throw new LotusException("unknownCommand", line);
@@ -275,6 +284,59 @@ class Interpreter {
 			} catch (LotusException e) {
 				e.setLine(i + 1);
 				throw e;
+			}
+		}
+	}
+
+	private void runIfChain(ArrayList<ArrayList<String>> chain) throws LotusException {
+		boolean done;
+		Matcher elseM;
+		Variable result;
+		int p, q, i, max;
+		String statement;
+		Expression condition;
+		ArrayList<String> block = chain.get(0);
+
+		statement = block.get(0);
+		p = statement.indexOf("(");
+		q = statement.lastIndexOf(")");
+		statement = statement.substring(p + 1, q);
+		condition = new Expression(statement);
+		result = this.solve(condition);
+
+		if (result.equals(new BoolVar(true)).toBool()) {
+			block.remove(0);
+			block.remove(block.size() - 1);
+			this.execute(block);
+		}
+		else {
+			done = false;
+			max = chain.size();
+
+			for (i = 1; i < max && !done; i++) {
+				block = chain.get(i);
+				statement = block.get(0);
+
+				elseM = wholeElseP.matcher(statement);
+				if (elseM.matches()) {
+					block.remove(0);
+					block.remove(block.size() - 1);
+					this.execute(block);
+					done = true;
+				}
+				else {
+					p = statement.indexOf("(");
+					q = statement.lastIndexOf(")");
+					statement = statement.substring(p + 1, q);
+					condition = new Expression(statement);
+					result = this.solve(condition);
+					if (result.equals(new BoolVar(true)).toBool()) {
+						block.remove(0);
+						block.remove(block.size() - 1);
+						this.execute(block);
+						done = true;
+					}
+				}
 			}
 		}
 	}
@@ -290,9 +352,9 @@ class Interpreter {
 		while (i < max && !endOfBlock) {
 			line = code.get(i);
 
-			ifM = ifP.matcher(line);
-			elsifM = elsifP.matcher(line);
-			elseM = elseP.matcher(line);
+			ifM = wholeIfP.matcher(line);
+			elsifM = wholeElsifP.matcher(line);
+			elseM = wholeElseP.matcher(line);
 
 			clBracket = line.lastIndexOf("}");
 			if (clBracket >= 0) {
@@ -561,7 +623,7 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		System.out.println(">>>> result: " + answ + "\n");
+		// System.out.println(">>>> result: " + answ + "\n");
 
 		return answ;
 	}
@@ -606,10 +668,11 @@ class Interpreter {
 			t = t.substring(t.indexOf("\"") + 1);
 
 			// needs to the the index of the last quotation mark
-			index = t.indexOf("\"");
-			while (t.indexOf("\"", index + 1) > index) {
-				index = t.indexOf("\"", index + 1);
-			}
+			index = t.lastIndexOf("\"");
+			// index = t.indexOf("\"");
+			// while (t.indexOf("\"", index + 1) > index) {
+			// 	index = t.indexOf("\"", index + 1);
+			// }
 
 			t = t.substring(0, index);
 			// replacing all \" for an actual "
@@ -989,7 +1052,7 @@ class Interpreter {
 	public static final String compOrBoolR = compOpR + "|" + boolOpR;
 	public static final String mathOpR = "\\-|\\+|\\/|\\%|\\*|\\^";
 
-	public static final String wholeOpR = parenR + "|" + boolOpR + "|" + compOpR + "|" + mathOpR;
+	public static final String wholeOpR = parenR + "|" + mathOpR + "|" + compOpR + "|" + boolOpR;
 
 	public static final String atrR = varNameR + "( )*=( )*.+";
 	public static final String wholeAtrR = atrR + semicR;
@@ -1001,10 +1064,11 @@ class Interpreter {
 	public static final String wholeScanR = "(scan)" + fnParentheses;
 	public static final String wholeScanlnR = "(scanln)" + fnParentheses;
 	public static final String scanContentR = "(" + varNameR + ")(( )*,( )*(" + varNameR + "))*";
-	public static final String ifR = "(if)( )*\\(( )*(.+)( )*\\)( )*\\{";
-	public static final String elsifR = "(elsif)( )*\\(( )*(.+)( )*\\)( )*\\{";
-	public static final String elseR = "(else)( )*\\{";
-	// public static final String blockEnd = "";
+
+	public static final String ifR = "(if)( )*\\(( )*";
+	public static final String ifEnding = "( )*\\)( )*\\{";
+	public static final String elsifR = "(elsif)( )*\\(( )*";
+	public static final String wholeElseR = "(else)( )*\\{";
 
 	public static final String quotMarkR = "\\\"";
 	public static final String quotInStrR = "\\\\" + quotMarkR;
@@ -1064,9 +1128,13 @@ class Interpreter {
 		cutPrintP = Pattern.compile(printR + "( )*\\(");
 		cutScanP = Pattern.compile("(scan|scanln)( )*\\(");
 		scanContentP = Pattern.compile(scanContentR);
+
 		ifP = Pattern.compile(ifR);
+		wholeIfP = Pattern.compile(ifR + "(.+)" + ifEnding);
 		elsifP = Pattern.compile(elsifR);
-		elseP = Pattern.compile(elseR);
+		wholeElsifP = Pattern.compile(elsifR + "(.+)" + ifEnding);
+		wholeElseP = Pattern.compile(wholeElseR);
+		ifEndingP = Pattern.compile(ifEnding);
 
 		parenP = Pattern.compile("[()]");
 		numBuildP = Pattern.compile("(\\w|\\.)+");
