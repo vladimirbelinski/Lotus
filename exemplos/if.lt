@@ -1,0 +1,17 @@
+let a, b, c: double;
+
+println(** OPERAÇÃO DE DIVISÃO **);
+
+print(\nDigite o numerador: );
+scan(a);
+
+print(Digite o denominador: );
+scan(b);
+
+if (b == 0) {
+	println(\nA divisão por 0 é uma operação indefinida!);
+}
+else {
+	c = a / b;
+	println(\n$a$ / $b$ = $c$);
+}
