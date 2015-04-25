@@ -66,7 +66,7 @@ Arquivos que contenham código fonte Lotus devem ter a extensão ``.lt''.
 
 Sintaxe
 
-Cada linha pode conter apenas um comando e todas as linhas devem ser finalizadas com `;', ou `{' ou `}', dependendo do caso. Não são permitidos comandos do tipo if, for ou while de uma linha.
+Cada comando pode ser quebrado em várias linhas, até com comentários, caso seja conveniente. Todos os comandos devem ser finalizados com `;', ou `{' ou `}', dependendo do caso. Não são permitidos comandos do tipo if, for ou while de uma linha.
 Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.
 
 
@@ -126,7 +126,12 @@ Para string, em relação aos operandos:
 
 Entrada e saída:
 
-A função print() é utilizada para imprimir uma linha, sem quebra no final. É equivalente ao printf() do C ou System.out.print() do java. Já o comando println() pode ser usado para quebrar automaticamente uma linha ao final da string a ser impressa (equivalente ao System.out.println() do Java). O caractere `\n' pode ser utilizado para quebrar uma linha em ambos os comandos.
+A função print() é utilizada para imprimir uma linha, sem quebra no final. É equivalente ao printf() do C ou System.out.print() do java. Já o comando println() pode ser usado para quebrar automaticamente uma linha ao final da string a ser impressa (equivalente ao System.out.println() do Java). Os caracteres especiais são os seguintes:
+`\\t' para um tab;
+`\\n' para uma quebra de linha;
+`\\\$' para um cifrão;
+`\\\\' para uma contra-barra (para imprimir o literal ``\n"", faça ``\\n'').
+
 
 De maneira análoga às funções de impressão, o comando scan() é utilizado para ler um valor do teclado. Esse comando lê a informação até o primeiro espaço ou quebra de linha que delimitarem a entrada desejada, assim como o scanf() do C. Já o comando scanln() lê uma linha inteira, como o fgets() do C. Em ambos os comandos, a conversão dos tipos de variável se aplica, caso a entrada não corresponda ao valor esperado.
 
