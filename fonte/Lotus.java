@@ -20,13 +20,12 @@ import java.util.regex.*;
 class Lotus {
     public static void main(String[] args) throws Exception {
         File f;
-        Scanner sc;
+        int ind = 0;
         Matcher extM;
-        String tmpInput, tmpEnding;
-        int ind = 0, max, semicolon, bracket;
         Interpreter lotus = new Interpreter();
-        boolean hasParam = true, validParam = true;
         Pattern extP = Pattern.compile(".+\\.lt");
+        boolean hasParam = true, validParam = true;
+        SourceScanner lotusScanner = new SourceScanner();
         ArrayList<String> input = new ArrayList<String>();
 
         if (args.length > 0) {
@@ -46,33 +45,7 @@ class Lotus {
 
         if (hasParam && validParam) {
             f = new File(args[ind]);
-            sc = new Scanner(f);
-
-            while (sc.hasNext()) {
-                tmpInput = sc.nextLine().trim();
-
-                // discarding comments and empty
-                if (tmpInput.startsWith("--")) {
-                    tmpInput = "";
-                }
-                else if (!tmpInput.isEmpty()) {
-                    // arrumar isso aqui, porque não é o índice da última ocorrência!
-                    semicolon = tmpInput.lastIndexOf(";");
-    				bracket = tmpInput.lastIndexOf("{");
-
-                    if (semicolon > bracket) {
-                        tmpInput = tmpInput.substring(0, semicolon + 1);
-    				}
-    				else if (bracket > 0) {
-                        tmpInput = tmpInput.substring(0, bracket + 1);
-    				}
-                }
-
-                // System.out.println("tmpInput: " + tmpInput);
-
-                input.add(tmpInput);
-            }
-            sc.close();
+            input = lotusScanner.scan(f);
 
             try {
                 lotus.execute(input);
