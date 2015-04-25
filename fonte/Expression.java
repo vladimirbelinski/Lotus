@@ -2,11 +2,12 @@ import java.util.*;
 import java.util.regex.*;
 
 class Expression {
-	public String value;
+	public String original, value;
 	public static final Character SEP = 96; // 31, 96 to test
     private static final Map<String, Integer> precedence = mapPrecedence();
 
 	public Expression(String value) throws LotusException {
+		this.original = value;
         this.value = value;
 		// System.out.println("Expression 1: " + this.value);
 		this.fixSpaces();

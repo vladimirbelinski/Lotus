@@ -188,20 +188,9 @@ class Interpreter {
 			try {
 				line = code.get(i);
 
-			    if (line.isEmpty() || line.startsWith("--")) {
-			        continue; // ignoring commented and blank lines
+			    if (line.isEmpty()) {
+			        continue;
 			    }
-
-				semicolon = line.lastIndexOf(";");
-				bracket = line.lastIndexOf("{");
-
-				// line = line.substring(0, line.indexOf(";") + 1);
-				if (semicolon > bracket) {
-					line = line.substring(0, semicolon + 1);
-				}
-				else if (bracket > 0) {
-					line = line.substring(0, bracket + 1);
-				}
 
 				ifM = wholeIfP.matcher(line);
 				wholeAtrM = wholeAtrP.matcher(line);
@@ -232,7 +221,7 @@ class Interpreter {
 					while (!endOfChain) {
 						line = code.get(i);
 
-						if (line.isEmpty() || line.startsWith("--")) {
+						if (line.isEmpty()) {
 							i++;
 							continue; // ignoring commented and blank lines
 						}
@@ -244,7 +233,7 @@ class Interpreter {
 
 							if (i < max) {
 								line = code.get(i);
-								while (i < max && (line.isEmpty() || line.startsWith("--"))) {
+								while (i < max && line.isEmpty()) {
 									i++;
 									line = code.get(i);
 								}
@@ -330,8 +319,8 @@ class Interpreter {
 
 	private ArrayList<String> buildIfBlock(ArrayList<String> code, int index, int max) throws LotusException {
 		ArrayList<String> ifBlock = new ArrayList<String>();
-		Matcher ifM, elsifM, elseM, commM;
 		int i = index, bracketCount = 0;
+		Matcher ifM, elsifM, elseM;
 		boolean endOfBlock = false;
 		String line, lineEnding;
 		int clBracket;
@@ -347,8 +336,7 @@ class Interpreter {
 			if (clBracket >= 0) {
 				lineEnding = line.substring(clBracket + 1);
 
-				commM = commP.matcher(lineEnding);
-				if (lineEnding.isEmpty() || commM.matches()) {
+				if (lineEnding.isEmpty()) {
 					bracketCount--;
 				}
 			}
@@ -416,6 +404,7 @@ class Interpreter {
 					// if the variable being declared is a string and
 					// it has an assignment, it must have ""
 					if (v instanceof StringVar) {
+						System.out.println("String assign: " + decl[i].substring(decl[i].indexOf("=") + 1));
 						strM = strP.matcher(decl[i].substring(decl[i].indexOf("=") + 1));
 						if (!strM.matches()) {
 							throw new LotusException("syntaxError", decl[i]);
@@ -438,8 +427,8 @@ class Interpreter {
 	// remember the Arrays!
     public String[] fixDecl(String line) throws LotusException {
         int i;
-        String var = new String("");
 		Matcher atrM, charM, typeM;
+        String var = new String("");
         String[] t = line.replace("let ", "").replaceAll(" ", "").split("");
         ArrayList<String> tokens = new ArrayList<String>();
 
@@ -560,6 +549,10 @@ class Interpreter {
 				if (i < t.length) wholeOpM = wholeOpP.matcher(t[i]);
 			}
 
+			if (i >= t.length) {
+				throw new LotusException("invalidExp", exp.original);
+			}
+
 			// then, the operation char is at i's position in the array
 			op = t[i];
 			// as it's postfix, the 2nd operand is right before op
@@ -610,7 +603,7 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		// System.out.println(">>>> result: " + answ + "\n");
+		System.out.println(">>>> result: " + answ + "\n");
 
 		return answ;
 	}
@@ -729,8 +722,6 @@ class Interpreter {
 
                 case "*":
 				answ = v1.times(v2);
-                // if (intOpns) answ = new IntVar(v1.toInt() * v2.toInt());
-                // else answ = new DoubleVar(v1.toDouble() * v2.toDouble());
                 break;
 
 				case "/":
@@ -865,12 +856,15 @@ class Interpreter {
 						throw new LotusException("varNotFound", exp);
 					}
 					text += v.toString();
+					i = line.indexOf("$", i + 1);
 				}
 				else if (!exp.isEmpty()) {
 					text += this.solve(new Expression(exp));
+					i = line.indexOf("$", i + 1);
 				}
-
-				i = line.indexOf("$", i + 1);
+				else {
+					text += content[i];
+				}
 			}
 			else {
 				text += content[i];

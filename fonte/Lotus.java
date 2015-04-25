@@ -12,27 +12,27 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-/* To execute the test, run:
+/* To execute a test, from inside the folder that contains this file, run:
  * javac *.java
- * java Lotus ../exemplos/testing.lt
- */
+ * java Lotus ../exemplos/<filename>.lt
+ * */
 
 class Lotus {
     public static void main(String[] args) throws Exception {
         File f;
         Scanner sc;
-        int max, ind = 0;
-        Matcher extMatcher;
-        String tmpInput, lineEnding;
+        Matcher extM;
+        String tmpInput, tmpEnding;
+        int ind = 0, max, semicolon, bracket;
         Interpreter lotus = new Interpreter();
         boolean hasParam = true, validParam = true;
-        Pattern extPattern = Pattern.compile(".+\\.lt");
+        Pattern extP = Pattern.compile(".+\\.lt");
         ArrayList<String> input = new ArrayList<String>();
 
         if (args.length > 0) {
             for (ind = 0; ind < args.length; ind++) {
-                extMatcher = extPattern.matcher(args[ind]);
-                if (extMatcher.matches()) {
+                extM = extP.matcher(args[ind]);
+                if (extM.matches()) {
                     validParam = true;
                     break;
                 }
@@ -49,8 +49,27 @@ class Lotus {
             sc = new Scanner(f);
 
             while (sc.hasNext()) {
-                // takes off all duplicated and trailing spaces
                 tmpInput = sc.nextLine().trim();
+
+                // discarding comments and empty
+                if (tmpInput.startsWith("--")) {
+                    tmpInput = "";
+                }
+                else if (!tmpInput.isEmpty()) {
+                    // arrumar isso aqui, porque não é o índice da última ocorrência!
+                    semicolon = tmpInput.lastIndexOf(";");
+    				bracket = tmpInput.lastIndexOf("{");
+
+                    if (semicolon > bracket) {
+                        tmpInput = tmpInput.substring(0, semicolon + 1);
+    				}
+    				else if (bracket > 0) {
+                        tmpInput = tmpInput.substring(0, bracket + 1);
+    				}
+                }
+
+                // System.out.println("tmpInput: " + tmpInput);
+
                 input.add(tmpInput);
             }
             sc.close();
