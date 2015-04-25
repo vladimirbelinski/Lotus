@@ -18,6 +18,8 @@ println(average z: $z$);
 
 println(-------------\n);
 
+let a, b, k: double;
+
 println(Binary average calculator\n);
 
 print(Please enter the first number: );

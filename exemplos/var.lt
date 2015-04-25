@@ -24,17 +24,17 @@ s = "Acácia"    ;
 
 print(sfd ewdfe $s$ fe fef\n);
 
-let x = " oie": string;
-println($x$);
+let s = " oie": string;
+println({$s$});
 
 print(\\n);
 
-print( $x$dsdsds $y$ kkk $\n);
+print( $x$dsdsds $y$ kkk $$\n);
 println( $x$dsdsds $y$ kkk $);
 print ( dowi 21 $z$  \n);
 print($s$\\n\n);
 
-print("oi" R$ 3.5 R$1$x$ *$()\n);
+print("oi" R\$ 3.5 R$1$x$ *$()\n);
 
     print(\n\\n\n);
 
