@@ -149,7 +149,7 @@ class Interpreter {
 				}
 			}
 	        else {
-				throw new LotusException("cantAssign", StringVar.class + ";" + v.getClass().toString());
+				((IntVar)v).setValue(value.length());
 	        }
 		}
 		else if (v instanceof DoubleVar) {
@@ -165,7 +165,7 @@ class Interpreter {
 				}
 			}
 	        else {
-				throw new LotusException("cantAssign", StringVar.class + ";" + v.getClass().toString());
+				((DoubleVar)v).setValue(new Double(value.length()));
 	        }
 		}
 		else {
