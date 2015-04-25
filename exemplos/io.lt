@@ -3,4 +3,21 @@ let i: int;
 let d: double;
 let s: string;
 
-println($-3 +4 *2 / ( 1 - 5)^ 2 ^ 3\$);
+println($-3 +4 *2 / ( 1 - 5)^ 2 ^ 3$);
+println($$);
+
+println(Leitura de int);
+scanln(i);
+println($i$);
+
+println(Leitura de bool);
+scanln(b);
+println($b$);
+
+println(Leitura de int);
+scan(i);
+println($i$);
+
+println(Leitura de double);
+scan(d);
+println($d$);
