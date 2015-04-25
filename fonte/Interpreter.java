@@ -830,6 +830,9 @@ class Interpreter {
 				else if (content[i + 1].equals("$")) {
 					text += "$";
 				}
+				// else if (content[i + 1].equals("-")) {
+				// 	text += "-";
+				// }
 				else if (content[i + 1].equals("\\")) {
 					if (i + 2 < content.length && content[i + 2].equals("n")) {
 						text += "\\n";

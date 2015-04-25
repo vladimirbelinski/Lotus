@@ -4,9 +4,9 @@ import java.util.regex.*;
 
 class SourceScanner {
     public ArrayList<String> scan(File f) throws Exception {
-        String tmpInput;
+        String tmpInput, aux;
         Scanner sc = new Scanner(f);
-        int ind = 0, max, semicolon, bracket;
+        int ind = 0, max, semicolon, bracket, comm;
         ArrayList<String> input = new ArrayList<String>();
 
         while (sc.hasNext()) {
@@ -16,9 +16,29 @@ class SourceScanner {
             if (tmpInput.startsWith("--")) {
                 tmpInput = "";
             }
-            else if (!tmpInput.isEmpty()) {
+            else if (!tmpInput.isEmpty() && !tmpInput.startsWith("}")) {
                 semicolon = this.indexOf(";", tmpInput);
                 bracket = this.indexOf("{", tmpInput);
+                comm = tmpInput.indexOf("--");
+
+                if (comm > semicolon && comm > bracket) {
+                    tmpInput = tmpInput.substring(0, comm);
+                }
+
+                while (semicolon < 0 && bracket < 0 && sc.hasNext()) {
+                    aux = sc.nextLine().trim();
+                    if (aux.startsWith("--")) continue;
+
+                    tmpInput += " " + aux;
+
+                    semicolon = this.indexOf(";", tmpInput);
+                    bracket = this.indexOf("{", tmpInput);
+                    comm = tmpInput.indexOf("--");
+
+                    if (comm > semicolon && comm > bracket) {
+                        tmpInput = tmpInput.substring(0, comm);
+                    }
+                }
 
                 if (semicolon > bracket) {
                     tmpInput = tmpInput.substring(0, semicolon + 1);
@@ -44,9 +64,12 @@ class SourceScanner {
             if (aux > 0) {
                 index = aux;
                 lineEnding = s.substring(index + 1).trim();
-                System.out.println("lineEnding: " + lineEnding);
             }
         } while (aux > 0 && !lineEnding.isEmpty() && !lineEnding.startsWith("--"));
+
+        if (aux < 0/* && (!lineEnding.isEmpty() || !lineEnding.startsWith("--"))*/) {
+            index = -1;
+        }
 
         return index;
     }
