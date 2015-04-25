@@ -8,7 +8,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, quotInStrP, invalidFpP, intStrP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, intStrP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -125,7 +125,7 @@ class Interpreter {
 	}
 
 	public void setVar(Variable v, String value) throws LotusException {
-		Matcher intM = intP.matcher(value), fpM = fpP.matcher(value);
+		Matcher intM = intP.matcher(value), fpM = jfpP.matcher(value);
 
 		if (v instanceof StringVar) {
 			((StringVar)v).setValue(value);
@@ -263,20 +263,7 @@ class Interpreter {
 						}
 					}
 
-					// System.out.println("\n****    IF CHAIN:   ****");
-					// for (int p = 0; p < ifChain.size(); p++) {
-					// 	codeBlock = ifChain.get(p);
-					//
-					// 	System.out.println("> BLOCK");
-					// 	for (int q = 0; q < codeBlock.size(); q++) {
-					// 		System.out.println(codeBlock.get(q));
-					// 	}
-					// }
-					// System.out.println();
-					//
 					this.runIfChain(ifChain);
-
-					// System.out.println(i + " ~> line: " + code.get(i));
 				}
 				else {
 					throw new LotusException("unknownCommand", line);
@@ -634,7 +621,7 @@ class Interpreter {
 		int index;
 
         intM = intP.matcher(t);
-        fpM = fpP.matcher(t);
+        fpM = jfpP.matcher(t);
 		boolM = boolP.matcher(t);
 		strM = strP.matcher(t);
 		intStrM = intStrP.matcher(t);
@@ -666,13 +653,7 @@ class Interpreter {
 		}
 		else if (strM.matches()) {
 			t = t.substring(t.indexOf("\"") + 1);
-
-			// needs to the the index of the last quotation mark
 			index = t.lastIndexOf("\"");
-			// index = t.indexOf("\"");
-			// while (t.indexOf("\"", index + 1) > index) {
-			// 	index = t.indexOf("\"", index + 1);
-			// }
 
 			t = t.substring(0, index);
 			// replacing all \" for an actual "
@@ -825,11 +806,10 @@ class Interpreter {
 	private void print(String line) throws LotusException {
 		int i, offset;
 		String[] content;
-		String text = "";
 		Variable v = null;
-		String lineEnding;
-		Matcher cutPrintM;
 		boolean breakLine = false;
+		Matcher cutPrintM, varNameM;
+		String lineEnding, exp, text = "";
 
 		if (line.startsWith("println")) {
 			breakLine = true;
@@ -847,6 +827,7 @@ class Interpreter {
 			// \n 	Insert a newline in the text at this point.
 			// \\ 	Insert a backslash character in the text at this point.
 			if (content[i].equals("\\") && i + 1 < content.length) {
+
 				if (content[i + 1].equals("t")) {
 					text += "\t";
 				}
@@ -871,16 +852,25 @@ class Interpreter {
 
 				i++;
 			}
-			else if (content[i].equals("$")) {
-				// i is the index of the first '$'!
-				v = this.whatVar(line, i);
-				if (v != null) {
+			// content.length - 2 because it's the maximum index in the
+			// string for a variable or expression to exist, for example: $x$
+			else if (i < content.length - 2 && content[i].equals("$")) {
+				// i is the index of the first '$'
+				exp = this.getExp(line, i);
+
+				varNameM = varNameP.matcher(exp);
+				if (varNameM.matches()) {
+					v = this.getVar(exp);
+					if (v == null) {
+						throw new LotusException("varNotFound", exp);
+					}
 					text += v.toString();
-					i = line.indexOf("$", i + 1)/* + 1*/;
 				}
-				else {
-					text += content[i];
+				else if (!exp.isEmpty()) {
+					text += this.solve(new Expression(exp));
 				}
+
+				i = line.indexOf("$", i + 1);
 			}
 			else {
 				text += content[i];
@@ -890,28 +880,14 @@ class Interpreter {
 		else System.out.print(text);
 	}
 
-	private Variable whatVar(String content, int fromIndex) throws LotusException {
-		String name;
-		Variable var = null;
-		Matcher varNameM;
+	private String getExp (String content, int fromIndex) throws LotusException {
 		int offset = content.indexOf("$", fromIndex + 1);
 
 		if (offset > fromIndex) {
-			name = content.substring(fromIndex + 1, offset);
-
-			varNameM = varNameP.matcher(name);
-			if (varNameM.matches()) {
-				var = this.getVar(name);
-				if (var == null) {
-					throw new LotusException("varNotFound", name);
-				}
-			}
-			// if does not follow the pattern for a variable name
-			// in a print command, it doesn't matter, as that
-			// variable doesn't exist anyways
+			return content.substring(fromIndex + 1, offset);
 		}
 
-		return var;
+		return "";
 	}
 
 	// directly assigns the input read into the requested variable(s)
@@ -953,7 +929,7 @@ class Interpreter {
 
 					if ((v = this.getVar(name)) != null) {
 						intM = intP.matcher(input[j]);
-						fpM = fpP.matcher(input[j]);
+						fpM = jfpP.matcher(input[j]);
 
 						if (intM.matches()) {
 							other = new IntVar(Integer.parseInt(input[j]));
@@ -1090,7 +1066,43 @@ class Interpreter {
 
 	public static final String invalidFpR = "([+-]( )*)?(\\d+( )+\\.(( )*\\d)*|(\\d( )*)*\\.( )+\\d+)";
 
-	// public static final String wholeExpR = "(" + varNameR + "|" + fpR + "|" + strR + "|" + boolR + "|" + wholeOpR + ")";
+	// from Javadoc
+	private static final String Digits     = "(\\p{Digit}+)";
+	private static final String HexDigits  = "(\\p{XDigit}+)";
+	// an exponent is 'e' or 'E' followed by an optionally
+	// signed decimal integer.
+	private static final String Exp        = "[eE][+-]?"+Digits;
+	public static final String jufpR    =
+	    "NaN|" +           // "NaN" string
+	    "Infinity|" +      // "Infinity" string
+
+	    // A decimal floating-point string representing a finite positive
+	    // number without a leading sign has at most five basic pieces:
+	    // Digits . Digits ExponentPart FloatTypeSuffix
+	    //
+	    // Since this method allows integer-only strings as input
+	    // in addition to strings of floating-point literals, the
+	    // two sub-patterns below are simplifications of the grammar
+	    // productions from section 3.10.2 of
+	    // The Java Language Specification.
+
+	    // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+	    "((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
+
+	    // . Digits ExponentPart_opt FloatTypeSuffix_opt
+	    "(\\.("+Digits+")("+Exp+")?)|"+
+
+	    // Hexadecimal strings
+	    "((" +
+	    // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+	    "(0[xX]" + HexDigits + "(\\.)?)|" +
+
+	    // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
+	    "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
+
+	    ")[pP][+-]?" + Digits + "))" +
+	    "[fFdD]?)";
+	public static final String jfpR = signR + "?(" + jufpR + ")";
 
 	private static void initPatterns() {
 		varNameP = Pattern.compile(varNameR);
@@ -1103,6 +1115,8 @@ class Interpreter {
 		intP = Pattern.compile(intR);
 		ufpP = Pattern.compile(ufpR);
 		fpP = Pattern.compile(fpR);
+		jufpP = Pattern.compile(jufpR);
+		jfpP = Pattern.compile(jfpR);
 		invalidFpP = Pattern.compile(invalidFpR);
 		boolP = Pattern.compile(boolR);
 		charP = Pattern.compile("\\w");

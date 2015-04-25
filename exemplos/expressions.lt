@@ -116,7 +116,7 @@ s = s / "\"";
 println($s$);
 
 --x = 2. 5 * 9;
-x = .9   ^2;
+x = .9   ^2; -- 0.81
 
 let b: bool;
 
@@ -148,3 +148,7 @@ if ("Gabriel" > "Vladimir") {
 else {
 	println(>>> 8);
 }
+
+let x: double;
+x = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3; -- -3 pra int
+x = -3.0 +4 *2.0 / ( 1.0 - 5)^ 2 ^ 3; -- -3 pra int

@@ -1,0 +1,6 @@
+let b: bool;
+let i: int;
+let d: double;
+let s: string;
+
+println($-3 +4 *2 / ( 1 - 5)^ 2 ^ 3\$);

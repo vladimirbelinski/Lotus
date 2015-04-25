@@ -3,7 +3,7 @@ import java.util.regex.*;
 
 class Expression {
 	public String value;
-	public static final Character SEP = 31; // 31, 96 to test
+	public static final Character SEP = 96; // 31, 96 to test
     private static final Map<String, Integer> precedence = mapPrecedence();
 
 	public Expression(String value) throws LotusException {
@@ -31,7 +31,7 @@ class Expression {
 			throw new LotusException("invalidExp", aux);
 		}
 
-		ufpM = Interpreter.ufpP.matcher(aux);
+		ufpM = Interpreter.jufpP.matcher(aux);
 		strM = Interpreter.strP.matcher(aux);
 		opGroupM = Interpreter.opGroupP.matcher(aux);
 		wholeOpM = Interpreter.wholeOpP.matcher(aux);
@@ -76,7 +76,7 @@ class Expression {
 				throw new LotusException("invalidExp", this.value);
 			}
 
-			ufpM = Interpreter.ufpP.matcher(aux);
+			ufpM = Interpreter.jufpP.matcher(aux);
 			strM = Interpreter.strP.matcher(aux);
 			opGroupM = Interpreter.opGroupP.matcher(aux);
 			wholeOpM = Interpreter.wholeOpP.matcher(aux);
