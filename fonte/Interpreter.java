@@ -366,6 +366,7 @@ class Interpreter {
 		int i, max = decl.length - 1;
 		Matcher atrM, varM, strM;
 		Variable v = null;
+		String varName;
 
 		for (i = 0; i < max; i++) {
 			if (reservedWords.containsKey(decl[i])) {
@@ -411,7 +412,10 @@ class Interpreter {
 						}
 					}
 
-					this.newVar(varM.group(), v);
+					varName = varM.group();
+					if (!this.hasVar(varName)) {
+						this.newVar(varName, v);
+					}
 					this.assign(decl[i] + ";");
 				}
 				else {
