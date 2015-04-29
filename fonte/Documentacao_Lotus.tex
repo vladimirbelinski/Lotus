@@ -53,7 +53,7 @@ A sintaxe de declaração de variável funciona da seguinte forma:\\
 
 let nome\_variavel: tipo\_variavel;\\
 
-Sendo obrigatório o uso de ``let ''\ antes de qualquer declaração e o uso de `;'\ ao final dela. É permitida a criação de várias variáveis do mesmo tipo em apenas uma linha, desde que separadas por vírgulas, exemplo:\\
+Sendo obrigatório o uso de ``let '' antes de qualquer declaração e o uso de `;'\ ao final dela. É permitida a criação de várias variáveis do mesmo tipo em apenas uma linha, desde que separadas por vírgulas, exemplo:\\
 
 let x, y, z: int;\\
 
@@ -93,16 +93,38 @@ $*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
 \hypertarget{label1}{\Large{Entrada e saída}}\\[0.3cm]
 \normalsize
 
-A função print() é utilizada para imprimir uma linha, sem quebra no final. É equivalente ao printf() do C ou System.out.print() do java. Já o comando println() pode ser usado para quebrar automaticamente uma linha ao final da string a ser impressa (equivalente ao System.out.println() do Java). Os caracteres especiais são:\\[0.2cm]
+Para imprimir uma linha, deve ser chamada a função print(). A mesma é equivalente ao printf() do C ou System.out.print() do java.\\
+O comando println() imprimirá o que foi solicitado e também imprimirá uma quebra de linha ao final (equivalente ao System.out.println() do Java).\\
+
+Para imprimir o valor de uma variável, a mesma deve ser expressa entre cifrões. Exemplo: \\
+
+let ex: string;\\
+
+print(var: \$ex\$); \\
+
+Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimitar o comando. ``var: '' é uma string a ser posta diretamente na tela e \$ex\$ é o nome da variável, que está delimitada pelos cifrões para poder ser impressa.
+
+Os caracteres especiais em um comando de saída são:\\[0.2cm]
 \textbackslash t para uma tabulação \\
 \textbackslash n para uma quebra de linha \\
 \textbackslash \$ para um cifrão \\
-\textbackslash \textbackslash para uma contra-barra (para imprimir o literal ``\textbackslash n"", faça ``\textbackslash n'') \\
+\textbackslash \textbackslash\ para uma contra-barra % (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash n'') \\
 
+Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável. Exemplo: \\
 
-De maneira análoga às funções de impressão, o comando scan() é utilizado para ler um valor do teclado. Esse comando lê a informação até o primeiro espaço ou quebra de linha que delimitarem a entrada desejada, assim como o scanf() do C. Já o comando scanln() lê uma linha inteira, como o fgets() do C. Em ambos os comandos, a conversão dos tipos de variável se aplica, caso a entrada não corresponda ao valor esperado.
+println(\$$\ -3\ +4\ *2\ /\ (\ 1\ - 5)$\^\ 2 \^\ 3\$);\\
 
-Nas funções de impressão, agora é possível imprimir expressões diretamente, desde que ela esteja entre cifrões (`\$'), assim como uma variável. Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
+De maneira análoga às funções de saída, o comando scan() é utilizado para ler um valor do teclado. Esse comando lê a informação até o primeiro espaço ou quebra de linha que delimitar a entrada desejada, sendo idêntico ao scanf() do C. Já o comando scanln() lê uma linha inteira, assim como o fgets() do C. Em ambos os comandos, a conversão dos tipos de variável se aplica, caso a entrada não corresponda ao valor esperado.\\
+
+Exemplo do comando scan(): \\
+
+let i: int;\\
+
+scan(i);\\
+
+Onde ``scan'' é o comando, `$($' e `$)$' são os caracteres obrigatórios de delimitação e ``i'' é a variável onde será armazenado o valor lido. Neste exemplo, um valor do tipo inteiro.\\
+
+% Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
 
 \hypertarget{label2}{\Large{Atribuições de valores}}\\[0.3cm]
 \normalsize
@@ -119,23 +141,23 @@ Um comando de desvio condicional se comportará da seguinte forma: \\
 
 if (\emph{condição})\{ \\
 
-\emph{comandos a serem executados quando a condição for verdadeira} \\
+\textit{comandos a serem executados quando a condição for verdadeira} \\
 
 \} elseif (\emph{outra condição})\{\\
 
-\emph{comandos a serem executados quando a segunda condição for verdadeira} \\
+\textit{comandos a serem executados quando a segunda condição for verdadeira} \\
 
 \} else \{\\
 
 
-\emph{comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
+\textit{comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
 
 \}\\
 
 
-Sendo "if", "else"\ e "elseif"\ palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de operação.\\
+Sendo ``if'', ``else'' e ``elseif'' palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de operação.\\
 
-% O comando "if" pode conter uma ou mais expressões para análise
+% O comando ``if'' pode conter uma ou mais expressões para análise
 
 \hypertarget{label5}{\Large{Laços de repetição}}\\[0.3cm]
 \normalsize
@@ -147,7 +169,7 @@ Sendo "if", "else"\ e "elseif"\ palavras reservadas para as operações de desvi
 
 Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
 
-Já comandos do tipo if, for e while exigirão `{' e `}' como delimitadores de bloco.
+Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
 Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
 
 
