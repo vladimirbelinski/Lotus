@@ -8,7 +8,7 @@
 \usepackage{xspace}
 \usepackage{epsfig}
 \usepackage{ulem}
-\usepackage[pdftex]{hyperref}
+\usepackage{hyperref}
 \usepackage{amssymb}
 \usepackage[fixlanguage]{babelbib} % arruma pra português a automatização das referências e tal...
 \selectbiblanguage{portuguese}
@@ -36,17 +36,17 @@
 A linguagem de programação Lotus é uma linguagem desenvolvida com base em Java com as seguintes características e funcionalidades:\\
 
 \begin{itemize}
-\item \hyperlink{Declaração de variáveis}{Declaração de variáveis}
-\item \hyperlink{Entrada e saída}{Entrada e saída}
-\item \hyperlink{Atribuições de valores}{Atribuições de valores}
-\item \hyperlink{Operações aritméticas}{Operações aritméticas}
-\item \hyperlink{Desvios condicionais}{Desvios condicionais}
-\item \hyperlink{Laços de repetição}{Laços de repetição}
-\item \hyperlink{Sintaxe}{Sintaxe}
-\item \hyperlink{Extensão de arquivos}{Extensão de arquivos}\\[15.4cm]
+\item \hyperlink{label}{Declaração de variáveis}
+\item \hyperlink{label1}{Entrada e saída}
+\item \hyperlink{label2}{Atribuições de valores}
+\item \hyperlink{label3}{Operações aritméticas}
+\item \hyperlink{label4}{Desvios condicionais}
+\item \hyperlink{label5}{Laços de repetição}
+\item \hyperlink{label6}{Sintaxe}
+\item \hyperlink{label7}{Extensão de arquivos}\\[15.4cm]
 \end{itemize}
 
-\hypertarget{Declaração de variáveis}{\Large{Declaração de variáveis}}\\[0.3cm]
+\hypertarget{label}{\Large{Declaração de variáveis}}\\[0.3cm]
 \normalsize
 
 A sintaxe de declaração de variável funciona da seguinte forma:\\
@@ -82,15 +82,15 @@ $/$ $\rightarrow$ nand\\
 $*$ $\rightarrow$ and\\
 \^ \ $\rightarrow$ xor\\
 
-Para string, em relação aos operandos:
-%+ concatena o segundo ao primeiro;
-%- retira a primeira ocorrência do segundo no primeiro;
-%/ retira todas as ocorrências do segundo no primeiro;
-%\% retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/');
-%* adiciona o segundo entre cada caractere do primeiro;
-%^ ainda não está definido. Lança uma exceção.\\
+Para string, em relação aos operandos:\\[0.2cm]
+$+$ $\rightarrow$ concatena o segundo ao primeiro\\
+$-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro\\
+$/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
+\textbackslash\ $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
+$*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
+% \^ \ $\rightarrow$ ainda não está definido. Lança uma exceção\\
 
-\hypertarget{Entrada e saída}{\Large{Entrada e saída}}\\[0.3cm]
+\hypertarget{label1}{\Large{Entrada e saída}}\\[0.3cm]
 \normalsize
 
 A função print() é utilizada para imprimir uma linha, sem quebra no final. É equivalente ao printf() do C ou System.out.print() do java. Já o comando println() pode ser usado para quebrar automaticamente uma linha ao final da string a ser impressa (equivalente ao System.out.println() do Java). Os caracteres especiais são:\\[0.2cm]
@@ -104,13 +104,13 @@ De maneira análoga às funções de impressão, o comando scan() é utilizado p
 
 Nas funções de impressão, agora é possível imprimir expressões diretamente, desde que ela esteja entre cifrões (`\$'), assim como uma variável. Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
 
-\hypertarget{Atribuições de valores}{\Large{Atribuições de valores}}\\[0.3cm]
+\hypertarget{label2}{\Large{Atribuições de valores}}\\[0.3cm]
 \normalsize
 
-\hypertarget{Operações aritméticas}{\Large{Operações aritméticas}}\\[0.3cm]
+\hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
 
-\hypertarget{Desvios condicionais}{\Large{Desvios condicionais}}\\[0.3cm]
+\hypertarget{label4}{\Large{Desvios condicionais}}\\[0.3cm]
 \normalsize
 
 A linguagem suporta toda e qualquer cadeia ou aninhamento de comandos if. A condição é qualquer expressão suportada pela linguagem, cujo resultado será transformado em booleano para efeitos de avaliação.\\
@@ -137,12 +137,12 @@ Sendo "if", "else"\ e "elseif"\ palavras reservadas para as operações de desvi
 
 % O comando "if" pode conter uma ou mais expressões para análise
 
-\hypertarget{Laços de repetição}{\Large{Laços de repetição}}\\[0.3cm]
+\hypertarget{label5}{\Large{Laços de repetição}}\\[0.3cm]
 \normalsize
 
 % A fazer
 
-\hypertarget{Sintaxe}{\Large{Sintaxe}}\\[0.3cm]
+\hypertarget{label6}{\Large{Sintaxe}}\\[0.3cm]
 \normalsize
 
 Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
@@ -151,7 +151,7 @@ Já comandos do tipo if, for e while exigirão `{' e `}' como delimitadores de b
 Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
 
 
-\hypertarget{Extensão de arquivos}{\Large{Extensão de arquivos}}\\[0.3cm]
+\hypertarget{label7}{\Large{Extensão de arquivos}}\\[0.3cm]
 \normalsize
 
 Os códigos escritos com a linguagem de programação Lotus devem apresentar extensão ``.lt''.\\
