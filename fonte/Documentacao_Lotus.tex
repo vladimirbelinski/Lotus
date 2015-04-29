@@ -36,14 +36,17 @@
 A linguagem de programação Lotus é uma linguagem desenvolvida com base em Java com as seguintes características e funcionalidades:\\
 
 \begin{itemize}
-\item \hyperlink{label}{Declaração de variáveis}
+\item \hyperlink{Declaração de variáveis}{Declaração de variáveis}
+\item \hyperlink{Entrada e saída}{Entrada e saída}
 \item Atribuições de valores
 \item Operações aritméticas
-\item Desvios condicionais
-\item Laços de repetição\\[15.4cm]
+\item \hyperlink{Desvios condicionais}{Desvios condicionais}
+\item Laços de repetição
+\item \hyperlink{Sintaxe}{Sintaxe}
+\item \hyperlink{Extensão de arquivos}{Extensão de arquivos}\\[15.4cm]
 \end{itemize}
 
-\hypertarget{label}{\Large{Declaração de variáveis}}\\[0.3cm]
+\hypertarget{Declaração de variáveis}{\Large{Declaração de variáveis}}\\[0.3cm]
 \normalsize
 
 A sintaxe de declaração de variável funciona da seguinte forma:\\
@@ -57,17 +60,6 @@ let x, y, z: int;\\
 Também é permitida a atribuição de valores às variáveis no momento da declaração. Exemplo:\\
 
 let x = ``Oi'': string;\\
-
-
-Extensão de arquivo
-
-Arquivos que contenham código fonte Lotus devem ter a extensão ``.lt''.
-
-
-Sintaxe
-
-Cada comando pode ser quebrado em várias linhas, até com comentários, caso seja conveniente. Todos os comandos devem ser finalizados com `;', ou `{' ou `}', dependendo do caso. Não são permitidos comandos do tipo if, for ou while de uma linha.
-Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.
 
 
 Conversão de tipos:
@@ -121,10 +113,10 @@ Para string, em relação aos operandos:
 / retira todas as ocorrências do segundo no primeiro;
 \% retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/');
 * adiciona o segundo entre cada caractere do primeiro;
-^ ainda não está definido. Lança uma exceção.
+^ ainda não está definido. Lança uma exceção.\\
 
-
-Entrada e saída:
+\hypertarget{Entrada e saída}{\Large{Entrada e saída}}\\[0.3cm]
+\normalsize
 
 A função print() é utilizada para imprimir uma linha, sem quebra no final. É equivalente ao printf() do C ou System.out.print() do java. Já o comando println() pode ser usado para quebrar automaticamente uma linha ao final da string a ser impressa (equivalente ao System.out.println() do Java). Os caracteres especiais são os seguintes:
 `\\t' para um tab;
@@ -135,11 +127,49 @@ A função print() é utilizada para imprimir uma linha, sem quebra no final. É
 
 De maneira análoga às funções de impressão, o comando scan() é utilizado para ler um valor do teclado. Esse comando lê a informação até o primeiro espaço ou quebra de linha que delimitarem a entrada desejada, assim como o scanf() do C. Já o comando scanln() lê uma linha inteira, como o fgets() do C. Em ambos os comandos, a conversão dos tipos de variável se aplica, caso a entrada não corresponda ao valor esperado.
 
-Nas funções de impressão, agora é possível imprimir expressões diretamente, desde que ela esteja entre cifrões (`\$'), assim como uma variável. Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.
+Nas funções de impressão, agora é possível imprimir expressões diretamente, desde que ela esteja entre cifrões (`\$'), assim como uma variável. Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
+
+\hypertarget{Desvios condicionais}{\Large{Desvios condicionais}}\\[0.3cm]
+\normalsize
+
+A linguagem suporta toda e qualquer cadeia ou aninhamento de comandos if. A condição é qualquer expressão suportada pela linguagem, cujo resultado será transformado em booleano para efeitos de avaliação.\\
+
+Um comando de desvio condicional se comportará da seguinte forma: \\
+
+if (\emph{condição})\{ \\
+
+\emph{comandos a serem executados quando a condição for verdadeira} \\
+
+\} elseif (\emph{outra condição})\{\\
+
+\emph{comandos a serem executados quando a segunda condição for verdadeira} \\
+
+\} else \{\\
 
 
-Desvio condicional:
+\emph{comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
 
-Suportamos toda e qualquer cadeia ou aninhamento de comandos if. A condição é qualquer expressão suportada pela linguagem, cujo resultado será transformado em bool para efeitos de avaliação.
+\}\\
+
+
+Sendo "if", "else"\ e "elseif"\ palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de operação.\\
+
+% O comando "if" pode conter uma ou mais expressões para análise
+
+
+\hypertarget{Sintaxe}{\Large{Sintaxe}}\\[0.3cm]
+\normalsize
+
+Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
+
+Já comandos do tipo if, for e while exigirão `{' e `}' como delimitadores de bloco.
+Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
+
+
+\hypertarget{Extensão de arquivos}{\Large{Extensão de arquivos}}\\[0.3cm]
+\normalsize
+
+Os códigos escritos com a linguagem de programação Lotus devem apresentar extensão ``.lt''.\\
+
 
 \end{document}
