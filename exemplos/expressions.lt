@@ -39,7 +39,7 @@ x = + - - + - - 5; -- 5
 x = - - + - 5; -- -5
 x = - - 5 + - + 4; -- 1
 x = + + + + - 5 - - - - 4; -- -1
-x = - - x + - 1; -- -2
+x = - - x + - 1; -- -2.0
 x = - - - -  5; -- 5
 x = -       5; -- -5
 x = - - - - - 5; -- -5
@@ -51,7 +51,7 @@ let i: int;
 let d: double;
 let s: string;
 
-b = 1 < 5;
+b = 1 < 5; -- true
 
 b = (x < 5 || (2^2 >= 4)) && (25 == 5 * 5); -- true
 
@@ -68,16 +68,16 @@ b = i || false; -- true
 
 d = 1.0;
 
-b = d;
+b = d; -- 1.0, vai virar true
 
-b = d || false;
+b = d || false; -- true
 
 s = "true";
-b = s || false;
+b = s || false; -- true
 
 b = "true" || false;
 
-s = "7.11" + 1.5;
+s = "7.11" + 1.5; -- 7.111.5
 
 b = !false;
 
@@ -92,30 +92,31 @@ let s: string;
 s = " Gabriel ";
 println({$s$});
 
-b = "Gabriel" < "Ana";
+b = "Gabriel" < "Ana"; -- false
 
 let x: int;
 x = +- 5;
 
-b = s == " Gabriel ";
+b = s == " Gabriel "; -- true
 
 s = "oi\"";
 println(s: $s$);
 
-b = "Gabriel" + " Galli" < "Vladimir " + "Belinski";
+b = "Gabriel" + " Galli" < "Vladimir " + "Belinski"; -- true
 
-b = " false " || false;
-b = !1 && true;
+b = " false " || false; -- false
+b = !1 && true; -- false
 
 s = "Ana Carolina" / "a";
 s = "Ana Carolina" % "a";
 s = "Ana Carolina" * "a";
 
 s = "\"oi\"";
+println($s$);
 s = s / "\"";
 println($s$);
 
---x = 2. 5 * 9;
+x = 2.5 * 9; -- 22.5
 x = .9   ^2; -- 0.81
 
 let b: bool;
@@ -151,4 +152,4 @@ else {
 
 let x: double;
 x = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3; -- -3 pra int
-x = -3.0 +4 *2.0 / ( 1.0 - 5)^ 2 ^ 3; -- -3 pra int
+x = -3.0 +4 *2.0 / ( 1.0 - 5)^ 2 ^ 3; -- -2.9998779296875 pra double

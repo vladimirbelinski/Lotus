@@ -2,7 +2,6 @@ import java.util.*;
 import java.util.regex.*;
 
 class Interpreter {
-	private int lN = 1; // line number
 	private HashMap<String, Variable> vars;
 	// this doesn't make that much sense now, but it's faster to
 	// look up in a hash than an array. And later on we can replace
@@ -178,7 +177,7 @@ class Interpreter {
 
 	public void execute(ArrayList<String> code) throws LotusException {
 		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, ifM, elsifM, elseM;
-		int i, j, max, semicolon, bracket, clBracket;
+		int i, j, max, semicolon, clBracket;
 		ArrayList<ArrayList<String>> ifChain;
 		String line = "", lineEnding = "";
 		ArrayList<String> codeBlock;
@@ -187,7 +186,6 @@ class Interpreter {
 		max = code.size();
 		for (i = 0; i < max; i++) {
 			try {
-				lN++;
 				line = code.get(i);
 
 			    if (line.isEmpty()) {
@@ -260,7 +258,7 @@ class Interpreter {
 					throw new LotusException("unknownCommand", line);
 				}
 			} catch (LotusException e) {
-				e.setLN(lN);
+				e.setLN(i + 1);
 				throw e;
 			}
 		}
@@ -321,7 +319,7 @@ class Interpreter {
 
 	private ArrayList<String> buildIfBlock(ArrayList<String> code, int index, int max) throws LotusException {
 		ArrayList<String> ifBlock = new ArrayList<String>();
-		int i = index, bracketCount = 0, lNBack = lN;
+		int i = index, bracketCount = 0;
 		Matcher ifM, elsifM, elseM;
 		boolean endOfBlock = false;
 		String line, lineEnding;
@@ -336,15 +334,12 @@ class Interpreter {
 
 			clBracket = line.lastIndexOf("}");
 			if (clBracket >= 0) {
-				lineEnding = line.substring(clBracket + 1);
-
-				if (lineEnding.isEmpty()) {
-					bracketCount--;
-				}
-			}
-			else if (bracketCount > 0 && (elsifM.matches() || elseM.matches())) {
-				lN--;
-				throw new LotusException("bracketNotFound", code.get(index));
+				bracketCount--;
+				// lineEnding = line.substring(clBracket + 1);
+				//
+				// if (lineEnding.isEmpty()) {
+				// 	bracketCount--;
+				// }
 			}
 			else if (ifM.matches() || elsifM.matches() || elseM.matches()) {
 				bracketCount++;
@@ -358,11 +353,11 @@ class Interpreter {
 			if (bracketCount == 0) {
 				endOfBlock = true;
 			}
-
-			lN++;
 		}
 
-		lN = lNBack;
+		if (!endOfBlock) {
+			throw new LotusException("bracketNotFound", code.get(index));
+		}
 
 		return ifBlock;
 	}
@@ -411,8 +406,7 @@ class Interpreter {
 					// if the variable being declared is a string and
 					// it has an assignment, it must have ""
 					if (v instanceof StringVar) {
-						System.out.println("String assign: " + decl[i].substring(decl[i].indexOf("=") + 1));
-						strM = strP.matcher(decl[i].substring(decl[i].indexOf("=") + 1));
+						strM = strP.matcher(decl[i].substring(decl[i].indexOf("=") + 1).trim());
 						if (!strM.matches()) {
 							throw new LotusException("syntaxError", line);
 						}
@@ -434,16 +428,16 @@ class Interpreter {
 		}
 	}
 
-	// remember the Arrays!
     public String[] fixDecl(String line) throws LotusException {
         int i;
 		Matcher atrM, charM, typeM;
         String var = new String("");
-        String[] t = line.replace("let ", "").replaceAll(" ", "").split("");
+        String[] t = line.replace("let ", "").split("");
         ArrayList<String> tokens = new ArrayList<String>();
 
         for (i = 0; i < t.length && !t[i].equals(":"); i++) {
 			charM = charP.matcher(t[i]);
+
             if (charM.matches()) {
                 var += t[i];
             }
@@ -462,12 +456,12 @@ class Interpreter {
 					throw new LotusException("syntaxError", line);
 				}
 			}
-            else if (!var.isEmpty() && (t[i].equals(" ") || t[i].equals(","))) {
+            else if (!var.isEmpty() && t[i].equals(",")) {
                 tokens.add(var);
                 var = "";
             }
-			else if (!t[i].equals(",")/* && t[i].matches("\\W")*/) {
-                throw new LotusException("invalidVarName", line);
+			else if (!t[i].isEmpty() && !t[i].equals(",") && !t[i].equals(" ")) {
+                throw new LotusException("syntaxError", line);
             }
         }
         // the last var left before ":"
@@ -613,7 +607,7 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		// System.out.println(">>>> result: " + answ);
+		System.out.println(">>>> result: " + answ);
 
 		return answ;
 	}

@@ -15,11 +15,28 @@ class SourceScanner {
         while (sc.hasNext()) {
             fix = false;
             tmpInput = sc.nextLine().trim();
+
+            if (tmpInput.startsWith("--")) {
+                tmpInput = "";
+            }
+
             semicolon = opBr = clBr = comm = -1;
 
-            // Using Java's indexOf because I look at the
-            // first occurrence of "--" no matter what
+            semicolon = this.indexOf(";", "--", tmpInput);
+
+            opBrackM = opBrackP.matcher(tmpInput);
+            if (opBrackM.find()) {
+                opBr = opBrackM.start();
+            }
+            else opBr = -1;
+            if (opBr > 0) fix = true;
+
+            clBr = this.indexOf("}", "--", tmpInput);
+
             comm = tmpInput.indexOf("--");
+            while (comm >= 0 && (comm < semicolon || comm < opBr || comm < clBr)) {
+                comm = tmpInput.indexOf("--", comm + 1);
+            }
             if (comm >= 0) {
                 tmpInput = tmpInput.substring(0, comm).trim();
             }
@@ -81,7 +98,11 @@ class SourceScanner {
                         opBr = opBrackM.start();
                     }
                     else opBr = -1;
+
                     comm = tmpInput.indexOf("--");
+                    while (comm >= 0 && (comm < semicolon || comm < opBr)) {
+                        comm = tmpInput.indexOf("--", comm + 1);
+                    }
 
                     if (comm > semicolon && comm > opBr) {
                         tmpInput = tmpInput.substring(0, comm);
@@ -97,7 +118,7 @@ class SourceScanner {
                 // }
             }
 
-            input.add(tmpInput);
+            input.add(tmpInput.trim());
             if (clBr > 0) input.add("}");
         }
         sc.close();

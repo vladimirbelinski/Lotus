@@ -73,7 +73,7 @@ println(Testing multiline commands...);
 if (1 < 2) -- we can put comments here and it doesn't matter...
 { -- and here
     if (5 * 2 == 10 && -- and here
-        -- and here, just like Java :)
+        -- and here :)
         2 * 3 == 6 &&
         9 * 9 == 81) {
         println(WORKS!);

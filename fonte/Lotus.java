@@ -54,7 +54,7 @@ class Lotus {
                 lotus.execute(input);
             } catch (LotusException e) {
                 System.out.println("\n> " + e.getMessage() + " @ line #" + e.getLN() + ":");
-                System.out.println(e.getLine() + "\n");
+                System.out.println(e.getLine());
                 System.exit(1);
             }
         }

@@ -50,28 +50,28 @@ class Expression {
 				index = wholeOpM.start();
 
 				tokens.put(index, tmp);
-				aux = wholeOpM.replaceFirst(this.replacement(tmp));
+				aux = wholeOpM.replaceFirst(this.spacenize(tmp));
 			}
 			else if (strM.find()) {
 				tmp = strM.group();
 				index = strM.start();
 
 				tokens.put(index, tmp);
-				aux = strM.replaceFirst(this.replacement(tmp));
+				aux = strM.replaceFirst(this.spacenize(tmp));
 			}
 			else if (ufpM.find()) {
 				tmp = ufpM.group();
 				index = ufpM.start();
 
 				tokens.put(index, tmp);
-				aux = ufpM.replaceFirst(this.replacement(tmp));
+				aux = ufpM.replaceFirst(this.spacenize(tmp));
 			}
 			else if (varNameM.find()) {
 				tmp = varNameM.group();
 				index = varNameM.start();
 
 				tokens.put(index, tmp);
-				aux = varNameM.replaceFirst(this.replacement(tmp));
+				aux = varNameM.replaceFirst(this.spacenize(tmp));
 			}
 			else {
 				throw new LotusException("invalidExp", this.value);
@@ -95,7 +95,7 @@ class Expression {
 		this.value = fixed;
 	}
 
-	private String replacement(String token) {
+	public String spacenize(String token) {
 		int i, max = token.length();
 		String repl = "";
 
@@ -131,7 +131,7 @@ class Expression {
         for (i = 0; i < tokens.length; i++) {
             wholeOpM = Interpreter.wholeOpP.matcher(tokens[i]);
 
-            if (isSignal(tokens, i)) {
+            if (this.isSignal(tokens, i)) {
 				ts.add(tokens[i] + tokens[i + 1]);
 				i++;
             }
@@ -151,7 +151,7 @@ class Expression {
         this.value = t;
     }
 
-	private static boolean isSignal(String[] tokens, int i) {
+	private boolean isSignal(String[] tokens, int i) {
         boolean result = false;
         Matcher numBuildM, signM, opBeforeM;
 
