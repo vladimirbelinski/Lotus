@@ -24,7 +24,6 @@ class SourceScanner {
                 tmpInput = tmpInput.substring(0, comm).trim();
             }
 
-
             if (!tmpInput.isEmpty() && !tmpInput.startsWith("}")) {
                 semicolon = this.indexOf(";", "--", tmpInput);
 
@@ -33,14 +32,6 @@ class SourceScanner {
                     opBr = opBrackM.start();
                 }
                 else opBr = -1;
-                // opBr = this.indexOf("{", "--", tmpInput);
-                // if (opBr < 0) {
-                //     opBr = this.indexOf(")", "{", tmpInput);
-                //     if (opBr > 0) fix = true;
-                // }
-                // System.out.println(">>>> " + this.indexOf("{", "--", tmpInput));
-                // System.out.println(">>>> " + this.indexOf(")", "{", tmpInput));
-                // System.out.println(">>>> " + opBr);
                 if (opBr > 0) fix = true;
 
                 clBr = this.indexOf("}", "--", tmpInput);
@@ -57,8 +48,10 @@ class SourceScanner {
                             aux = aux.substring(0, this.indexOf(";", "}", aux) + 1);
                             tmpInput = tmpInput.substring(0, opBr + 1) + " {";
 
-                            input.add(tmpInput);
-                            tmpInput = aux;
+                            if (!aux.isEmpty()) {
+                                input.add(tmpInput);
+                                tmpInput = aux;
+                            }
                         }
                         else {
                             tmpInput = tmpInput.substring(0, clBr);
@@ -98,9 +91,10 @@ class SourceScanner {
                 if (semicolon > opBr) {
                     tmpInput = tmpInput.substring(0, semicolon + 1);
                 }
-                else if (opBr > 0) {
-                    tmpInput = tmpInput.substring(0, opBr + 1);
-                }
+                // else if (opBr > 0) {
+                //     System.out.println("*** " + tmpInput);
+                //     tmpInput = tmpInput.substring(0, opBr + 1);
+                // }
             }
 
             input.add(tmpInput);
