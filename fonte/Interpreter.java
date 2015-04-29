@@ -607,7 +607,9 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		System.out.println(">>>> result: " + answ + "\n");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~");
+		System.out.println(">>>> result: " + answ);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~");
 
 		return answ;
 	}

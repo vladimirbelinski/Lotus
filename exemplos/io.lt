@@ -1,7 +1,12 @@
 let b: bool;
-let i: int;
+let i = 35: int;
 let d: double;
 let s: string;
+
+s = "3 + 5";
+
+println(s: $s$);
+println(i: $i$);
 
 println($-3 +4 *2 / ( 1 - 5)^ 2 ^ 3$);
 println($$);
