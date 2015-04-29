@@ -1,56 +1,46 @@
 class LotusException extends Exception {
-    private String code, message;
-    private Integer line;
+    private String message, line;
+    private int lN;
 
-    public LotusException(String code, String info) {
+    public LotusException(String code, String line) {
+        this.setLine(line);
+
         switch (code) {
         case "syntaxError":
-			this.setException(code, "Syntax error: \"" + info + "\""); break;
+			this.setMessage("Syntax error"); break;
         case "multipleCommands":
-			this.setException(code, "You can only have one command per line:\n\"" + info + "\""); break;
+			this.setMessage("You can only have one command per line"); break;
         case "unknownCommand":
-			this.setException(code, "Unknown command: \"" + info + "\""); break;
+			this.setMessage("Unknown command"); break;
         case "bracketNotFound":
-            this.setException(code, "Could not find closing bracket for command:\n\"" + info + "\""); break;
+            this.setMessage("Could not find closing bracket"); break;
         case "usingReservedWords":
-			this.setException(code, "You cannot use Lotus' reserved words as variable names:\n\"" + info + "\""); break;
+			this.setMessage("You cannot use Lotus' reserved words"); break;
         case "invalidType":
-			this.setException(code, "Invalid type: \"" + info + "\""); break;
+			this.setMessage("Invalid type"); break;
         case "invalidVarName":
-			this.setException(code, "Variable names cannot start with numbers or special characters:\n'" + info + "'"); break;
+			this.setMessage("Variable names cannot start with numbers or special characters"); break;
         case "invalidExp":
-            this.setException(code, "Invalid expression:\n\"" + info + "\""); break;
+            this.setMessage("Invalid expression"); break;
         case "varNotFound":
-			this.setException(code, "Could not find variable: \"" + info + "\""); break;
+			this.setMessage("Could not find variable"); break;
         case "unknownSymbol":
-			this.setException(code, "Unknown symbol: '" + info + "'"); break;
+			this.setMessage("Unknown symbol"); break;
         case "stringPow":
-			this.setException(code, "Cannot calculate the power of a string: \"" + info + "\""); break;
+			this.setMessage("Cannot calculate the power of a string"); break;
         case "nonIntMod":
-			this.setException(code, "Cannot calculate remainder of a division between non-integer operands: \"" + info + "\""); break;
+			this.setMessage("Cannot calculate remainder of a division between non-integer operands"); break;
         case "divisionByZero":
-			this.setException(code, "Division by zero: \"" + info + "\""); break;
+			this.setMessage("Division by zero"); break;
         case "unknownEscape":
-			this.setException(code, "Unknown escape sequence: \"" + info + "\""); break;
+			this.setMessage("Unknown escape sequence"); break;
         case "cantAssign":
-			this.setException(code, "Cannot assign a \"" + info.substring(0, info.indexOf(";")) + "\" value to a variable of type \"" + info.substring(info.indexOf(";") + 1) + "\""); break;
+			this.setMessage("Invalid assignment of types"); break;
         case "inputMismatch":
-			this.setException(code, "Could not read the input: \"" + info + "\""); break;
+			this.setMessage("Could not read the input"); break;
         case "missingParen":
-            this.setException(code, "Missing parenthesis in the expression: \"" + info + "\""); break;
+            this.setMessage("Missing parenthesis"); break;
         }
-    }
-
-    private void setException(String code, String message) {
-        this.setCode(code);
-        this.setMessage(message);
-    }
-
-    private void setCode(String code) {
-        this.code = code;
-    }
-    public String getCode() {
-        return this.code;
     }
 
     private void setMessage(String message) {
@@ -60,10 +50,17 @@ class LotusException extends Exception {
         return this.message;
     }
 
-    public void setLine(int i) {
-        this.line = i;
+    public void setLine(String line) {
+        this.line = line;
     }
-    public Integer getLine() {
+    public String getLine() {
         return this.line;
+    }
+
+    public void setLN(int lN) {
+        this.lN = lN;
+    }
+    public int getLN() {
+        return this.lN;
     }
 }
