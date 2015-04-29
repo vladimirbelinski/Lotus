@@ -40,7 +40,9 @@ A linguagem de programação Lotus é uma linguagem desenvolvida com base em Jav
 \item Atribuições de valores
 \item Operações aritméticas
 \item Desvios condicionais
-\item Laços de repetição\\[15.4cm]
+\item Laços de repetição
+\item \hyperlink{label}{Sintaxe}
+\item \hyperlink{label}{Extensão de arquivos}\\[15.4cm]
 \end{itemize}
 
 \hypertarget{label}{\Large{Declaração de variáveis}}\\[0.3cm]
@@ -59,14 +61,17 @@ Também é permitida a atribuição de valores às variáveis no momento da decl
 let x = ``Oi'': string;\\
 
 
-Extensão de arquivo
+\hypertarget{label}{\Large{Extensão de arquivos}}\\[0.3cm]
+\normalsize
 
-Arquivos que contenham código fonte Lotus devem ter a extensão ``.lt''.
+Os códigos escritos com a linguagem de programação Lotus devem apresentar extensão ``.lt''.
 
+\hypertarget{label}{\Large{Sintaxe}}\\[0.3cm]
+\normalsize
 
-Sintaxe
+Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
 
-Cada comando pode ser quebrado em várias linhas, até com comentários, caso seja conveniente. Todos os comandos devem ser finalizados com `;', ou `{' ou `}', dependendo do caso. Não são permitidos comandos do tipo if, for ou while de uma linha.
+Já comandos do tipo if, for e while exigirão `{' e `}' como delimitadores de bloco.
 Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.
 
 
