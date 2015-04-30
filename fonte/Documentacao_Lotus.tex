@@ -62,35 +62,6 @@ Também é permitida a atribuição de valores às variáveis no momento da decl
 
 let x = ``Oi'': string;\\
 
-
-Expressões:
-
-Todos os tipos operam entre si, através da conversão de tipos, utilizando os seguintes operadores:
-
-% Matemáticos: -, +, /, \%, *, ^ (potência), v (ainda não implementado, possível raiz quadrada);
-% Comparação: <, <=, ==, >=, >, !=;
-% Booleanos: !, &&, ||.
-
-Os operadores de comparação e os booleanos sempre resultam em um bool. A comparação de strings é em relação a ordem lexicográfica. Se as strings têm tamanhos diferentes, a menor vem antes. Comparações com bool são feitas de modo que o valor é primeiro transformado em int e então é feita a comparação (exceto para os operadores ``=='' e ``!='').
-
-Os operadores matemáticos variam com seu tipo:
-Int e double funcionam normalmente, como manda a matemática;
-Para booleanos, os operadores matemáticos são interpretados como as seguintes operações lógicas:\\[0.2cm]
-$+$ $\rightarrow$ or\\
-$-$ $\rightarrow$ nor\\
-$/$ $\rightarrow$ nand\\
-\textbackslash\ $\rightarrow$ xnor\\
-$*$ $\rightarrow$ and\\
-\^ \ $\rightarrow$ xor\\
-
-Para string, em relação aos operandos:\\[0.2cm]
-$+$ $\rightarrow$ concatena o segundo ao primeiro\\
-$-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro\\
-$/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
-\textbackslash\ $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
-$*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
-% \^ \ $\rightarrow$ ainda não está definido. Lança uma exceção\\
-
 \hypertarget{label1}{\Large{Entrada e saída}}\\[0.3cm]
 \normalsize
 
@@ -149,6 +120,7 @@ b após a conversão automática valerá "true".\\
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
 
+
 \hypertarget{label4}{\Large{Desvios condicionais}}\\[0.3cm]
 \normalsize
 
@@ -188,6 +160,35 @@ Os comandos podem apresentar quebras de linha que podem incluir até mesmo comen
 
 Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
 Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
+
+\large{Expressões:}\\[0.1cm]
+\normalsize
+
+Todos os tipos operam entre si, através da conversão de tipos, utilizando os seguintes operadores:\\[0.2cm]
+Matemáticos: $-,\ +,\ /,\ \%,\ *,$ \^\ (potência)\\
+Comparação: $<,\ <=,\ ==,\ >=,\ >,\ !=$\\
+Booleanos: $!,\ \&\&,\ ||$\\
+
+Os operadores de comparação e os booleanos sempre resultam em um bool. A comparação de strings é em relação a ordem lexicográfica, ou seja, se as strings têm tamanhos diferentes, a menor vem antes. Comparações com bool são feitas de modo que o valor é primeiro transformado em int e então é feita a comparação (exceto para os operadores ``=='' e ``!='').\\
+
+Os operadores matemáticos variam com seu tipo:\\
+Int e double funcionam normalmente, como ensinado na matemática\\
+
+Para booleanos, os operadores matemáticos são interpretados como as seguintes operações lógicas:\\[0.2cm]
+$+$ $\rightarrow$ or\\
+$-$ $\rightarrow$ nor\\
+$/$ $\rightarrow$ nand\\
+\textbackslash\ $\rightarrow$ xnor\\
+$*$ $\rightarrow$ and\\
+\^ \ $\rightarrow$ xor\\
+
+Para string, em relação aos operandos:\\[0.2cm]
+$+$ $\rightarrow$ concatena o segundo ao primeiro\\
+$-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro\\
+$/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
+\textbackslash\ $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
+$*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
+% \^ \ $\rightarrow$ ainda não está definido. Lança uma exceção\\
 
 
 \hypertarget{label7}{\Large{Extensão de arquivos}}\\[0.3cm]
