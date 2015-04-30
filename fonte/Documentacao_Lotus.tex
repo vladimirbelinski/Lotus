@@ -38,12 +38,13 @@ A linguagem de programação Lotus é uma linguagem desenvolvida com base em Jav
 \begin{itemize}
 \item \hyperlink{label}{Declaração de variáveis}
 \item \hyperlink{label1}{Entrada e saída}
-\item \hyperlink{label2}{Atribuições de valores}
+\item \hyperlink{label2}{Atribuições de valor}
 \item \hyperlink{label3}{Operações aritméticas}
 \item \hyperlink{label4}{Desvios condicionais}
 \item \hyperlink{label5}{Laços de repetição}
 \item \hyperlink{label6}{Sintaxe}
-\item \hyperlink{label7}{Extensão de arquivos}\\[15.4cm]
+\item \hyperlink{label7}{Extensão de arquivos}
+\item \hyperlink{label8}{Conversão de tipos}\\[15.4cm]
 \end{itemize}
 
 \hypertarget{label}{\Large{Declaração de variáveis}}\\[0.3cm]
@@ -106,9 +107,9 @@ Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimi
 
 Os caracteres especiais em um comando de saída são:\\[0.2cm]
 \textbackslash t para uma tabulação \\
-\textbackslash n para uma quebra de linha \\
+\textbackslash n para uma quebra de linha (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash \textbackslash n'')\\
 \textbackslash \$ para um cifrão \\
-\textbackslash \textbackslash\ para uma contra-barra % (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash n'') \\
+\textbackslash \textbackslash\ para uma contra-barra \\
 
 Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável e então as expressões são resolvidas. Exemplo: \\
 
@@ -128,8 +129,22 @@ Onde ``scan'' é o comando, `$($' e `$)$' são os caracteres obrigatórios de de
 
 % Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
 
-\hypertarget{label2}{\Large{Atribuições de valores}}\\[0.3cm]
+\hypertarget{label2}{\Large{Atribuições de valor}}\\[0.3cm]
 \normalsize
+
+Para atribuir valores à uma variável, basta fazer: \\
+
+nome\_variavel = valor\_variavel; \\
+
+As atribuições também podem ser feitas na própria declaração de variável, como demonstrado. \\
+
+Se por ventura for atribuído um valor diferente do do tipo da variável, então será automaticamente convertido. Exemplo:\\
+
+let b: bool; \\
+
+b = 861;\\
+
+b após a conversão automática valerá "true".\\
 
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
@@ -181,28 +196,30 @@ Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não h�
 Os códigos escritos com a linguagem de programação Lotus devem apresentar extensão ``.lt''.\\
 
 
-Conversão de tipos:
+\hypertarget{label8}{\Large{Conversão de tipos}}\\[0.3cm]
+\normalsize
 
-A partir de int:
-- pra double, ocorre normalmente: se meu int era x, o double será x.0;
-- pra bool: se o int era 0, torna-se false, senão true;
-- pra string: se torna uma string que representa o inteiro.
+Todas as variáveis que receberem um valor que não seja compatível com o seu próprio tipo (especificado na declaração) passarão por uma conversão automática, onde: \\
 
-A partir de double:
-- pra int: resumidamente, o valor é truncado;
-- pra bool: se o valor era 0.0, torna-se false, senão true;
-- pra string: assim como de int, torna-se uma string que representa o double.
+Se foi atribuído um número inteiro:\\
+- à uma variável double: se o int era x, o double será x.0\\
+- à uma variável bool: se o int era 0, torna-se false, se qualquer outro valor, torna-se true\\
+- à uma variável string: se torna uma string que representa o valor inteiro\\[0.3cm]
 
-A partir de bool:
-- pra int: se era true, torna-se 1, senão 0;
-- pra double: se era true, torna-se 1.0, senão 0.0;
-- pra string: torna-se uma string de conteúdo ``true'' ou ``false''.
+Se for atribuído um número double:\\
+- à uma variável int: o valor será truncado, ou seja, só será guardado o que está antes da vírgula\\
+- à uma variável bool: se o valor for 0.0, torna-se false, senão true\\
+- à uma variável string: torna-se uma string que representa o valor double\\[0.3cm]
 
-A partir de string:
-- pra int e double:
-Se a string representa um int ou double, converte-se normalmente. Exemplo: ``7'' se torna 7 e ``11.0'' se torna 11.0;
-Se a string é exatamente ``true'' ou ``false'', a conversão de bool pra int/double ocorrerá;
-Caso contrário, o int ou double receberão o tamanho da string, para evitar exceptions.
-- pra bool: será true se a string é exatamente ``true''. Caso contrário, false.
+Se for atribuído um valor bool:\\
+- à uma variável int: se for true, torna-se 1 e se false, torna-se 0\\
+- à uma variável double: se for true, torna-se 1.0, se false, 0.0\\
+- à uma variável string: torna-se uma string de conteúdo ``true'' ou ``false'', dependendo do valor da variável\\[0.3cm]
+
+Se for atribuído um valor de uma string:
+- à uma variável int ou double: Se a string representa um int ou double, converte-se normalmente. Exemplo: ``7'' se torna 7 e ``11.0'' se torna 11.0\\
+Se a string for exatamente ``true'' ou ``false'', a conversão de bool pra int/double ocorrerá\\
+Caso contrário, o int ou double receberão o tamanho da string, para evitar exceções no programa.\\
+- à uma variável bool: será true se a string é exatamente ``true''. Caso contrário, false.\\
 
 \end{document}
