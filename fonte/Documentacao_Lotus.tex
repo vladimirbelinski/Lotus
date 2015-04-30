@@ -110,9 +110,11 @@ Os caracteres especiais em um comando de saída são:\\[0.2cm]
 \textbackslash \$ para um cifrão \\
 \textbackslash \textbackslash\ para uma contra-barra % (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash n'') \\
 
-Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável. Exemplo: \\
+Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável e então as expressões são resolvidas. Exemplo: \\
 
 println(\$$\ -3\ +4\ *2\ /\ (\ 1\ - 5)$\^\ 2 \^\ 3\$);\\
+
+O qual a resposta será $-3$.\\
 
 De maneira análoga às funções de saída, o comando scan() é utilizado para ler um valor do teclado. Esse comando lê a informação até o primeiro espaço ou quebra de linha que delimitar a entrada desejada, sendo idêntico ao scanf() do C. Já o comando scanln() lê uma linha inteira, assim como o fgets() do C. Em ambos os comandos, a conversão dos tipos de variável se aplica, caso a entrada não corresponda ao valor esperado.\\
 
