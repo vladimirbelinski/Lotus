@@ -36,6 +36,7 @@
 A linguagem de programação Lotus é uma linguagem desenvolvida com base em Java com as seguintes características e funcionalidades:\\
 
 \begin{itemize}
+\item \hyperlink{label7}{Extensão de arquivos}
 \item \hyperlink{label}{Declaração de variáveis}
 \item \hyperlink{label1}{Entrada e saída}
 \item \hyperlink{label2}{Atribuições de valor}
@@ -43,9 +44,13 @@ A linguagem de programação Lotus é uma linguagem desenvolvida com base em Jav
 \item \hyperlink{label4}{Desvios condicionais}
 \item \hyperlink{label5}{Laços de repetição}
 \item \hyperlink{label6}{Sintaxe}
-\item \hyperlink{label7}{Extensão de arquivos}
 \item \hyperlink{label8}{Conversão de tipos}\\[15.4cm]
 \end{itemize}
+
+\hypertarget{label7}{\Large{Extensão de arquivos}}\\[0.3cm]
+\normalsize
+
+Os códigos escritos com a linguagem de programação Lotus devem apresentar extensão ``.lt''.\\
 
 \hypertarget{label}{\Large{Declaração de variáveis}}\\[0.3cm]
 \normalsize
@@ -74,7 +79,7 @@ let ex: string;\\
 
 print(var: \$ex\$); \\
 
-Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimitar o comando. ``var: '' é uma string a ser posta diretamente na tela e \$ex\$ é o nome da variável, que está delimitada pelos cifrões para poder ser impressa.
+Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimitar o comando. ``var: '' é uma string a ser posta diretamente na tela e \$ex\$ é o nome da variável, que está delimitada pelos cifrões para poder ser impressa.\\
 
 Os caracteres especiais em um comando de saída são:\\[0.2cm]
 \textbackslash t para uma tabulação \\
@@ -120,59 +125,24 @@ b após a conversão automática valerá "true".\\
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
 
-
-\hypertarget{label4}{\Large{Desvios condicionais}}\\[0.3cm]
-\normalsize
-
-A linguagem suporta toda e qualquer cadeia ou aninhamento de comandos if. A condição é qualquer expressão suportada pela linguagem, cujo resultado será transformado em booleano para efeitos de avaliação.\\
-
-Um comando de desvio condicional se comportará da seguinte forma: \\
-
-if (\emph{condição})\{ \\
-
-\textit{comandos a serem executados quando a condição for verdadeira} \\
-
-\} elseif (\emph{outra condição})\{\\
-
-\textit{comandos a serem executados quando a segunda condição for verdadeira} \\
-
-\} else \{\\
-
-
-\textit{comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
-
-\}\\
-
-
-Sendo ``if'', ``else'' e ``elseif'' palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de operação.\\
-
-% O comando ``if'' pode conter uma ou mais expressões para análise
-
-\hypertarget{label5}{\Large{Laços de repetição}}\\[0.3cm]
-\normalsize
-
-% A fazer
-
-\hypertarget{label6}{\Large{Sintaxe}}\\[0.3cm]
-\normalsize
-
-Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
-
-Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
-Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
-
-\large{Expressões:}\\[0.1cm]
-\normalsize
-
-Todos os tipos operam entre si, através da conversão de tipos, utilizando os seguintes operadores:\\[0.2cm]
-Matemáticos: $-,\ +,\ /,\ \%,\ *,$ \^\ (potência)\\
+Todos os tipos de variáveis operam entre si, através da conversão de tipos, utilizando os seguintes operadores:\\[0.2cm]
+Matemáticos: $-,\ +,\ /,\ \%,\ *,$ \^\\
 Comparação: $<,\ <=,\ ==,\ >=,\ >,\ !=$\\
-Booleanos: $!,\ \&\&,\ ||$\\
+Booleanos: $!,\ \&\&,\ ||$\\[0.6cm]
+Exemplo de uso:\\[0.3cm]
+let x: int;\\
+let y: double;\\
 
-Os operadores de comparação e os booleanos sempre resultam em um bool. A comparação de strings é em relação a ordem lexicográfica, ou seja, se as strings têm tamanhos diferentes, a menor vem antes. Comparações com bool são feitas de modo que o valor é primeiro transformado em int e então é feita a comparação (exceto para os operadores ``=='' e ``!='').\\
+x = $3--4$;\\
+
+y = $+\ 2$ \^\ $\ -\ 4\ +\ -0\ /\ +\ 5$;\\[0.5cm]
+Onde a resposta será x = 7 e y = 0.0625.\\
+
+
+Os operadores de comparação e os booleanos sempre resultam em um booleano. A comparação de strings é em relação a ordem lexicográfica, ou seja, se as strings têm tamanhos diferentes, a menor vem antes. Comparações com booleanos são feitas de modo que o valor é primeiro transformado em inteiro e só então é feita a comparação (exceto para os operadores ``=='' e ``!='').\\
 
 Os operadores matemáticos variam com seu tipo:\\
-Int e double funcionam normalmente, como ensinado na matemática\\
+Int e double funcionam normalmente, como ensinado na matemática.\\
 
 Para booleanos, os operadores matemáticos são interpretados como as seguintes operações lógicas:\\[0.2cm]
 $+$ $\rightarrow$ or\\
@@ -190,12 +160,45 @@ $/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
 $*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
 % \^ \ $\rightarrow$ ainda não está definido. Lança uma exceção\\
 
-
-\hypertarget{label7}{\Large{Extensão de arquivos}}\\[0.3cm]
+\hypertarget{label4}{\Large{Desvios condicionais}}\\[0.3cm]
 \normalsize
 
-Os códigos escritos com a linguagem de programação Lotus devem apresentar extensão ``.lt''.\\
+A linguagem suporta toda e qualquer cadeia ou aninhamento de comandos if. A condição é qualquer expressão suportada pela linguagem, cujo resultado será transformado em booleano para efeitos de avaliação.\\
 
+Um comando de desvio condicional se comportará da seguinte forma: \\
+
+if (\emph{condição})\{ \\
+
+\textit{comandos a serem executados quando a condição for verdadeira} \\
+
+\} elsif (\emph{outra condição})\{\\
+
+\textit{comandos a serem executados quando a segunda condição for verdadeira} \\
+
+\} else \{\\
+
+
+\textit{comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
+
+\}\\
+
+
+Sendo ``if'', ``else'' e ``elsif'' palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de operação.\\
+
+% O comando ``if'' pode conter uma ou mais expressões para análise
+
+\hypertarget{label5}{\Large{Laços de repetição}}\\[0.3cm]
+\normalsize
+
+% A fazer
+
+\hypertarget{label6}{\Large{Sintaxe}}\\[0.3cm]
+\normalsize
+
+Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
+
+Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
+Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
 
 \hypertarget{label8}{\Large{Conversão de tipos}}\\[0.3cm]
 \normalsize
