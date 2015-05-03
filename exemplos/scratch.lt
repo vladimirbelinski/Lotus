@@ -1,34 +1,12 @@
-let s = "Gabriel": string;
-let i = 0: int;
+if (1 > 2) {
+	println(FIRST);
+}
+elsif (1 > 2) { println(SECOND); }
+elsif (1 > 2) { println(THIRD); }
+else { println(FOURTH); println(FIFTH); }
 
-println($i$: $s ^ i$);
+let x = 2: int; let y = 1.0: double;
+println($x$); print
+ln($y$);
 
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
-
-i = i + 1;
-println($i$: $s ^ i$);
+println(\-\-\-\-\-\-\-\-\-\-\-\-\-\-);

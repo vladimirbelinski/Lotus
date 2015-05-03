@@ -81,12 +81,12 @@ if (1 < 2) -- we can put comments here and it doesn't matter...
 }
 
 -----------------------------------------
-println(-------------);
+println(~~~~~~~~~~~~~);
 let s: string;
 println(Uma string:);
 scan(s);
 println(s: $s$);
-println(-------------);
+println(~~~~~~~~~~~~~);
 let i: int;
 let r: string;
 println(Uma string, um int e uma string:);
@@ -94,7 +94,7 @@ scan(r, i, s);
 println(r: $r$);
 println(i: $i$);
 println(s: $s$);
-println(-------------);
+println(~~~~~~~~~~~~~);
 let b: bool;
 let i: int;
 b = 0;
@@ -102,7 +102,7 @@ println($b$);
 i = 5;
 b = i;
 println($b$);
-println(-------------);
+println(~~~~~~~~~~~~~);
 println(scanln:);
 scanln(s);
 println($s$);
