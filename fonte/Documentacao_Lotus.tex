@@ -107,33 +107,32 @@ b após a conversão automática valerá ``true''.\\
 Todas as variáveis que receberem um valor que não seja compatível com o seu próprio tipo (especificado na declaração) passarão por uma conversão automática, onde: \\
 
 Se foi atribuído um número inteiro:\\
-- à uma variável double: se o int era x, o double será x.0\\
-- à uma variável bool: se o int era 0, torna-se false, senão true\\
-- à uma variável string: se torna uma string que representa o valor inteiro\\[0.3cm]
+- à uma variável double: se o int era x, o double será x.0;\\
+- à uma variável bool: se o int era 0, torna-se false, senão true;\\
+- à uma variável string: se torna uma string que representa o valor inteiro;\\[0.3cm]
 
 Se for atribuído um número double:\\
-- à uma variável int: o valor será truncado, ou seja, só será guardado o que está antes da vírgula\\
-- à uma variável bool: se o valor for 0.0, torna-se false, senão true\\
-- à uma variável string: torna-se uma string que representa o valor double\\[0.3cm]
+- à uma variável int: o valor será truncado, ou seja, só será guardado o que está antes da vírgula;\\
+- à uma variável bool: se o valor for 0.0, torna-se false, senão true;\\
+- à uma variável string: torna-se uma string que representa o valor double;\\[0.3cm]
 
 Se for atribuído um valor bool:\\
-- à uma variável int: se for true, torna-se 1 e se false, torna-se 0\\
-- à uma variável double: se for true, torna-se 1.0, se false, 0.0\\
-- à uma variável string: torna-se uma string de conteúdo ``true'' ou ``false'', dependendo do valor da variável\\[0.3cm]
+- à uma variável int: se for true, torna-se 1 e se false, torna-se 0;\\
+- à uma variável double: se for true, torna-se 1.0, se false, 0.0;\\
+- à uma variável string: torna-se uma string de conteúdo ``true'' ou ``false'', dependendo do valor da variável;\\[0.3cm]
 
 Se for atribuído um valor de uma string:\\
-- à uma variável int ou double: Se a string representa um int ou double, converte-se normalmente. Exemplo: ``7'' se torna 7 e ``11.0'' se torna 11.0\\
-Se a string for exatamente ``true'' ou ``false'', a conversão de bool pra int/double ocorrerá\\
-Caso contrário, o int ou double receberão o tamanho da string, para evitar exceções no programa.\\
-- à uma variável bool: será true se a string é exatamente ``true''. Caso contrário, false.\\
+- à uma variável int ou double: Se a string representa um int ou double, converte-se normalmente. Exemplo: ``7'' se torna 7 e ``11.0'' se torna 11.0;\\
+Se a string for exatamente ``true'' ou ``false'', a conversão de bool pra int/double ocorrerá, caso contrário, o int ou double receberão o tamanho da string, para evitar exceções no programa;\\
+- à uma variável bool: será true se a string é exatamente ``true''. Caso contrário, false;\\
 
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
 
 Todos os tipos de variáveis operam entre si, através da conversão de tipos, utilizando os seguintes operadores:\\[0.2cm]
-Matemáticos: $-,\ +,\ /,\ \%,\ *,$ \^\\
-Comparação: $<,\ <=,\ ==,\ >=,\ >,\ !=$\\
-Booleanos: $!,\ \&\&,\ ||$\\[0.6cm]
+Matemáticos: $-,\ +,\ /,\ \%,\ *,$ \^\ ;\\
+Comparação: $<,\ <=,\ ==,\ >=,\ >,\ !=$;\\
+Booleanos: $!,\ \&\&,\ ||$;\\[0.6cm]
 Exemplo de uso:\\[0.3cm]
 let x: int;\\
 let y: double;\\
@@ -150,20 +149,20 @@ Os operadores matemáticos variam com seu tipo:\\
 Int e double funcionam normalmente, como ensinado na matemática.\\
 
 Para booleanos, os operadores matemáticos são interpretados como as seguintes operações lógicas:\\[0.2cm]
-$+$ $\rightarrow$ or\\
-$-$ $\rightarrow$ nor\\
-$/$ $\rightarrow$ nand\\
-\% $\rightarrow$ xnor\\
-$*$ $\rightarrow$ and\\
-\^ \ $\rightarrow$ xor\\
+$+$ $\rightarrow$ or;\\
+$-$ $\rightarrow$ nor;\\
+$/$ $\rightarrow$ nand;\\
+\% $\rightarrow$ xnor;\\
+$*$ $\rightarrow$ and;\\
+\^ \ $\rightarrow$ xor;\\
 
 Para string, em relação aos operandos:\\[0.2cm]
-$+$ $\rightarrow$ concatena o segundo ao primeiro\\
-$-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro\\
-$/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
-\% $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
-$*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
-\^ \ $\rightarrow$ se o segundo operando for uma string, retornará o índice daquela string dentro do primeiro operando. Caso contrário, retorna o char do primeiro na posição indicada pelo segundo\\
+$+$ $\rightarrow$ concatena o segundo ao primeiro;\\
+$-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro;\\
+$/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro;\\
+\% $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/');\\
+$*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro;\\
+\^ \ $\rightarrow$ se o segundo operando for uma string, retornará o índice daquela string dentro do primeiro operando. Caso contrário, retorna o char do primeiro na posição indicada pelo segundo;\\
 
 \hypertarget{label1}{\Large{Entrada e saída}}\\[0.3cm]
 \normalsize
@@ -180,10 +179,10 @@ print(var: \$ex\$); \\
 Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimitar o comando. ``var: '' é uma string a ser posta diretamente na tela e \$ex\$ é o nome da variável, que está delimitada pelos cifrões para poder ser impressa.\\
 
 Os caracteres especiais em um comando de saída são:\\[0.2cm]
-\textbackslash t para uma tabulação \\
-\textbackslash n para uma quebra de linha (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash \textbackslash n'')\\
-\textbackslash \$ para um cifrão \\
-\textbackslash \textbackslash\ para uma contra-barra \\
+\textbackslash t para uma tabulação; \\
+\textbackslash n para uma quebra de linha (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash \textbackslash n'');\\
+\textbackslash \$ para um cifrão; \\
+\textbackslash \textbackslash\ para uma contra-barra; \\
 
 Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável e então as expressões são resolvidas. Exemplo: \\
 
