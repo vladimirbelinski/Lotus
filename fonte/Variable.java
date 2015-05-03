@@ -44,7 +44,7 @@ abstract class Variable<T> {
     public abstract Variable plus(Variable other);
     public abstract Variable minus(Variable other);
     public abstract Variable times(Variable other);
-    public abstract Variable pow(Variable other) throws LotusException;
+    public abstract Variable pow(Variable other);
     public abstract Variable divided(Variable other) throws LotusException;
     public abstract Variable mod(Variable other) throws LotusException;
     public abstract Variable equals(Variable other);

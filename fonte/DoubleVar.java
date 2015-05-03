@@ -115,7 +115,7 @@ class DoubleVar extends Variable<Double> {
         }
     }
 
-    public Variable pow(Variable other) throws LotusException {
+    public Variable pow(Variable other) {
         if (other instanceof DoubleVar) {
             return new DoubleVar(Math.pow(this.value, other.toDouble()));
         }

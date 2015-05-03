@@ -123,7 +123,7 @@ let b: bool; \\
 
 b = 861;\\
 
-b após a conversão automática valerá "true".\\
+b após a conversão automática valerá ``true''.\\
 
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
@@ -142,7 +142,7 @@ y = $+\ 2$ \^\ $\ -\ 4\ +\ -0\ /\ +\ 5$;\\[0.5cm]
 Onde a resposta será x = 7 e y = 0.0625.\\
 
 
-Os operadores de comparação e os booleanos sempre resultam em um booleano. A comparação de strings é em relação a ordem lexicográfica, ou seja, se as strings têm tamanhos diferentes, a menor vem antes. Comparações com booleanos são feitas de modo que o valor é primeiro transformado em inteiro e só então é feita a comparação (exceto para os operadores ``=='' e ``!='').\\
+Os operadores de comparação e os booleanos sempre resultam em um booleano. A comparação de strings é em relação a ordem lexicográfica (se as strings têm tamanhos diferentes, a menor vem antes). Comparações com booleanos são feitas de modo que o valor é primeiro transformado em inteiro e só então é feita a comparação (exceto para os operadores ``=='' e ``!='').\\
 
 Os operadores matemáticos variam com seu tipo:\\
 Int e double funcionam normalmente, como ensinado na matemática.\\
@@ -151,7 +151,7 @@ Para booleanos, os operadores matemáticos são interpretados como as seguintes 
 $+$ $\rightarrow$ or\\
 $-$ $\rightarrow$ nor\\
 $/$ $\rightarrow$ nand\\
-\textbackslash\ $\rightarrow$ xnor\\
+\% $\rightarrow$ xnor\\
 $*$ $\rightarrow$ and\\
 \^ \ $\rightarrow$ xor\\
 
@@ -159,9 +159,9 @@ Para string, em relação aos operandos:\\[0.2cm]
 $+$ $\rightarrow$ concatena o segundo ao primeiro\\
 $-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro\\
 $/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
-\textbackslash\ $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
+\% $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
 $*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
-% \^ \ $\rightarrow$ ainda não está definido. Lança uma exceção\\
+\^ \ $\rightarrow$ se o segundo operando for uma string, retornará o índice daquela string dentro do primeiro operando. Caso contrário, retorna o char do primeiro na posição indicada pelo segundo\\
 
 \hypertarget{label4}{\Large{Desvios condicionais}}\\[0.3cm]
 \normalsize
@@ -170,23 +170,15 @@ A linguagem suporta toda e qualquer cadeia ou aninhamento de comandos if. A cond
 
 Um comando de desvio condicional se comportará da seguinte forma: \\
 
-if (\emph{condição})\{ \\
-
-\textit{comandos a serem executados quando a condição for verdadeira} \\
-
-\} elsif (\emph{outra condição})\{\\
-
-\textit{comandos a serem executados quando a segunda condição for verdadeira} \\
-
+\noindent\texttt{if (\emph{condição}) \{\\
+\indent\textit{-- comandos a serem executados quando a condição for verdadeira} \\
+\} elsif (\emph{outra condição}) \{\\
+\indent\textit{-- comandos a serem executados quando a segunda condição for verdadeira} \\
 \} else \{\\
+\indent\textit{-- comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
+\}}\\
 
-
-\textit{comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
-
-\}\\
-
-
-Sendo ``if'', ``else'' e ``elsif'' palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de operação.\\
+Sendo ``if'', ``elsif'' e ``else'' palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de código, mesmo que seja escrito em uma linha.\\
 
 % O comando ``if'' pode conter uma ou mais expressões para análise
 
@@ -201,7 +193,7 @@ Sendo ``if'', ``else'' e ``elsif'' palavras reservadas para as operações de de
 Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
 
 Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
-Comentários são marcados com ``--'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
+Comentários são marcados com ``-{}-'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
 
 \hypertarget{label8}{\Large{Conversão de tipos}}\\[0.3cm]
 \normalsize
@@ -210,7 +202,7 @@ Todas as variáveis que receberem um valor que não seja compatível com o seu p
 
 Se foi atribuído um número inteiro:\\
 - à uma variável double: se o int era x, o double será x.0\\
-- à uma variável bool: se o int era 0, torna-se false, se qualquer outro valor, torna-se true\\
+- à uma variável bool: se o int era 0, torna-se false, senão true\\
 - à uma variável string: se torna uma string que representa o valor inteiro\\[0.3cm]
 
 Se for atribuído um número double:\\
@@ -223,7 +215,7 @@ Se for atribuído um valor bool:\\
 - à uma variável double: se for true, torna-se 1.0, se false, 0.0\\
 - à uma variável string: torna-se uma string de conteúdo ``true'' ou ``false'', dependendo do valor da variável\\[0.3cm]
 
-Se for atribuído um valor de uma string:
+Se for atribuído um valor de uma string:\\
 - à uma variável int ou double: Se a string representa um int ou double, converte-se normalmente. Exemplo: ``7'' se torna 7 e ``11.0'' se torna 11.0\\
 Se a string for exatamente ``true'' ou ``false'', a conversão de bool pra int/double ocorrerá\\
 Caso contrário, o int ou double receberão o tamanho da string, para evitar exceções no programa.\\

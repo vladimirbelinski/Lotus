@@ -64,7 +64,7 @@ class BoolVar extends Variable<Boolean> {
     }
 
     // xor
-    public Variable pow(Variable other) throws LotusException {
+    public Variable pow(Variable other) {
         return new BoolVar(this.value ^ other.toBool());
     }
 
