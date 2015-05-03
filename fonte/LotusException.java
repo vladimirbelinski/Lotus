@@ -18,12 +18,8 @@ class LotusException extends Exception {
         switch (code) {
         case "syntaxError":
 			this.setMessage("Syntax error"); break;
-        case "multipleCommands":
-			this.setMessage("You can only have one command per line"); break;
-        case "unknownCommand":
-			this.setMessage("Unknown command"); break;
         case "bracketNotFound":
-            this.setMessage("Could not find closing bracket"); break;
+            this.setMessage("Could not find closing bracket for the block"); break;
         case "usingReservedWords":
 			this.setMessage("You cannot use Lotus' reserved words"); break;
         case "invalidType":
@@ -36,16 +32,12 @@ class LotusException extends Exception {
 			this.setMessage("Could not find variable"); break;
         case "unknownSymbol":
 			this.setMessage("Unknown symbol"); break;
-        case "nonIntMod":
-			this.setMessage("Cannot calculate remainder of a division between non-integer operands"); break;
         case "divisionByZero":
 			this.setMessage("Division by zero"); break;
         case "unknownEscape":
 			this.setMessage("Unknown escape sequence"); break;
         case "cantAssign":
 			this.setMessage("Invalid assignment of types"); break;
-        case "inputMismatch":
-			this.setMessage("Could not read the input"); break;
         case "missingParen":
             this.setMessage("Missing parenthesis"); break;
         }
@@ -58,7 +50,7 @@ class LotusException extends Exception {
         return this.message;
     }
 
-    public void setLine(String line) {
+    private void setLine(String line) {
         this.line = line;
     }
     public String getLine() {

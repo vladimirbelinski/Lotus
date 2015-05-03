@@ -82,7 +82,7 @@ class IntVar extends Variable<Integer> {
 
     public Variable divided(Variable other) throws LotusException {
         if (other instanceof IntVar) {
-            if (!other.equals(0)) {
+            if (!other.value.equals(0)) {
                 return new IntVar(this.value / other.toInt());
             }
             else {
@@ -102,7 +102,7 @@ class IntVar extends Variable<Integer> {
 
     public Variable mod(Variable other) throws LotusException {
         if (other instanceof IntVar) {
-            if (!other.equals(0)) {
+            if (!other.value.equals(0)) {
                 return new IntVar(this.value % other.toInt());
             }
             else {

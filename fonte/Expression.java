@@ -246,7 +246,7 @@ class Expression {
             parenM = Interpreter.parenP.matcher(op.peek());
 
             if (parenM.matches()) {
-                throw new LotusException("missingParen", this.value);
+                throw new LotusException("missingParen", this.original);
             }
 
             rpn += op.pop() + SEP;

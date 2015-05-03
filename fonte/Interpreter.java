@@ -333,8 +333,8 @@ class Interpreter {
 		Matcher ifM, elsifM, elseM;
 		boolean endOfBlock = false;
 		String command, lineEnding;
+		Line line = null;
 		int clBracket;
-		Line line;
 
 		while (i < max && !endOfBlock) {
 			line = code.get(i);
@@ -378,7 +378,7 @@ class Interpreter {
 
 		for (i = 0; i < max; i++) {
 			if (reservedWords.containsKey(decl[i])) {
-				throw new LotusException("usingReservedWords", decl[i] + ", from " + line);
+				throw new LotusException("usingReservedWords", decl[i] + ", from \"" + line + "\"");
 			}
 
 			// decl[max] holds the type
@@ -405,9 +405,9 @@ class Interpreter {
 			}
 			if (v != null) {
 				atrM = atrP.matcher(decl[i]);
+				varM = varNameP.matcher(decl[i]);
 
 				if (atrM.matches()) {
-					varM = varNameP.matcher(decl[i]);
 					varM.find();
 
 					// if the variable being declared is a string and
@@ -426,11 +426,16 @@ class Interpreter {
 					this.assign(decl[i] + ";");
 				}
 				else {
-					this.newVar(decl[i], v);
+					if (varM.matches()) {
+						this.newVar(decl[i], v);
+					}
+					else {
+						throw new LotusException("invalidVarName", decl[i] + ", from \"" + line + "\"");
+					}
 				}
 			}
 			else {
-				throw new LotusException("invalidType", decl[max] + ", from " + line);
+				throw new LotusException("invalidType", decl[max] + ", from \"" + line + "\"");
 			}
 		}
 	}
@@ -491,7 +496,7 @@ class Interpreter {
             tokens.add(var);
         }
         else {
-            throw new LotusException("syntaxError", line);
+			throw new LotusException("invalidType", var + ", from \"" + line + "\"");
         }
 
         t = new String[tokens.size()];
@@ -724,9 +729,6 @@ class Interpreter {
         }
         else {
             switch (op) {
-                /* pow() returns double. Maybe I will implement
-                 * a binary exponentiation later...
-                 */
                 case "^":
                 answ = v1.pow(v2);
                 break;
@@ -852,7 +854,7 @@ class Interpreter {
 					else text += "\\";
 				}
 				else {
-					throw new LotusException("unknownEscape", content[i] + content[i + 1] + ", from " + line);
+					throw new LotusException("unknownEscape", content[i] + content[i + 1] + ", from \"" + line + "\"");
 				}
 
 				i++;
@@ -867,7 +869,7 @@ class Interpreter {
 				if (varNameM.matches()) {
 					v = this.getVar(exp);
 					if (v == null) {
-						throw new LotusException("varNotFound", exp + ", from " + line);
+						throw new LotusException("varNotFound", exp + ", from \"" + line + "\"");
 					}
 					text += v.toString();
 					i = line.indexOf("$", i + 1);
@@ -952,7 +954,7 @@ class Interpreter {
 						this.setVar(v, other);
 					}
 					else {
-						throw new LotusException("varNotFound", name + ", from " + line);
+						throw new LotusException("varNotFound", name + ", from \"" + line + "\"");
 					}
 
 					if (j + 1 < input.length) i++;
@@ -988,7 +990,7 @@ class Interpreter {
 				this.setVar(v, input);
 			}
 			else {
-				throw new LotusException("varNotFound", name + ", from " + line);
+				throw new LotusException("varNotFound", name + ", from \"" + line + "\"");
 			}
 		}
 	}

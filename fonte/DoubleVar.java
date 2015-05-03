@@ -82,7 +82,7 @@ class DoubleVar extends Variable<Double> {
 
     public Variable divided(Variable other) throws LotusException {
         if (other instanceof DoubleVar) {
-            if (!other.equals(0.0)) {
+            if (!other.value.equals(0.0)) {
                 return new DoubleVar(this.value / other.toDouble());
             }
             else {
@@ -102,7 +102,7 @@ class DoubleVar extends Variable<Double> {
 
     public Variable mod(Variable other) throws LotusException {
         if (other instanceof DoubleVar) {
-            if (!other.equals(0.0)) {
+            if (!other.value.equals(0.0)) {
                 return new DoubleVar(0.0);
             }
             else {
