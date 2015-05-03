@@ -1,3 +1,12 @@
+/*******************************************************************************
+Name: IntVar.java
+Authors: Acácia dos Campos da Terra- terra.acacia@gmail.com
+         Gabriel Batista Galli - g7.galli96@gmail.com
+         Vladimir Belinski - vlbelinski@gmail.com
+
+Description: Class IntVar of Lotus, a programming language based on Java.
+             Treats conversions with integer values.
+*******************************************************************************/
 class IntVar extends Variable<Integer> {
 
     public IntVar(Integer value) {
