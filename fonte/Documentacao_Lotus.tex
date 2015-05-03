@@ -161,7 +161,7 @@ $-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro\\
 $/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
 \% $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
 $*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
-\^ $\rightarrow$ se o segundo operando for uma string, retornará o índice daquela string dentro do primeiro operando. Caso contrário, retorna o char do primeiro na posição indicada pelo segundo\\
+\^ \ $\rightarrow$ se o segundo operando for uma string, retornará o índice daquela string dentro do primeiro operando. Caso contrário, retorna o char do primeiro na posição indicada pelo segundo\\
 
 \hypertarget{label4}{\Large{Desvios condicionais}}\\[0.3cm]
 \normalsize
@@ -169,22 +169,14 @@ $*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
 A linguagem suporta toda e qualquer cadeia ou aninhamento de comandos if. A condição é qualquer expressão suportada pela linguagem, cujo resultado será transformado em booleano para efeitos de avaliação.\\
 
 Um comando de desvio condicional se comportará da seguinte forma: \\
-% fazer fonte monospace
-if (\emph{condição}) \{ \\
 
-\textit{comandos a serem executados quando a condição for verdadeira} \\
-
+\noindent\texttt{if (\emph{condição}) \{\\
+\indent\textit{-- comandos a serem executados quando a condição for verdadeira} \\
 \} elsif (\emph{outra condição}) \{\\
-
-\textit{comandos a serem executados quando a segunda condição for verdadeira} \\
-
+\indent\textit{-- comandos a serem executados quando a segunda condição for verdadeira} \\
 \} else \{\\
-
-
-\textit{comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
-
-\}\\
-
+\indent\textit{-- comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
+\}}\\
 
 Sendo ``if'', ``elsif'' e ``else'' palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de código, mesmo que seja escrito em uma linha.\\
 
@@ -201,7 +193,7 @@ Sendo ``if'', ``elsif'' e ``else'' palavras reservadas para as operações de de
 Os comandos podem apresentar quebras de linha que podem incluir até mesmo comentários, caso seja conveniente. Todas as linhas com comandos devem ser finalizadas com `;'.
 
 Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
-Comentários são marcados com ``\-\-'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
+Comentários são marcados com ``-{}-'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
 
 \hypertarget{label8}{\Large{Conversão de tipos}}\\[0.3cm]
 \normalsize
