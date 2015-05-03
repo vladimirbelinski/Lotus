@@ -1,11 +1,12 @@
 /*******************************************************************************
 Name: DoubleVar.java
-Authors: Acácia dos Campos da Terra- terra.acacia@gmail.com
+Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
          Gabriel Batista Galli - g7.galli96@gmail.com
          Vladimir Belinski - vlbelinski@gmail.com
 
 Description: Class DoubleVar of Lotus, a programming language based on Java.
-             Treats conversions with double values.
+             Implements the functionality specified by the Variable class
+             for the Double type.
 *******************************************************************************/
 class DoubleVar extends Variable<Double> {
 

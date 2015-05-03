@@ -1,11 +1,12 @@
 /*******************************************************************************
 Name: StringVar.java
-Authors: Acácia dos Campos da Terra- terra.acacia@gmail.com
+Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
          Gabriel Batista Galli - g7.galli96@gmail.com
          Vladimir Belinski - vlbelinski@gmail.com
 
 Description: Class StringVar of Lotus, a programming language based on Java.
-             Treats conversions with strings.
+             Implements the functionality specified by the Variable class
+             for the String type.
 *******************************************************************************/
 import java.util.regex.*;
 

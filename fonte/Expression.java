@@ -1,18 +1,18 @@
 /*******************************************************************************
 Name: Expression.java
-Authors: Acácia dos Campos da Terra- terra.acacia@gmail.com
+Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
          Gabriel Batista Galli - g7.galli96@gmail.com
          Vladimir Belinski - vlbelinski@gmail.com
 
 Description: Class Expression of Lotus, a programming language based on Java.
-             Responsible to treat expressions.
+             Responsible for treating all expressions supported by Lotus.
 *******************************************************************************/
 import java.util.*;
 import java.util.regex.*;
 
 class Expression {
 	public String original, value;
-	public static final Character SEP = 96; // 31, 96 to test
+	public static final Character SEP = 31; // 31, 96 to test
     private static final Map<String, Integer> precedence = mapPrecedence();
 
 	public Expression(String value) throws LotusException {

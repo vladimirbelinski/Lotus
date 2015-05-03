@@ -1,11 +1,11 @@
 /*******************************************************************************
 Name: Variable.java
-Authors: Acácia dos Campos da Terra- terra.acacia@gmail.com
+Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
          Gabriel Batista Galli - g7.galli96@gmail.com
          Vladimir Belinski - vlbelinski@gmail.com
 
 Description: Class Variable of Lotus, a programming language based on Java.
-             Responsible to variables.
+             Specifies what a variable must have, be and do
 *******************************************************************************/
 import java.util.*;
 
