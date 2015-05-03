@@ -5,7 +5,7 @@ Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
          Vladimir Belinski - vlbelinski@gmail.com
 
 Description: Class Variable of Lotus, a programming language based on Java.
-             Specifies what a variable must have, be and do
+             Specifies what a variable must have, be and do.
 *******************************************************************************/
 import java.util.*;
 
