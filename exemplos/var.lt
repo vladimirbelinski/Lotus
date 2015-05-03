@@ -3,6 +3,9 @@ let k = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3: double;
 println(>>> k = $k$);
 let s: string;
 
+let _oi_sou_uma_var = 8080: int;
+println(~~~~~~~~~~ $_oi_sou_uma_var$~~~~~~);
+
 gabriel = 7;
 
 --x = 10 ^(-2);
