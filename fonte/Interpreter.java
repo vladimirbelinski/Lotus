@@ -263,7 +263,7 @@ class Interpreter {
 					this.runIfChain(ifChain);
 				}
 				else {
-					throw new LotusException("unknownCommand", line);
+					throw new LotusException("syntaxError", line);
 				}
 			} catch (LotusException e) {
 				e.setLN(i + 1);
@@ -1020,7 +1020,7 @@ class Interpreter {
     }
 
 	public static final String semicR = "( )*;";
-	public static final String commR = "( )*--\\.*";
+	public static final String commR = "( )*--.*";
 
 	public static final String typeR = "int|double|string|bool";
 	public static final String varNameR = "[A-Za-z_][A-Za-z_0-9]*";
@@ -1038,7 +1038,7 @@ class Interpreter {
 	public static final String wholeAtrR = atrR + semicR;
 	public static final String stripAtrR = "( )*=( )*";
 
-	public static final String fnParentheses = "( )*\\(.*\\)" + semicR;
+	public static final String fnParentheses = "( )*\\([^;)]*\\)" + semicR;
 	public static final String printR = "(print|println)";
 	public static final String wholePrintR = printR + fnParentheses;
 	public static final String wholeScanR = "(scan)" + fnParentheses;
@@ -1148,9 +1148,9 @@ class Interpreter {
 		scanContentP = Pattern.compile(scanContentR);
 
 		ifP = Pattern.compile(ifR);
-		wholeIfP = Pattern.compile(ifR + "(.+)" + ifEnding);
+		wholeIfP = Pattern.compile(ifR + "[^{;)]+" + ifEnding);
 		elsifP = Pattern.compile(elsifR);
-		wholeElsifP = Pattern.compile(elsifR + "(.+)" + ifEnding);
+		wholeElsifP = Pattern.compile(elsifR + "[^{;)]+" + ifEnding);
 		wholeElseP = Pattern.compile(wholeElseR);
 		ifEndingP = Pattern.compile(ifEnding);
 
