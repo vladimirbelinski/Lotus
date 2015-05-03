@@ -81,8 +81,15 @@ class StringVar extends Variable<String> {
     }
 
     // cannot do a pow
-    public Variable pow(Variable other) throws LotusException {
-        throw new LotusException("stringPow", this.toString());
+    public Variable pow(Variable other) {
+        int i;
+        if (other instanceof StringVar) {
+            return new IntVar(this.value.indexOf(other.toString()));
+        }
+        else {
+            i = other.toInt() % this.value.length();
+            return new StringVar(this.value.substring(i, i + 1));
+        }
     }
 
     public Variable equals(Variable other) {

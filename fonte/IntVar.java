@@ -110,9 +110,8 @@ class IntVar extends Variable<Integer> {
         }
     }
 
-    public Variable pow(Variable other) throws LotusException {
+    public Variable pow(Variable other) {
         if (other instanceof IntVar) {
-            // do a binary exponentiation...
             return new IntVar((int)Math.pow(this.toDouble(), other.toDouble()));
         }
         else if (other instanceof DoubleVar) {
