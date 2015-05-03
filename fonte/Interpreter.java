@@ -1,3 +1,13 @@
+/*******************************************************************************
+Name: Interpreter.java
+Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
+         Gabriel Batista Galli - g7.galli96@gmail.com
+         Vladimir Belinski - vlbelinski@gmail.com
+
+Description: Class Interpreter of Lotus, a programming language based on Java.
+             Responsible for the interpretation of the code.
+*******************************************************************************/
+
 import java.util.*;
 import java.util.regex.*;
 
