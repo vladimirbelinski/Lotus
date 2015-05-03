@@ -42,8 +42,8 @@ A linguagem de programação Lotus é uma linguagem desenvolvida com base em Jav
 \item \hyperlink{label7}{Extensão de arquivos}
 \item \hyperlink{label6}{Sintaxe}
 \item \hyperlink{label}{Declaração de variáveis}
-\item \hyperlink{label1}{Entrada e saída}
 \item \hyperlink{label2}{Atribuições de valor}
+\item \hyperlink{label1}{Entrada e saída}
 \item \hyperlink{label3}{Operações aritméticas}
 \item \hyperlink{label4}{Desvios condicionais}
 \item \hyperlink{label5}{Laços de repetição}
@@ -84,6 +84,23 @@ Também é permitida a atribuição de valores às variáveis no momento da decl
 
 let x = ``Oi'': string;\\
 
+\hypertarget{label2}{\Large{Atribuições de valor}}\\[0.3cm]
+\normalsize
+
+Para atribuir valores à uma variável, basta fazer: \\
+
+nome\_variavel = valor\_variavel; \\
+
+As atribuições também podem ser feitas na própria declaração de variável, como demonstrado. \\
+
+Se por ventura for atribuído um valor diferente do do tipo da variável, então será automaticamente convertido. Exemplo:\\
+
+let b: bool; \\
+
+b = 861;\\
+
+b após a conversão automática valerá ``true''.\\
+
 \hypertarget{label1}{\Large{Entrada e saída}}\\[0.3cm]
 \normalsize
 
@@ -121,23 +138,6 @@ scan(i);\\
 Onde ``scan'' é o comando, `$($' e `$)$' são os caracteres obrigatórios de delimitação e ``i'' é a variável onde será armazenado o valor lido. Neste exemplo, um valor do tipo inteiro.\\
 
 % Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
-
-\hypertarget{label2}{\Large{Atribuições de valor}}\\[0.3cm]
-\normalsize
-
-Para atribuir valores à uma variável, basta fazer: \\
-
-nome\_variavel = valor\_variavel; \\
-
-As atribuições também podem ser feitas na própria declaração de variável, como demonstrado. \\
-
-Se por ventura for atribuído um valor diferente do do tipo da variável, então será automaticamente convertido. Exemplo:\\
-
-let b: bool; \\
-
-b = 861;\\
-
-b após a conversão automática valerá ``true''.\\
 
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
