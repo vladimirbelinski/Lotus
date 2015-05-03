@@ -46,9 +46,9 @@ class Lotus {
         if (hasParam && validParam) {
             f = new File(args[ind]);
             input = lotusScanner.scan(f);
-            // System.out.println("------------------------------------------");
-            // lotusScanner.print(input);
-            // System.out.println("------------------------------------------");
+            System.out.println("------------------------------------------");
+            lotusScanner.print(input);
+            System.out.println("------------------------------------------");
 
             try {
                 lotus.execute(input);

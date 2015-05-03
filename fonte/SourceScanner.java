@@ -10,7 +10,7 @@ class SourceScanner {
         Scanner sc = new Scanner(f);
         int ind = 0, max, semicolon, opBr, clBr, comm;
         ArrayList<String> input = new ArrayList<String>();
-        Pattern opBrackP = Pattern.compile("(\\)|\\w)( )*\\{");
+        Pattern opBrackP = Pattern.compile("(?:(\\)|\\w)( )*)\\{");
 
         while (sc.hasNext()) {
             fix = false;
@@ -26,15 +26,14 @@ class SourceScanner {
 
             opBrackM = opBrackP.matcher(tmpInput);
             if (opBrackM.find()) {
-                opBr = opBrackM.start();
+                opBr = opBrackM.end() - 1;
             }
             else opBr = -1;
-            if (opBr > 0) fix = true;
 
             clBr = this.indexOf("}", "--", tmpInput);
 
             comm = tmpInput.indexOf("--");
-            while (comm >= 0 && (comm < semicolon || comm < opBr || comm < clBr)) {
+            while (comm >= 0 && comm < semicolon && comm < opBr && comm < clBr) {
                 comm = tmpInput.indexOf("--", comm + 1);
             }
             if (comm >= 0) {
@@ -46,27 +45,25 @@ class SourceScanner {
 
                 opBrackM = opBrackP.matcher(tmpInput);
                 if (opBrackM.find()) {
-                    opBr = opBrackM.start();
+                    opBr = opBrackM.end() - 1;
                 }
                 else opBr = -1;
-                if (opBr > 0) fix = true;
+                if (opBr > 0 && opBr < tmpInput.length() - 1) fix = true;
 
                 clBr = this.indexOf("}", "--", tmpInput);
 
-                while (semicolon < 0 && opBr < 0 && sc.hasNext() || fix) {
-
+                while ((semicolon < 0 && opBr < 0 && sc.hasNext()) || fix) {
                     aux = tmpInput;
                     if (clBr > 0 || fix) {
                         fix = false;
 
                         if (opBr > 0) {
-                            aux = tmpInput.substring(opBr).replaceFirst("\\)", "")
-                                .replaceFirst("\\{", "").trim();
-                            aux = aux.substring(0, this.indexOf(";", "}", aux) + 1);
-                            tmpInput = tmpInput.substring(0, opBr + 1) + " {";
+                            aux = tmpInput.substring(opBr + 1, this.indexOf(";", "}", aux) + 1).trim();
+                            // aux = aux.substring(0, this.indexOf(";", "}", aux) + 1);
+                            tmpInput = tmpInput.substring(0, opBr + 1);
 
                             if (!aux.isEmpty()) {
-                                input.add(tmpInput);
+                                this.add(input, tmpInput);
                                 tmpInput = aux;
                             }
                         }
@@ -76,10 +73,9 @@ class SourceScanner {
                         }
 
                         semicolon = this.indexOf(";", "--", tmpInput);
-                        // opBr = this.indexOf("{", "--", tmpInput);
                         opBrackM = opBrackP.matcher(tmpInput);
                         if (opBrackM.find()) {
-                            opBr = opBrackM.start();
+                            opBr = opBrackM.end() - 1;
                         }
                         else opBr = -1;
 
@@ -89,13 +85,12 @@ class SourceScanner {
                     aux = sc.nextLine().trim();
                     if (aux.startsWith("--")) continue;
 
-                    tmpInput += " " + aux;
+                    tmpInput += /*" " + */aux;
 
                     semicolon = this.indexOf(";", "--", tmpInput);
-                    // opBr = this.indexOf("{", "--", tmpInput);
                     opBrackM = opBrackP.matcher(tmpInput);
                     if (opBrackM.find()) {
-                        opBr = opBrackM.start();
+                        opBr = opBrackM.end() - 1;
                     }
                     else opBr = -1;
 
@@ -113,12 +108,11 @@ class SourceScanner {
                     tmpInput = tmpInput.substring(0, semicolon + 1);
                 }
                 // else if (opBr > 0) {
-                //     System.out.println("*** " + tmpInput);
                 //     tmpInput = tmpInput.substring(0, opBr + 1);
                 // }
             }
 
-            input.add(tmpInput.trim());
+            this.add(input, tmpInput);
             if (clBr > 0) input.add("}");
         }
         sc.close();
@@ -143,6 +137,20 @@ class SourceScanner {
         }
 
         return index;
+    }
+
+    private void add(ArrayList<String> input, String line) {
+        int i;
+        String command;
+        String[] commands = line.split(";");
+        boolean bracket = this.indexOf("{", "--", line) >= 0 || this.indexOf("}", "--", line) >= 0 || line.startsWith("}");
+
+        for (i = 0; i < commands.length; i++) {
+            command = commands[i].trim();
+            if (!command.isEmpty() && !bracket) command += ";";
+
+            input.add(command);
+        }
     }
 
     public void print(ArrayList<String> code) {

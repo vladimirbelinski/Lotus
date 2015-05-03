@@ -227,7 +227,7 @@ class Interpreter {
 						}
 
 						if (!endOfChain) {
-							codeBlock = buildIfBlock(code, i, max);
+							codeBlock = buildBlock(code, i);
 							ifChain.add(codeBlock);
 							i += codeBlock.size();
 
@@ -251,6 +251,14 @@ class Interpreter {
 							}
 						}
 					}
+					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
+					for (int x = 0; x < ifChain.size(); x++) {
+						ArrayList<String> ifBlock = ifChain.get(x);
+						for (int y = 0; y < ifBlock.size(); y++) {
+							System.out.println(ifBlock.get(y));
+						}
+					}
+					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 
 					this.runIfChain(ifChain);
 				}
@@ -317,9 +325,9 @@ class Interpreter {
 		}
 	}
 
-	private ArrayList<String> buildIfBlock(ArrayList<String> code, int index, int max) throws LotusException {
-		ArrayList<String> ifBlock = new ArrayList<String>();
-		int i = index, bracketCount = 0;
+	private ArrayList<String> buildBlock(ArrayList<String> code, int index) throws LotusException {
+		ArrayList<String> block = new ArrayList<String>();
+		int i = index, max = code.size(), bracketCount = 0;
 		Matcher ifM, elsifM, elseM;
 		boolean endOfBlock = false;
 		String line, lineEnding;
@@ -335,18 +343,13 @@ class Interpreter {
 			clBracket = line.lastIndexOf("}");
 			if (clBracket >= 0) {
 				bracketCount--;
-				// lineEnding = line.substring(clBracket + 1);
-				//
-				// if (lineEnding.isEmpty()) {
-				// 	bracketCount--;
-				// }
 			}
 			else if (ifM.matches() || elsifM.matches() || elseM.matches()) {
 				bracketCount++;
 			}
 
 			if (!endOfBlock) {
-				ifBlock.add(line);
+				block.add(line);
 				i++;
 			}
 
@@ -359,7 +362,7 @@ class Interpreter {
 			throw new LotusException("bracketNotFound", code.get(index));
 		}
 
-		return ifBlock;
+		return block;
 	}
 
 	private void let(String line) throws LotusException {
@@ -834,9 +837,9 @@ class Interpreter {
 				else if (content[i + 1].equals("$")) {
 					text += "$";
 				}
-				// else if (content[i + 1].equals("-")) {
-				// 	text += "-";
-				// }
+				else if (content[i + 1].equals("-")) {
+					text += "-";
+				}
 				else if (content[i + 1].equals("\\")) {
 					if (i + 2 < content.length && content[i + 2].equals("n")) {
 						text += "\\n";
