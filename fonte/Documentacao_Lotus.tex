@@ -106,22 +106,22 @@ b após a conversão automática valerá ``true''.\\
 
 Todas as variáveis que receberem um valor que não seja compatível com o seu próprio tipo (especificado na declaração) passarão por uma conversão automática, onde: \\
 
-Se foi atribuído um número inteiro:\\
+Se foi atribuído um número inteiro:\\[0.15cm]
 - à uma variável double: se o int era x, o double será x.0;\\
 - à uma variável bool: se o int era 0, torna-se false, senão true;\\
 - à uma variável string: se torna uma string que representa o valor inteiro;\\[0.3cm]
 
-Se for atribuído um número double:\\
+Se for atribuído um número double:\\[0.15cm]
 - à uma variável int: o valor será truncado, ou seja, só será guardado o que está antes da vírgula;\\
 - à uma variável bool: se o valor for 0.0, torna-se false, senão true;\\
 - à uma variável string: torna-se uma string que representa o valor double;\\[0.3cm]
 
-Se for atribuído um valor bool:\\
+Se for atribuído um valor bool:\\[0.15cm]
 - à uma variável int: se for true, torna-se 1 e se false, torna-se 0;\\
 - à uma variável double: se for true, torna-se 1.0, se false, 0.0;\\
 - à uma variável string: torna-se uma string de conteúdo ``true'' ou ``false'', dependendo do valor da variável;\\[0.3cm]
 
-Se for atribuído um valor de uma string:\\
+Se for atribuído um valor de uma string:\\[0.15cm]
 - à uma variável int ou double: Se a string representa um int ou double, converte-se normalmente. Exemplo: ``7'' se torna 7 e ``11.0'' se torna 11.0;\\
 Se a string for exatamente ``true'' ou ``false'', a conversão de bool pra int/double ocorrerá, caso contrário, o int ou double receberão o tamanho da string, para evitar exceções no programa;\\
 - à uma variável bool: será true se a string é exatamente ``true''. Caso contrário, false;\\
@@ -156,7 +156,7 @@ $/$ $\rightarrow$ nand;\\
 $*$ $\rightarrow$ and;\\
 \^ \ $\rightarrow$ xor;\\
 
-Para string, em relação aos operandos:\\[0.2cm]
+Para string, em relação aos operandos:\\[0.15cm]
 $+$ $\rightarrow$ concatena o segundo ao primeiro;\\
 $-$ $\rightarrow$ retira a primeira ocorrência do segundo no primeiro;\\
 $/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro;\\
