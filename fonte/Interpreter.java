@@ -175,53 +175,55 @@ class Interpreter {
 
 	/* ---------------------------------------------------------------------- */
 
-	public void execute(ArrayList<String> code) throws LotusException {
+	public void execute(ArrayList<Line> code) throws LotusException {
 		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, ifM, elsifM, elseM;
 		int i, j, max, semicolon, clBracket;
-		ArrayList<ArrayList<String>> ifChain;
-		String line = "", lineEnding = "";
-		ArrayList<String> codeBlock;
+		ArrayList<ArrayList<Line>> ifChain;
+		String command = "", lineEnding = "";
+		ArrayList<Line> codeBlock;
 		boolean endOfChain;
+		Line line = null;
 
 		max = code.size();
 		for (i = 0; i < max; i++) {
 			try {
 				line = code.get(i);
+				command = line.toString();
 
-			    if (line.isEmpty()) {
+			    if (command.isEmpty()) {
 			        continue;
 			    }
 
-				ifM = wholeIfP.matcher(line);
-				wholeAtrM = wholeAtrP.matcher(line);
-				wholeDeclM = wholeDeclP.matcher(line);
-				wholeScanM = wholeScanP.matcher(line);
-				wholePrintM = wholePrintP.matcher(line);
-				wholeScanlnM = wholeScanlnP.matcher(line);
+				ifM = wholeIfP.matcher(command);
+				wholeAtrM = wholeAtrP.matcher(command);
+				wholeDeclM = wholeDeclP.matcher(command);
+				wholeScanM = wholeScanP.matcher(command);
+				wholePrintM = wholePrintP.matcher(command);
+				wholeScanlnM = wholeScanlnP.matcher(command);
 
 				if (wholeDeclM.matches()) {
-					this.let(line);
+					this.let(command);
 				}
 				else if (wholeAtrM.matches()) {
-					this.assign(line);
+					this.assign(command);
 				}
 				else if (wholePrintM.matches()) {
-					this.print(line);
+					this.print(command);
 				}
 				else if (wholeScanM.matches()) {
-					this.scan(line);
+					this.scan(command);
 				}
 				else if (wholeScanlnM.matches()) {
-					this.scanln(line);
+					this.scanln(command);
 				}
 				else if (ifM.matches()) {
-					ifChain = new ArrayList<ArrayList<String>>();
+					ifChain = new ArrayList<ArrayList<Line>>();
 					endOfChain = false;
 
 					while (!endOfChain) {
-						line = code.get(i);
+						command = code.get(i).toString();
 
-						if (line.isEmpty()) {
+						if (command.isEmpty()) {
 							i++;
 							continue; // ignoring commented and blank lines
 						}
@@ -232,14 +234,14 @@ class Interpreter {
 							i += codeBlock.size();
 
 							if (i < max) {
-								line = code.get(i);
-								while (i < max && line.isEmpty()) {
+								command = code.get(i).toString();
+								while (i < max && command.isEmpty()) {
 									i++;
-									line = code.get(i);
+									command = code.get(i).toString();
 								}
 
-								elsifM = wholeElsifP.matcher(line);
-								elseM = wholeElseP.matcher(line);
+								elsifM = wholeElsifP.matcher(command);
+								elseM = wholeElseP.matcher(command);
 								if (!elsifM.matches() && !elseM.matches()) {
 									endOfChain = true;
 									i -= 1;
@@ -253,7 +255,7 @@ class Interpreter {
 					}
 					// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 					// for (int x = 0; x < ifChain.size(); x++) {
-					// 	ArrayList<String> ifBlock = ifChain.get(x);
+					// 	ArrayList<Line> ifBlock = ifChain.get(x);
 					// 	for (int y = 0; y < ifBlock.size(); y++) {
 					// 		System.out.println(ifBlock.get(y));
 					// 	}
@@ -263,25 +265,25 @@ class Interpreter {
 					this.runIfChain(ifChain);
 				}
 				else {
-					throw new LotusException("syntaxError", line);
+					throw new LotusException("syntaxError", command);
 				}
 			} catch (LotusException e) {
-				e.setLN(i + 1);
+				e.setNumber(line.getNumber());
 				throw e;
 			}
 		}
 	}
 
-	private void runIfChain(ArrayList<ArrayList<String>> chain) throws LotusException {
+	private void runIfChain(ArrayList<ArrayList<Line>> chain) throws LotusException {
 		boolean done;
 		Matcher elseM;
 		Variable result;
 		int p, q, i, max;
 		String statement;
 		Expression condition;
-		ArrayList<String> block = chain.get(0);
+		ArrayList<Line> block = chain.get(0);
 
-		statement = block.get(0);
+		statement = block.get(0).toString();
 		p = statement.indexOf("(");
 		q = statement.lastIndexOf(")");
 		statement = statement.substring(p + 1, q);
@@ -299,7 +301,7 @@ class Interpreter {
 
 			for (i = 1; i < max && !done; i++) {
 				block = chain.get(i);
-				statement = block.get(0);
+				statement = block.get(0).toString();
 
 				elseM = wholeElseP.matcher(statement);
 				if (elseM.matches()) {
@@ -325,22 +327,24 @@ class Interpreter {
 		}
 	}
 
-	private ArrayList<String> buildBlock(ArrayList<String> code, int index) throws LotusException {
-		ArrayList<String> block = new ArrayList<String>();
+	private ArrayList<Line> buildBlock(ArrayList<Line> code, int index) throws LotusException {
+		ArrayList<Line> block = new ArrayList<Line>();
 		int i = index, max = code.size(), bracketCount = 0;
 		Matcher ifM, elsifM, elseM;
 		boolean endOfBlock = false;
-		String line, lineEnding;
+		String command, lineEnding;
 		int clBracket;
+		Line line;
 
 		while (i < max && !endOfBlock) {
 			line = code.get(i);
+			command = line.toString();
 
-			ifM = wholeIfP.matcher(line);
-			elsifM = wholeElsifP.matcher(line);
-			elseM = wholeElseP.matcher(line);
+			ifM = wholeIfP.matcher(command);
+			elsifM = wholeElsifP.matcher(command);
+			elseM = wholeElseP.matcher(command);
 
-			clBracket = line.lastIndexOf("}");
+			clBracket = command.lastIndexOf("}");
 			if (clBracket >= 0) {
 				bracketCount--;
 			}
@@ -359,7 +363,7 @@ class Interpreter {
 		}
 
 		if (!endOfBlock) {
-			throw new LotusException("bracketNotFound", code.get(index));
+			throw new LotusException("bracketNotFound", code.get(index).toString());
 		}
 
 		return block;

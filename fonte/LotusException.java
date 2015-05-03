@@ -10,7 +10,7 @@ Description: Class LotusException of Lotus, a programming language based on Java
 *******************************************************************************/
 class LotusException extends Exception {
     private String message, line;
-    private int lN;
+    private int number;
 
     public LotusException(String code, String line) {
         this.setLine(line);
@@ -65,10 +65,10 @@ class LotusException extends Exception {
         return this.line;
     }
 
-    public void setLN(int lN) {
-        this.lN = lN;
+    public void setNumber(int number) {
+        if (this.number == 0) this.number = number;
     }
-    public int getLN() {
-        return this.lN;
+    public int getNumber() {
+        return this.number;
     }
 }

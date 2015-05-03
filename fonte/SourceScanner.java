@@ -3,13 +3,13 @@ import java.util.*;
 import java.util.regex.*;
 
 class SourceScanner {
-    public ArrayList<String> scan(File f) throws Exception {
-        int comm;
+    public ArrayList<Line> scan(File f) throws Exception {
+        int i, comm;
         String line;
         Scanner sc = new Scanner(f);
-        ArrayList<String> input = new ArrayList<String>();
+        ArrayList<Line> input = new ArrayList<Line>();
 
-        while (sc.hasNext()) {
+        for (i = 1; sc.hasNext(); i++) {
             line = sc.nextLine().trim();
 
             if (line.startsWith("--")) {
@@ -22,14 +22,14 @@ class SourceScanner {
                 }
             }
 
-            input.add(line);
+            input.add(new Line(line, i));
         }
         sc.close();
 
         return input;
     }
 
-    public void print(ArrayList<String> code) {
+    public void print(ArrayList<Line> code) {
         int i, max = code.size();
         for (i = 0; i < max; i++) {
             System.out.println(code.get(i));

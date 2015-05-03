@@ -24,8 +24,8 @@ class Lotus {
         Interpreter lotus = new Interpreter();
         Pattern extP = Pattern.compile(".+\\.lt");
         boolean hasParam = true, validParam = true;
+        ArrayList<Line> input = new ArrayList<Line>();
         SourceScanner lotusScanner = new SourceScanner();
-        ArrayList<String> input = new ArrayList<String>();
 
         if (args.length > 0) {
             for (ind = 0; ind < args.length; ind++) {
@@ -52,7 +52,7 @@ class Lotus {
             try {
                 lotus.execute(input);
             } catch (LotusException e) {
-                System.out.println("\n> " + e.getMessage() + " @ line #" + e.getLN() + ":");
+                System.out.println("\n> " + e.getMessage() + " @ line #" + e.getNumber() + ":");
                 System.out.println(e.getLine());
                 System.exit(1);
             }
