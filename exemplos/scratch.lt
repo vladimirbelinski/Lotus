@@ -1,12 +1,23 @@
-if (1 > 2) {
-	println(FIRST);
+let x, y: int;
+
+if (1 > 2) {-- if( x < y) {}
+	println($x$);
 }
-elsif (1 > 2) { println(SECOND); }
-elsif (1 > 2) { println(THIRD); }
-else { println(FOURTH); println(FIFTH); }
+elsif (1 > 2) {
+	println(SECOND);
+}
+elsif (1 < 2) {
+	println(THIRD);
+}
+else {
+	println(FOURTH);
+	println(FIFTH);
+}
 
-let x = 2: int; let y = 1.0: double;
-println($x$); print
-ln($y$);
+let _xu_xa = "oi": string;
 
-println(\-\-\-\-\-\-\-\-\-\-\-\-\-\-);
+println($_xu_xa$);
+
+x = 1 * (   );
+println($x$);
+println($1 + 1 + -    $);

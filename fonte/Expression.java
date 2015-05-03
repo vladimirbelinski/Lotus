@@ -16,8 +16,7 @@ class Expression {
     private static final Map<String, Integer> precedence = mapPrecedence();
 
 	public Expression(String value) throws LotusException {
-		this.original = value;
-        this.value = value;
+		this.original = this.value = value.trim();
 		// System.out.println("Expression 1: " + this.value);
 		this.fixSpaces();
 		// System.out.println("Expression 2: " + this.value);
@@ -38,6 +37,11 @@ class Expression {
 
 		invalidFpM = Interpreter.invalidFpP.matcher(aux);
 		if (invalidFpM.find()) {
+			throw new LotusException("invalidExp", aux);
+		}
+
+		wholeOpM = Interpreter.wholeOpP.matcher(aux.substring(aux.length() - 1));
+		if (wholeOpM.find()) {
 			throw new LotusException("invalidExp", aux);
 		}
 

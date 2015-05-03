@@ -724,7 +724,7 @@ class Interpreter {
 				answ = new BoolVar(!v2.toBool());
 			}
             else if (opM.matches()) {
-                throw new LotusException("invalidExp", v1 + " " + op + " " + v2);
+                throw new LotusException("invalidExp", v2 + " " + op + " ?");
             }
         }
         else {
@@ -829,6 +829,8 @@ class Interpreter {
 		for (i = 0; i < content.length; i++) {
 			// \t 	Insert a tab in the text at this point.
 			// \n 	Insert a newline in the text at this point.
+			// \$ 	Insert a '$' character in the text at this point.
+			// \- 	Insert a hyphen character in the text at this point.
 			// \\ 	Insert a backslash character in the text at this point.
 			if (content[i].equals("\\") && i + 1 < content.length) {
 
@@ -838,8 +840,6 @@ class Interpreter {
 				else if (content[i + 1].equals("n")) {
 					text += "\n";
 				}
-				// if you want to print something like "$gabriel$",
-				// you just need to escape one '$' (or both)
 				else if (content[i + 1].equals("$")) {
 					text += "$";
 				}
