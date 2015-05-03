@@ -44,8 +44,8 @@ A linguagem de programação Lotus é uma linguagem desenvolvida com base em Jav
 \item \hyperlink{label}{Declaração de variáveis}
 \item \hyperlink{label2}{Atribuições de valor}
 \item \hyperlink{label8}{Conversão de tipos}
-\item \hyperlink{label1}{Entrada e saída}
 \item \hyperlink{label3}{Operações aritméticas}
+\item \hyperlink{label1}{Entrada e saída}
 \item \hyperlink{label4}{Desvios condicionais}
 \item \hyperlink{label5}{Laços de repetição}\\[15.4cm]
 \end{itemize}
@@ -127,44 +127,6 @@ Se a string for exatamente ``true'' ou ``false'', a conversão de bool pra int/d
 Caso contrário, o int ou double receberão o tamanho da string, para evitar exceções no programa.\\
 - à uma variável bool: será true se a string é exatamente ``true''. Caso contrário, false.\\
 
-\hypertarget{label1}{\Large{Entrada e saída}}\\[0.3cm]
-\normalsize
-
-Para imprimir uma linha, deve ser chamada a função print(). A mesma é equivalente ao printf() do C ou System.out.print() do java.\\
-O comando println() imprimirá o que foi solicitado e também imprimirá uma quebra de linha ao final (equivalente ao System.out.println() do Java).\\
-
-Para imprimir o valor de uma variável, a mesma deve ser expressa entre cifrões. Exemplo: \\
-
-let ex: string;\\
-
-print(var: \$ex\$); \\
-
-Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimitar o comando. ``var: '' é uma string a ser posta diretamente na tela e \$ex\$ é o nome da variável, que está delimitada pelos cifrões para poder ser impressa.\\
-
-Os caracteres especiais em um comando de saída são:\\[0.2cm]
-\textbackslash t para uma tabulação \\
-\textbackslash n para uma quebra de linha (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash \textbackslash n'')\\
-\textbackslash \$ para um cifrão \\
-\textbackslash \textbackslash\ para uma contra-barra \\
-
-Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável e então as expressões são resolvidas. Exemplo: \\
-
-println(\$$\ -3\ +4\ *2\ /\ (\ 1\ - 5)$\^\ 2 \^\ 3\$);\\
-
-O qual a resposta será $-3$.\\
-
-De maneira análoga às funções de saída, o comando scan() é utilizado para ler um valor do teclado. Esse comando lê a informação até o primeiro espaço ou quebra de linha que delimitar a entrada desejada, sendo idêntico ao scanf() do C. Já o comando scanln() lê uma linha inteira, assim como o fgets() do C. Em ambos os comandos, a conversão dos tipos de variável se aplica, caso a entrada não corresponda ao valor esperado.\\
-
-Exemplo do comando scan(): \\
-
-let i: int;\\
-
-scan(i);\\
-
-Onde ``scan'' é o comando, `$($' e `$)$' são os caracteres obrigatórios de delimitação e ``i'' é a variável onde será armazenado o valor lido. Neste exemplo, um valor do tipo inteiro.\\
-
-% Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
-
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
 \normalsize
 
@@ -202,6 +164,44 @@ $/$ $\rightarrow$ retira todas as ocorrências do segundo no primeiro\\
 \% $\rightarrow$ retira todas as ocorrências do primeiro no segundo (``resto'' da operação de `/')\\
 $*$ $\rightarrow$ adiciona o segundo entre cada caractere do primeiro\\
 \^ \ $\rightarrow$ se o segundo operando for uma string, retornará o índice daquela string dentro do primeiro operando. Caso contrário, retorna o char do primeiro na posição indicada pelo segundo\\
+
+\hypertarget{label1}{\Large{Entrada e saída}}\\[0.3cm]
+\normalsize
+
+Para imprimir uma linha, deve ser chamada a função print(). A mesma é equivalente ao printf() do C ou System.out.print() do java.\\
+O comando println() imprimirá o que foi solicitado e também imprimirá uma quebra de linha ao final (equivalente ao System.out.println() do Java).\\
+
+Para imprimir o valor de uma variável, a mesma deve ser expressa entre cifrões. Exemplo: \\
+
+let ex: string;\\
+
+print(var: \$ex\$); \\
+
+Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimitar o comando. ``var: '' é uma string a ser posta diretamente na tela e \$ex\$ é o nome da variável, que está delimitada pelos cifrões para poder ser impressa.\\
+
+Os caracteres especiais em um comando de saída são:\\[0.2cm]
+\textbackslash t para uma tabulação \\
+\textbackslash n para uma quebra de linha (para imprimir o literal ``\textbackslash n'', faça ``\textbackslash \textbackslash n'')\\
+\textbackslash \$ para um cifrão \\
+\textbackslash \textbackslash\ para uma contra-barra \\
+
+Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável e então as expressões são resolvidas. Exemplo: \\
+
+println(\$$\ -3\ +4\ *2\ /\ (\ 1\ - 5)$\^\ 2 \^\ 3\$);\\
+
+O qual a resposta será $-3$.\\
+
+De maneira análoga às funções de saída, o comando scan() é utilizado para ler um valor do teclado. Esse comando lê a informação até o primeiro espaço ou quebra de linha que delimitar a entrada desejada, sendo idêntico ao scanf() do C. Já o comando scanln() lê uma linha inteira, assim como o fgets() do C. Em ambos os comandos, a conversão dos tipos de variável se aplica, caso a entrada não corresponda ao valor esperado.\\
+
+Exemplo do comando scan(): \\
+
+let i: int;\\
+
+scan(i);\\
+
+Onde ``scan'' é o comando, `$($' e `$)$' são os caracteres obrigatórios de delimitação e ``i'' é a variável onde será armazenado o valor lido. Neste exemplo, um valor do tipo inteiro.\\
+
+% Para escapar uma variável ou expressão, deve-se escapar o primeiro ou ambos os cifrões. Ao escapar apenas o último, o que está entre os cifrões será interpretado como uma expressão, ocasionando em um erro de expressão inválida, já que o operador `\' não está definido.\\
 
 \hypertarget{label4}{\Large{Desvios condicionais}}\\[0.3cm]
 \normalsize
