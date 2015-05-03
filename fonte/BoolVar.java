@@ -1,3 +1,13 @@
+/*******************************************************************************
+Name: BoolVar.java
+Authors: Acácia dos Campos da Terra- terra.acacia@gmail.com
+         Gabriel Batista Galli - g7.galli96@gmail.com
+         Vladimir Belinski - vlbelinski@gmail.com
+         
+Description: Class BoolVar of Lotus, a programming language based on Java.
+             Treats conversions with boolean values.
+*******************************************************************************/
+
 class BoolVar extends Variable<Boolean> {
 
     public BoolVar(Boolean value) {
