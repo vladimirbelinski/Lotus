@@ -251,14 +251,14 @@ class Interpreter {
 							}
 						}
 					}
-					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
-					for (int x = 0; x < ifChain.size(); x++) {
-						ArrayList<String> ifBlock = ifChain.get(x);
-						for (int y = 0; y < ifBlock.size(); y++) {
-							System.out.println(ifBlock.get(y));
-						}
-					}
-					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
+					// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
+					// for (int x = 0; x < ifChain.size(); x++) {
+					// 	ArrayList<String> ifBlock = ifChain.get(x);
+					// 	for (int y = 0; y < ifBlock.size(); y++) {
+					// 		System.out.println(ifBlock.get(y));
+					// 	}
+					// }
+					// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 
 					this.runIfChain(ifChain);
 				}
@@ -610,7 +610,7 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		System.out.println(">>>> result: " + answ);
+		// System.out.println(">>>> result: " + answ);
 
 		return answ;
 	}
