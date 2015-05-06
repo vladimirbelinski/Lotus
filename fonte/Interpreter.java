@@ -51,16 +51,16 @@ class Interpreter {
 
 	public void setVar(Variable v, Variable other) throws LotusException {
 		if (other instanceof IntVar) {
-			this.setVar(v, (Integer)other.value);
+			this.setVar(v, other.toInt());
 		}
 		else if (other instanceof BoolVar) {
-			this.setVar(v, (Boolean)other.value);
+			this.setVar(v, other.toBool());
 		}
 		else if (other instanceof DoubleVar) {
-			this.setVar(v, (Double)other.value);
+			this.setVar(v, other.toDouble());
 		}
-		else if (other instanceof StringVar) {
-			this.setVar(v, (String)other.value);
+		else { // StringVar
+			this.setVar(v, other.toString());
 		}
 	}
 
@@ -588,6 +588,8 @@ class Interpreter {
 		Matcher wholeOpM;
 		String op;
 
+		// System.out.println("[INFO_LOG]: SOLVE_EXP = {" + exp + "}");
+
         if (t.length == 1) {
             answ = this.getOperand(t[0]);
         }
@@ -651,11 +653,13 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
+			// System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
+
 			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
 		}
 
-		// System.out.println(">>>> result: " + answ);
+		// System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
 
 		return answ;
 	}
