@@ -1,23 +1,10 @@
-let x, y: int;
+let x = 0, len = 0: int;
+let s = "Gabriel": string;
 
-if (1 > 2) {-- if( x < y) {}
-	println($x$);
+if (x == 0) {
+	len = s;
+	while (x < len) {
+		println([$s^x$]);
+		x = x + 1;
+	}
 }
-elsif (1 > 2) {
-	println(SECOND);
-}
-elsif (1 < 2) {
-	println(THIRD);
-}
-else {
-	println(FOURTH);
-	println(FIFTH);
-}
-
-let _xu_xa = "oi": string;
-
-println($_xu_xa$);
-
-x = 1 * (   );
-println($x$);
-println($1 + 1 + -    $);

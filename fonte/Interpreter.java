@@ -18,7 +18,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, intStrP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, intStrP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -186,11 +186,12 @@ class Interpreter {
 	/* ---------------------------------------------------------------------- */
 
 	public void execute(ArrayList<Line> code) throws LotusException {
-		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, ifM, elsifM, elseM;
+		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, wholeIfM, elsifM, elseM, wholeWhileM;
 		int i, j, max, semicolon, clBracket;
 		ArrayList<ArrayList<Line>> ifChain;
 		String command = "", lineEnding = "";
 		ArrayList<Line> codeBlock;
+		Expression loopCond;
 		boolean endOfChain;
 		Line line = null;
 
@@ -204,12 +205,13 @@ class Interpreter {
 			        continue;
 			    }
 
-				ifM = wholeIfP.matcher(command);
+				wholeIfM = wholeIfP.matcher(command);
 				wholeAtrM = wholeAtrP.matcher(command);
 				wholeDeclM = wholeDeclP.matcher(command);
 				wholeScanM = wholeScanP.matcher(command);
 				wholePrintM = wholePrintP.matcher(command);
 				wholeScanlnM = wholeScanlnP.matcher(command);
+				wholeWhileM = wholeWhileP.matcher(command);
 
 				if (wholeDeclM.matches()) {
 					this.let(command);
@@ -226,7 +228,7 @@ class Interpreter {
 				else if (wholeScanlnM.matches()) {
 					this.scanln(command);
 				}
-				else if (ifM.matches()) {
+				else if (wholeIfM.matches()) {
 					ifChain = new ArrayList<ArrayList<Line>>();
 					endOfChain = false;
 
@@ -266,13 +268,26 @@ class Interpreter {
 					// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 					// for (int x = 0; x < ifChain.size(); x++) {
 					// 	ArrayList<Line> ifBlock = ifChain.get(x);
-					// 	for (int y = 0; y < ifBlock.size(); y++) {
-					// 		System.out.println(ifBlock.get(y));
-					// 	}
+					// 	this.printBlock(ifBlock, false);
 					// }
 					// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 
 					this.runIfChain(ifChain);
+				}
+				else if (wholeWhileM.matches()) {
+					codeBlock = buildBlock(code, i);
+					i += codeBlock.size();
+					codeBlock.remove(0);
+					codeBlock.remove(codeBlock.size() - 1);
+
+					// this.printBlock(codeBlock, true);
+
+					loopCond = new Expression(command.substring(command.indexOf("(") + 1, command.lastIndexOf(")")));
+					// System.out.println("loopCond: {" + loopCond + "}");
+
+					while(this.solve(loopCond).toBool()) {
+						this.execute(codeBlock);
+					}
 				}
 				else {
 					throw new LotusException("syntaxError", command);
@@ -282,6 +297,16 @@ class Interpreter {
 				throw e;
 			}
 		}
+	}
+
+	private void printBlock(ArrayList<Line> block, boolean sep) {
+		int i, max = block.size();
+
+		if (sep) System.out.println("----------------------------------------");
+		for (i = 0; i < max; i++) {
+			System.out.println(block.get(i));
+		}
+		if (sep) System.out.println("----------------------------------------");
 	}
 
 	private void runIfChain(ArrayList<ArrayList<Line>> chain) throws LotusException {
@@ -340,7 +365,7 @@ class Interpreter {
 	private ArrayList<Line> buildBlock(ArrayList<Line> code, int index) throws LotusException {
 		ArrayList<Line> block = new ArrayList<Line>();
 		int i = index, max = code.size(), bracketCount = 0;
-		Matcher ifM, elsifM, elseM;
+		Matcher ifM, elsifM, elseM, whileM;
 		boolean endOfBlock = false;
 		String command, lineEnding;
 		Line line = null;
@@ -353,12 +378,13 @@ class Interpreter {
 			ifM = wholeIfP.matcher(command);
 			elsifM = wholeElsifP.matcher(command);
 			elseM = wholeElseP.matcher(command);
+			whileM = wholeWhileP.matcher(command);
 
 			clBracket = command.lastIndexOf("}");
 			if (clBracket >= 0) {
 				bracketCount--;
 			}
-			else if (ifM.matches() || elsifM.matches() || elseM.matches()) {
+			else if (ifM.matches() || elsifM.matches() || elseM.matches() || whileM.matches()) {
 				bracketCount++;
 			}
 
@@ -1044,7 +1070,7 @@ class Interpreter {
 
 	public static final String parenR = "\\(|\\)";
 	public static final String boolOpR = "\\!|\\&\\&|\\|\\|";
-	public static final String compOpR = "\\<|\\<\\=|\\=\\=|\\>\\=|\\>|\\!\\=";
+	public static final String compOpR = "\\!\\=|\\<\\=|\\=\\=|\\>\\=|\\<|\\>";
 	public static final String compOrBoolR = compOpR + "|" + boolOpR;
 	public static final String mathOpR = "\\-|\\+|\\/|\\%|\\*|\\^";
 
@@ -1054,7 +1080,7 @@ class Interpreter {
 	public static final String wholeAtrR = atrR + semicR;
 	public static final String stripAtrR = "( )*=( )*";
 
-	public static final String fnParentheses = "( )*\\([^;)]*\\)" + semicR;
+	public static final String fnParentheses = "( )*\\(.*\\)" + semicR;
 	public static final String printR = "(print|println)";
 	public static final String wholePrintR = printR + fnParentheses;
 	public static final String wholeScanR = "(scan)" + fnParentheses;
@@ -1164,11 +1190,13 @@ class Interpreter {
 		scanContentP = Pattern.compile(scanContentR);
 
 		ifP = Pattern.compile(ifR);
-		wholeIfP = Pattern.compile(ifR + "[^{;)]+" + ifEnding);
+		wholeIfP = Pattern.compile(ifR + ".+" + ifEnding);
 		elsifP = Pattern.compile(elsifR);
-		wholeElsifP = Pattern.compile(elsifR + "[^{;)]+" + ifEnding);
+		wholeElsifP = Pattern.compile(elsifR + ".+" + ifEnding);
 		wholeElseP = Pattern.compile(wholeElseR);
 		ifEndingP = Pattern.compile(ifEnding);
+
+		wholeWhileP = Pattern.compile("while( )*\\(.+\\)( )*\\{");
 
 		parenP = Pattern.compile("[()]");
 		numBuildP = Pattern.compile("(\\w|\\.)+");

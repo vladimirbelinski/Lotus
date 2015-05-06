@@ -5,7 +5,7 @@ Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
          Vladimir Belinski - vlbelinski@gmail.com
 
 Description: Class Line of Lotus, a programming language based on Java.
-             Helps the localization of a line when an error occur on it.
+             Helps the localization of a line when an error occurs on it.
 *******************************************************************************/
 
 class Line {
