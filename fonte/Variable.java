@@ -20,47 +20,9 @@ abstract class Variable<T> {
         return this.value.getClass();
     }
 
-    public void setValue(T value) {
-        this.value = value;
-    }
-
-    public void setValue(Variable v) throws LotusException {
-        if (v instanceof BoolVar) {
-            ((BoolVar)this).setValue((Boolean)v.value);
-        }
-        else if (v instanceof IntVar) {
-			((IntVar)this).setValue((Integer)v.value);
-		}
-        else if (v instanceof DoubleVar) {
-			((DoubleVar)this).setValue((Double)v.value);
-		}
-        else if (v instanceof StringVar) {
-			((StringVar)this).setValue((String)v.value);
-		}
-		else {
-			throw new LotusException("cantAssign", v.getClass() + ";" + this.getClass());
-		}
-    }
-
     public String toString() {
         return this.value.toString();
     }
-
-    public abstract Integer toInt();
-    public abstract Boolean toBool();
-    public abstract Double toDouble();
-    public abstract Variable inverted();
-    public abstract Variable plus(Variable other);
-    public abstract Variable minus(Variable other);
-    public abstract Variable times(Variable other);
-    public abstract Variable pow(Variable other);
-    public abstract Variable divided(Variable other) throws LotusException;
-    public abstract Variable mod(Variable other) throws LotusException;
-    public abstract Variable equals(Variable other);
-    public abstract Variable lessThan(Variable other);
-    public abstract Variable lessEquals(Variable other);
-    public abstract Variable greaterThan(Variable other);
-    public abstract Variable greaterEquals(Variable other);
 
     public BoolVar toBoolVar() {
         return new BoolVar(this.toBool());
@@ -85,4 +47,21 @@ abstract class Variable<T> {
     public Variable or(Variable other) {
         return this.toBoolVar().or(other);
     }
+
+    public abstract Integer toInt();
+    public abstract Boolean toBool();
+    public abstract Double toDouble();
+    public abstract Variable inverted();
+    public abstract void setValue(Variable other);
+    public abstract Variable plus(Variable other);
+    public abstract Variable minus(Variable other);
+    public abstract Variable times(Variable other);
+    public abstract Variable pow(Variable other);
+    public abstract Variable divided(Variable other) throws LotusException;
+    public abstract Variable mod(Variable other) throws LotusException;
+    public abstract Variable equals(Variable other);
+    public abstract Variable lessThan(Variable other);
+    public abstract Variable lessEquals(Variable other);
+    public abstract Variable greaterThan(Variable other);
+    public abstract Variable greaterEquals(Variable other);
 }

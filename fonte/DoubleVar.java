@@ -14,6 +14,10 @@ class DoubleVar extends Variable<Double> {
         super(value);
     }
 
+    public void setValue(Variable other) {
+        this.value = other.toDouble();
+    }
+
     public Variable inverted() {
         return new DoubleVar(-this.value);
     }

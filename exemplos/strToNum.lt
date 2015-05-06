@@ -1,0 +1,29 @@
+let i, j, len, mult, num: int;
+let d: double;
+let input: string;
+
+print(Type a number: );
+scan(input);
+
+num = 0;
+len = input; -- getting the length of the string
+d = input;
+
+i = 0;
+while (i < len) {
+	mult = 1;
+
+	j = i + 1;
+	while (j < len) {
+		mult = mult * 10;
+
+		j = j + 1;
+	}
+
+	num = num + (input ^ i * mult);
+
+	i = i + 1;
+}
+
+println(You typed: $num$);
+println(When assigning a string to a double, Lotus tries to convert it: $d$);

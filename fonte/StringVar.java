@@ -16,6 +16,10 @@ class StringVar extends Variable<String> {
         super(value);
     }
 
+    public void setValue(Variable other) {
+        this.value = other.toString();
+    }
+
     public Variable inverted() {
         Matcher boolM = Interpreter.boolP.matcher(this.value);
         Matcher upperCaseM = Interpreter.upperCaseP.matcher(this.value);
@@ -37,13 +41,7 @@ class StringVar extends Variable<String> {
     }
 
     public Integer toInt() {
-        Matcher intM = Interpreter.intP.matcher(this.value);
-        if (intM.matches()) {
-            return Integer.valueOf(this.value);
-        }
-        else {
-            return new Integer(this.value.length());
-        }
+        return new Integer(this.value.length());
     }
 
     public Boolean toBool() {
