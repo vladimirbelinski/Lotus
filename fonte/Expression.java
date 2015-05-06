@@ -31,7 +31,7 @@ class Expression {
 	private void fixSpaces() throws LotusException {
 		int index = 0;
 		String[] output;
-		String aux = this.value, tmp = "", fixed = "";
+		String aux = this.value, tmp = "", fixed = "", inv;
 		TreeMap<Integer, String> tokens = new TreeMap<Integer, String>();
 		Matcher notEmptyM, opGroupM, wholeOpM, ufpM, strM, varNameM, invalidFpM;
 
@@ -40,8 +40,9 @@ class Expression {
 			throw new LotusException("invalidExp", aux);
 		}
 
-		wholeOpM = Interpreter.wholeOpP.matcher(aux.substring(aux.length() - 1));
-		if (wholeOpM.find()) {
+		inv = aux.substring(aux.length() - 1);
+		wholeOpM = Interpreter.wholeOpP.matcher(inv);
+		if (wholeOpM.find() && !inv.equals(")")) {
 			throw new LotusException("invalidExp", aux);
 		}
 
@@ -87,7 +88,6 @@ class Expression {
 				aux = varNameM.replaceFirst(this.spacenize(tmp));
 			}
 			else {
-				System.out.println("HERE 7");
 				throw new LotusException("invalidExp", this.value);
 			}
 
