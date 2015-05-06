@@ -1,5 +1,5 @@
 let x = 0, len = 0: int;
-let s = "Gabriel": string;
+let s = "Lotus": string;
 
 if (x == 0) {
 	len = s;
@@ -8,3 +8,8 @@ if (x == 0) {
 		x = x + 1;
 	}
 }
+
+println($s$);
+println($x$);
+x = x + s; -- concatena o a string no int, não soma com o tamanho!
+println($x$);

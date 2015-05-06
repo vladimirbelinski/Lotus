@@ -18,7 +18,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, intStrP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -525,7 +525,7 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
-			System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
+			// System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
 
 			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
@@ -537,7 +537,7 @@ class Interpreter {
 	}
 
     private Variable getOperand(String t) throws LotusException {
-        Matcher intM, fpM, boolM, strM, quotInStrM, intStrM, varNameM;
+        Matcher intM, fpM, boolM, strM, quotInStrM, varNameM;
         Variable v = null;
 		int index;
 
@@ -545,7 +545,6 @@ class Interpreter {
         fpM = jfpP.matcher(t);
 		boolM = boolP.matcher(t);
 		strM = strP.matcher(t);
-		intStrM = intStrP.matcher(t);
 		varNameM = varNameP.matcher(t);
 
         if (intM.matches()) {
@@ -583,15 +582,13 @@ class Interpreter {
 
 			v = new StringVar(t);
 		}
-		else if (intStrM.matches()) {
-			if (varNameM.matches()) {
-				v = this.getVar(t);
-
-				if (v == null) throw new LotusException("varNotFound", t);
+		else if (varNameM.matches()) {
+			if ((v = this.getVar(t)) == null) {
+				throw new LotusException("varNotFound", t);
 			}
 		}
 		else {
-			throw new LotusException("invalidExp", t);
+			throw new LotusException("unknownSymbol", t);
 		}
 
         return v;
@@ -1041,7 +1038,6 @@ class Interpreter {
 		invalidFpP = Pattern.compile(invalidFpR);
 		boolP = Pattern.compile(boolR);
 		charP = Pattern.compile("\\w");
-		intStrP = Pattern.compile(".+");
 		strP = Pattern.compile(strR);
 		quotMarkP = Pattern.compile(quotMarkR);
 		quotInStrP = Pattern.compile(quotInStrR);
