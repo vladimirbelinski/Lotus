@@ -431,14 +431,23 @@ class Interpreter {
 			quotInStrM = quotInStrP.matcher(atr[1]);
 	        atr[1] = quotInStrM.replaceAll("\"");
 
-			this.setVar(this.getVar(atr[0]), atr[1]);
+			if ((v = this.getVar(atr[0])) != null) {
+				this.setVar(v, atr[1]);
+			}
+			else {
+				throw new LotusException("varNotFound", atr[0] + ", from \"" + line + "\"");
+			}
         }
 		else {
 			semicM = semicP.matcher(atr[1]);
 			atr[1] = semicM.replaceFirst("");
-            v = this.getVar(atr[0]);
 
-			this.setVar(v, this.solve(new Expression(atr[1])));
+			if ((v = this.getVar(atr[0])) != null) {
+				this.setVar(v, this.solve(new Expression(atr[1])));
+			}
+			else {
+				throw new LotusException("varNotFound", atr[0] + ", from \"" + line + "\"");
+			}
         }
     }
 
@@ -516,7 +525,7 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
-			// System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
+			System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
 
 			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
@@ -577,9 +586,8 @@ class Interpreter {
 		else if (intStrM.matches()) {
 			if (varNameM.matches()) {
 				v = this.getVar(t);
-			}
-			else {
-				v = new StringVar(t);
+
+				if (v == null) throw new LotusException("varNotFound", t);
 			}
 		}
 		else {
