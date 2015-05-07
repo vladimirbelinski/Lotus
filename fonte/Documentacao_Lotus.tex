@@ -67,7 +67,7 @@ A sintaxe da linguagem Lotus de programação é flexível, ou seja, os comandos
 % print(oi); println(ola); let var = 75: int; \\
 
 Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
-Comentários são marcados com ``$--$'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
+Comentários são marcados com ``-{}-'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\
 
 \hypertarget{label}{\Large{Declaração de variáveis}}\\[0.3cm]
 \normalsize
@@ -94,9 +94,9 @@ let oi88: double;\\
 
 São exemplos de uso errôneo ao declarar variável:\\
 
-let 9var: int; $--$(não se inicia com números)\\
+let 9var: int; -{}-(não se inicia com números)\\
 
-let var@: int; $--$(não é permitido o uso de caracteres especiais)\\
+let var@: int; -{}-(não é permitido o uso de caracteres especiais)\\
 
 \hypertarget{label2}{\Large{Atribuições de valor}}\\[0.3cm]
 \normalsize
@@ -136,8 +136,7 @@ Se for atribuído um valor bool:\\[0.15cm]
 - à uma variável string: torna-se uma string de conteúdo ``true'' ou ``false'', dependendo do valor da variável;\\[0.3cm]
 
 Se for atribuído um valor de uma string:\\[0.15cm]
-- à uma variável int ou double: Se a string representa um int ou double, converte-se normalmente. Exemplo: ``7'' se torna 7 e ``11.0'' se torna 11.0;\\
-Se a string for exatamente ``true'' ou ``false'', a conversão de bool pra int/double ocorrerá, caso contrário, o int ou double receberão o tamanho da string, para evitar exceções no programa;\\
+- à uma variável int ou double: a variável receberá o comprimento equivalente da string;\\
 - à uma variável bool: será true se a string é exatamente ``true''. Caso contrário, false;\\
 
 \hypertarget{label3}{\Large{Operações aritméticas}}\\[0.3cm]
@@ -225,13 +224,13 @@ A linguagem suporta toda e qualquer cadeia ou aninhamento de comandos if. A cond
 Um comando de desvio condicional se comportará da seguinte forma: \\
 
 \noindent\texttt{if (\emph{condição}) \{\\
-\indent\textit{-- comandos a serem executados quando a condição for verdadeira} \\
+\indent\textit{-{}- comandos a serem executados quando a condição for verdadeira} \\
 \} \\
 elsif (\emph{outra condição}) \{\\
-\indent\textit{-- comandos a serem executados quando a segunda condição for verdadeira} \\
+\indent\textit{-{}- comandos a serem executados quando a segunda condição for verdadeira} \\
 \} \\
 else \{\\
-\indent\textit{-- comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
+\indent\textit{-{}- comandos a serem executados quando nenhuma das condições acima for verdadeira} \\
 \}}\\
 
 Sendo ``if'', ``elsif'' e ``else'' palavras reservadas para as operações de desvio e o uso de `(' e `)' obrigatórios para delimitar a(s) condição(ões). O uso de `$\{$' e `$\}$' também é obrigatório para delimitar o bloco de código, mesmo que seja escrito em uma linha.\\
@@ -241,6 +240,18 @@ Sendo ``if'', ``elsif'' e ``else'' palavras reservadas para as operações de de
 \hypertarget{label5}{\Large{Laços de repetição}}\\[0.3cm]
 \normalsize
 
-% A fazer
+O laço de nome While funciona da seguinte forma: \\
+
+Todos os comandos dentro do bloco While serão executados enquanto a condição (definida entre parênteses) for verdadeira. Exemplo: \\
+
+let x = 0, y = 0: int;\\
+
+let s = "Lotus": string;\\
+
+y = s; -{}- Aqui ocorre conversão de tipo, onde y receberá 5, que é o comprimento de s. \\[0.2cm]
+while(x < s)\{\\
+\indent println(\$s \^\ x\$);\\
+\indent x = x + 1;\\
+\}\\
 
 \end{document}
