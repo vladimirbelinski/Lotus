@@ -21,18 +21,9 @@ class StringVar extends Variable<String> {
     }
 
     public Variable inverted() {
-        Matcher boolM = Interpreter.boolP.matcher(this.value);
         Matcher upperCaseM = Interpreter.upperCaseP.matcher(this.value);
 
-        if (boolM.matches()) {
-            if (this.value.equalsIgnoreCase("true")) {
-                return new StringVar("false");
-            }
-            else {
-                return new StringVar("true");
-            }
-        }
-        else if (upperCaseM.matches()) {
+        if (upperCaseM.matches()) {
             return new StringVar(this.value.toLowerCase());
         }
         else {

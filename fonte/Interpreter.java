@@ -18,7 +18,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP, anyP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -188,7 +188,7 @@ class Interpreter {
 		condition = new Expression(statement);
 		result = this.solve(condition);
 
-		if (result.equals(new BoolVar(true)).toBool()) {
+		if (result.toBool()) {
 			block.remove(0);
 			block.remove(block.size() - 1);
 			this.execute(block);
@@ -537,15 +537,18 @@ class Interpreter {
 	}
 
     private Variable getOperand(String t) throws LotusException {
-        Matcher intM, fpM, boolM, strM, quotInStrM, varNameM;
+        Matcher intM, fpM, boolM, strM, quotInStrM, varNameM, anyM;
         Variable v = null;
 		int index;
 
-        intM = intP.matcher(t);
         fpM = jfpP.matcher(t);
-		boolM = boolP.matcher(t);
+        intM = intP.matcher(t);
 		strM = strP.matcher(t);
+		anyM = anyP.matcher(t);
+		boolM = boolP.matcher(t);
 		varNameM = varNameP.matcher(t);
+
+		// System.out.println("[INFO_LOG]: GET_OPERAND = {" + t + "}");
 
         if (intM.matches()) {
             v = new IntVar(Integer.parseInt(t));
@@ -586,6 +589,11 @@ class Interpreter {
 			if ((v = this.getVar(t)) == null) {
 				throw new LotusException("varNotFound", t);
 			}
+		}
+		// for when I operate with direct strings in an expression.
+		// will probably never fall into the else, but leave it alone :P
+		else if (anyM.matches()) {
+			v = new StringVar(t);
 		}
 		else {
 			throw new LotusException("unknownSymbol", t);
@@ -1023,6 +1031,8 @@ class Interpreter {
 	public static final String jfpR = signR + "?(" + jufpR + ")";
 
 	private static void initPatterns() {
+		anyP = Pattern.compile(".+");
+
 		varNameP = Pattern.compile(varNameR);
 		typeP = Pattern.compile(typeR);
 		atrP = Pattern.compile(atrR);
