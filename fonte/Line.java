@@ -13,7 +13,7 @@ class Line {
 	private final int number;
 
 	public Line(String line, int number) {
-		this.line = line;
+		this.line = line.trim();
 		this.number = number;
 	}
 
