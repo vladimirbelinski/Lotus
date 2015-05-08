@@ -141,7 +141,7 @@ class Interpreter {
 				}
 				else if (wholeWhileM.matches()) {
 					codeBlock = buildBlock(code, i);
-					i += codeBlock.size();
+					i += codeBlock.size() - 1;
 					codeBlock.remove(0);
 					codeBlock.remove(codeBlock.size() - 1);
 
@@ -162,10 +162,12 @@ class Interpreter {
 					codeBlock.add(new Line(forArgs[0] + ";", line.getNumber()));
 					this.execute(codeBlock);
 
+					// for condition
 					loopCond = new Expression(forArgs[1]);
 
+					// building the block of code that will be executed
 					codeBlock = buildBlock(code, i);
-					i += codeBlock.size();
+					i += codeBlock.size() - 1;
 					codeBlock.remove(0);
 					codeBlock.remove(codeBlock.size() - 1);
 

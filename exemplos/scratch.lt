@@ -13,3 +13,9 @@ println($s$);
 println($x$);
 x = x + s; -- concatena o a string no int, não soma com o tamanho!
 println($x$);
+
+println(\nlen: $len$\n);
+for (x = 0; x < len && len > 0; x = x + 1) {
+	print([$x$]);
+}
+println();
