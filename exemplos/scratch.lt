@@ -14,6 +14,10 @@ println($x$);
 x = x + s; -- concatena o a string no int, não soma com o tamanho!
 println($x$);
 
+-- um for na Lotus aceita qualquer comando no campo de inicialização do laço, bem
+-- como no campo de incremento. Entretanto, o campo da condição apenas aceita uma
+-- expressão reconhecida pela linguagem. *Cada campo pode ter apenas um comando!*
+
 println(\nFor #1:);
 for (x = 0; x < len && len > 0; x = x + 1) {
 	print([$x$]);
@@ -24,7 +28,11 @@ x = 0;
 println(\nFor #2:);
 for (println($x$;); x < len; println($x$;)) {
 	x = x + 1;
+	--continue;
+	x = 27;
 }
+
+println(-> $x$;);
 
 println(\nFor #3:);
 for (s = ""; s <= "lotus"; s = s + "lotus") {

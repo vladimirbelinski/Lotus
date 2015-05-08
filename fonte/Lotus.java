@@ -25,7 +25,7 @@ class Lotus {
         Pattern extP = Pattern.compile(".+\\.lt");
         boolean hasParam = true, validParam = true;
         ArrayList<Line> input = new ArrayList<Line>();
-        SourceScanner lotusScanner = new SourceScanner();
+        SourceScanner ltSc = new SourceScanner();
 
         if (args.length > 0) {
             for (ind = 0; ind < args.length; ind++) {
@@ -44,13 +44,13 @@ class Lotus {
 
         if (hasParam && validParam) {
             f = new File(args[ind]);
-            input = lotusScanner.scan(f);
+            input = ltSc.scan(f);
             // System.out.println("------------------------------------------");
-            // lotusScanner.print(input);
+            // ltSc.print(input);
             // System.out.println("------------------------------------------");
 
             try {
-                lotus.execute(input);
+                lotus.execute(input, false);
             } catch (LotusException e) {
                 System.out.println("\n> " + e.getMessage() + " @ line #" + e.getNumber() + ":");
                 System.out.println(e.getLine());

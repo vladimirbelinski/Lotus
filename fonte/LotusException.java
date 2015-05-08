@@ -40,6 +40,8 @@ class LotusException extends Exception {
 			this.setMessage("Invalid assignment of types"); break;
         case "missingParen":
             this.setMessage("Missing parenthesis"); break;
+        case "notLooping":
+            this.setMessage("You're not inside a loop"); break;
         }
     }
 
