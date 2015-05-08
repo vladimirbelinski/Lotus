@@ -56,7 +56,7 @@ class Interpreter {
 		Expression loopCond;
 		String command = "";
 		boolean endOfChain;
-		String[] forLine;
+		String[] forArgs; // I know they're not arguments, but I couldn't find a better name...
 		Line line = null;
 
 		max = code.size();
@@ -155,34 +155,25 @@ class Interpreter {
 					}
 				}
 				else if (wholeForM.matches()) {
+					forArgs = command.replaceFirst("for( )*\\(", "").replaceFirst("\\)( )*\\{", "").split(";");
+
+					// for init
+					codeBlock = new ArrayList<Line>();
+					codeBlock.add(new Line(forArgs[0] + ";", line.getNumber()));
+					this.execute(codeBlock);
+
+					loopCond = new Expression(forArgs[1]);
+
 					codeBlock = buildBlock(code, i);
 					i += codeBlock.size();
 					codeBlock.remove(0);
 					codeBlock.remove(codeBlock.size() - 1);
 
-					command = command.replaceFirst("for( )*\\(", "");
-					command = command.replaceFirst("\\)( )*\\{", "");
-					forLine = command.split(";");
-
-					// System.out.println("forLine:");
-					// for (String s: forLine) {
-					// 	System.out.println(s);
-					// }
-
-					// for init
-					loopInc = new ArrayList<Line>();
-					loopInc.add(new Line(forLine[0] + ";", line.getNumber()));
-					this.execute(loopInc);
-					loopInc.remove(0);
-
-					loopCond = new Expression(forLine[1]);
-
-					// for increment
-					loopInc.add(new Line(forLine[2] + ";", line.getNumber()));
+					// for increment is last line of the block going to be executed
+					codeBlock.add(new Line(forArgs[2] + ";", line.getNumber()));
 
 					while (this.solve(loopCond).toBool()) {
 						this.execute(codeBlock);
-						this.execute(loopInc);
 					}
 				}
 				else {
