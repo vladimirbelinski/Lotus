@@ -28,8 +28,16 @@ x = 0;
 println(\nFor #2:);
 for (println($x$;); x < len; println($x$;)) {
 	x = x + 1;
-	--continue;
+	break;
 	x = 27;
+}
+
+println(-> $x$;);
+
+while (x > 0) {
+	println(while);
+	x = x - 3;
+	continue;
 }
 
 println(-> $x$;);

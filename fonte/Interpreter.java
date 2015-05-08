@@ -48,7 +48,7 @@ class Interpreter {
 		v.setValue(new StringVar(value));
 	}
 
-	public boolean execute(ArrayList<Line> code, boolean looping) throws LotusException {
+	public boolean execute(ArrayList<Line> code, boolean f, boolean w) throws LotusException {
 		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, wholeIfM, elsifM, elseM, wholeWhileM, wholeForM, forSplitM;
 		int i, j, max, semicolon, clBracket;
 		String command = "", forInit, forCond, forInc;
@@ -141,7 +141,7 @@ class Interpreter {
 					loopCond = new Expression(command.substring(command.indexOf("(") + 1, command.lastIndexOf(")")));
 
 					while(this.solve(loopCond).toBool()) {
-						if (!this.execute(codeBlock, true)) break;
+						if (!this.execute(codeBlock, false, true)) break;
 					}
 				}
 				else if (wholeForM.matches()) {
@@ -163,7 +163,7 @@ class Interpreter {
 					forInit = command.substring(forSplitM.start(), forSplitM.end()).replaceFirst("for( )*\\(", "").trim();
 					codeBlock = new ArrayList<Line>();
 					codeBlock.add(new Line(forInit, line.getNumber()));
-					this.execute(codeBlock, false);
+					this.execute(codeBlock, false, false);
 
 					// building the block of code that will be executed
 					codeBlock = buildBlock(code, i);
@@ -175,16 +175,20 @@ class Interpreter {
 					codeBlock.add(new Line(forInc, line.getNumber()));
 
 					while (this.solve(loopCond).toBool()) {
-						if (!this.execute(codeBlock, true)) break;
+						if (!this.execute(codeBlock, true, false)) break;
 					}
 				}
 				else if (command.equals("break;") || command.equals("continue;")) {
-					if (looping) {
+					if (f || w) {
+						// stopping here, breaking the loop
 						if (command.equals("break;")) {
 							return false;
 						}
-						else {
-							i = code.size() - 2;
+						else if (command.equals("continue;")) {
+							// stopping here, but not breaking the while
+							if (w) return true;
+							// or going to the for increment
+							else i = code.size() - 2;
 						}
 					}
 					else {
@@ -232,7 +236,7 @@ class Interpreter {
 		if (result.toBool()) {
 			block.remove(0);
 			block.remove(block.size() - 1);
-			this.execute(block, false);
+			this.execute(block, false, false);
 		}
 		else {
 			done = false;
@@ -246,7 +250,7 @@ class Interpreter {
 				if (elseM.matches()) {
 					block.remove(0);
 					block.remove(block.size() - 1);
-					this.execute(block, false);
+					this.execute(block, false, false);
 					done = true;
 				}
 				else {
@@ -258,7 +262,7 @@ class Interpreter {
 					if (result.equals(new BoolVar(true)).toBool()) {
 						block.remove(0);
 						block.remove(block.size() - 1);
-						this.execute(block, false);
+						this.execute(block, false, false);
 						done = true;
 					}
 				}
