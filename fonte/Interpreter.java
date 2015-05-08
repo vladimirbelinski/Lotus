@@ -18,7 +18,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, anyP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -49,14 +49,13 @@ class Interpreter {
 	}
 
 	public void execute(ArrayList<Line> code) throws LotusException {
-		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, wholeIfM, elsifM, elseM, wholeWhileM, wholeForM;
+		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, wholeIfM, elsifM, elseM, wholeWhileM, wholeForM, forSplitM;
 		int i, j, max, semicolon, clBracket;
+		String command = "", forInit, forCond, forInc;
 		ArrayList<ArrayList<Line>> ifChain;
 		ArrayList<Line> codeBlock, loopInc;
 		Expression loopCond;
-		String command = "";
 		boolean endOfChain;
-		String[] forArgs; // I know they're not arguments, but I couldn't find a better name...
 		Line line = null;
 
 		max = code.size();
@@ -130,12 +129,6 @@ class Interpreter {
 							}
 						}
 					}
-					// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
-					// for (int x = 0; x < ifChain.size(); x++) {
-					// 	ArrayList<Line> ifBlock = ifChain.get(x);
-					// 	this.printBlock(ifBlock, false);
-					// }
-					// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
 
 					this.runIfChain(ifChain);
 				}
@@ -145,25 +138,32 @@ class Interpreter {
 					codeBlock.remove(0);
 					codeBlock.remove(codeBlock.size() - 1);
 
-					// this.printBlock(codeBlock, true);
-
 					loopCond = new Expression(command.substring(command.indexOf("(") + 1, command.lastIndexOf(")")));
-					// System.out.println("loopCond: {" + loopCond + "}");
 
 					while(this.solve(loopCond).toBool()) {
 						this.execute(codeBlock);
 					}
 				}
 				else if (wholeForM.matches()) {
-					forArgs = command.replaceFirst("for( )*\\(", "").replaceFirst("\\)( )*\\{", "").split(";");
+					// getting the string: command.substring(0, index of ';' after condition);
+					forSplitM = forSplitP.matcher(command);
+					forSplitM.find();
+					forCond = forSplitM.group().substring(0, forSplitM.end() - 2);
 
-					// for init
-					codeBlock = new ArrayList<Line>();
-					codeBlock.add(new Line(forArgs[0] + ";", line.getNumber()));
-					this.execute(codeBlock);
+					// for increment. It's the command.substring starting right after the
+					// previous match until the end, without ") {", with ';' appended
+					forInc = command.substring(forSplitM.end()).replaceFirst("\\)( )*\\{", "").trim() + ";";
 
 					// for condition
-					loopCond = new Expression(forArgs[1]);
+					forSplitM = forSplitP.matcher(forCond);
+					forCond = forSplitM.replaceFirst("");
+					loopCond = new Expression(forCond);
+
+					// for init
+					forInit = command.substring(forSplitM.start(), forSplitM.end()).replaceFirst("for( )*\\(", "").trim();
+					codeBlock = new ArrayList<Line>();
+					codeBlock.add(new Line(forInit, line.getNumber()));
+					this.execute(codeBlock);
 
 					// building the block of code that will be executed
 					codeBlock = buildBlock(code, i);
@@ -172,7 +172,7 @@ class Interpreter {
 					codeBlock.remove(codeBlock.size() - 1);
 
 					// for increment is last line of the block going to be executed
-					codeBlock.add(new Line(forArgs[2] + ";", line.getNumber()));
+					codeBlock.add(new Line(forInc, line.getNumber()));
 
 					while (this.solve(loopCond).toBool()) {
 						this.execute(codeBlock);
@@ -1000,6 +1000,7 @@ class Interpreter {
 	public static final String elsifR = "(elsif)( )*\\(( )*";
 	public static final String wholeElseR = "(else)( )*\\{";
 
+	public static final String forSplitR = "(for)( )*\\(.+\\;(( )*)\\b";
 	public static final String wholeForR = "(for)( )*\\((.+;){2}.+\\)( )*\\{";
 
 	public static final String quotMarkR = "\\\"";
@@ -1108,6 +1109,7 @@ class Interpreter {
 		ifEndingP = Pattern.compile(ifEnding);
 
 		wholeWhileP = Pattern.compile("while( )*\\(.+\\)( )*\\{");
+		forSplitP = Pattern.compile(forSplitR);
 		wholeForP = Pattern.compile(wholeForR);
 
 		parenP = Pattern.compile("[()]");
