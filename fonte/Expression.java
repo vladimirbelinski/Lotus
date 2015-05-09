@@ -1,3 +1,4 @@
+package fonte;
 /*******************************************************************************
 Name: Expression.java
 Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com

@@ -1,3 +1,4 @@
+package fonte;
 /*******************************************************************************
 Name: Line.java
 Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
