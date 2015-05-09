@@ -1,3 +1,5 @@
+--Examples with implicit casting;
+
 let a: int;
 let b: double;
 let c: string;
