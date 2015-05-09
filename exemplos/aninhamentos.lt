@@ -1,0 +1,21 @@
+--Exemplo com aninhamentos
+
+let i=0, j=0: int;
+
+while (i < 3){
+  if(i == 0){
+    println("Zero");
+  }
+  else{
+    println("Outro");
+  }
+  i= i + 1;
+}
+if(i == 3){
+  if(j == 0){
+    println("Ok!");
+  }
+  else{
+    println("Erro");
+  }
+}
