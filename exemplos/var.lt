@@ -106,7 +106,7 @@ println($a$\n$b$\n$c$);
 
 let l = a: int;
 if (l > 0) { -- comprimento da string a
-    println($a$ não é vazia XD);
+    println($a$ não é vazia!);
 }
 else {
     println(A primeira string da sequência está vazia!);
