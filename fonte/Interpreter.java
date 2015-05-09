@@ -221,7 +221,6 @@ class Interpreter {
 	private void runIfChain(ArrayList<ArrayList<Line>> chain) throws LotusException {
 		boolean done;
 		Matcher elseM;
-		Variable result;
 		int p, q, i, max;
 		String statement;
 		Expression condition;
@@ -232,9 +231,8 @@ class Interpreter {
 		q = statement.lastIndexOf(")");
 		statement = statement.substring(p + 1, q);
 		condition = new Expression(statement);
-		result = this.solve(condition);
 
-		if (result.toBool()) {
+		if (this.solve(condition).toBool()) {
 			block.remove(0);
 			block.remove(block.size() - 1);
 			this.execute(block, false, false);
@@ -259,8 +257,7 @@ class Interpreter {
 					q = statement.lastIndexOf(")");
 					statement = statement.substring(p + 1, q);
 					condition = new Expression(statement);
-					result = this.solve(condition);
-					if (result.equals(new BoolVar(true)).toBool()) {
+					if (this.solve(condition).toBool()) {
 						block.remove(0);
 						block.remove(block.size() - 1);
 						this.execute(block, false, false);
