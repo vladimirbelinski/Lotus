@@ -258,12 +258,15 @@ class Expression {
             rpn += op.pop() + SEP;
         }
 
+		// System.out.println("[INFO_LOG]: TO_POSTFIX_RPN = {" + rpn + "}");
+
         return rpn;
     }
 
     private static Map<String, Integer> mapPrecedence() {
         Map<String, Integer> result = new HashMap<String, Integer>();
         result.put("^", 3);
+		result.put("!", 3);
 
         result.put("*", 2);
         result.put("/", 2);
@@ -279,7 +282,6 @@ class Expression {
         result.put(">=", 0);
         result.put("!=", 0);
 
-        result.put("!", 0);
         result.put("&&", 0);
         result.put("||", 0);
 

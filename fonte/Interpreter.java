@@ -509,6 +509,7 @@ class Interpreter {
 		String op;
 
 		// System.out.println("[INFO_LOG]: SOLVE_EXP = {" + exp + "}");
+		// System.out.println("[INFO_LOG]: SOLVE_TOKENS = {" + tokens + "}");
 
         if (t.length == 1) {
             answ = this.getOperand(t[0]);
@@ -535,7 +536,7 @@ class Interpreter {
 			/* now, if i > 1, then 1st operand is certainly 2 positions
 			 * before op. Else, it doesn't exist lol
 			 */
-			if (i > 1) {
+			if (!op.equals("!") && i > 1) {
                 num1 = this.getOperand(t[i - 2]);
             }
 			else {
@@ -579,7 +580,7 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		// System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
+		System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
 
 		return answ;
 	}
