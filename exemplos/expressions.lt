@@ -1,3 +1,5 @@
+--Examples using expressions;
+
 let x: double;
 
 x = -3 * -3; -- 9
