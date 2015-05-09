@@ -1,15 +1,10 @@
 let b: bool;
-let i = 35: int;
+let i: int;
 let d: double;
 let s: string;
 
-s = "3 + 5";
-
-println(s: $s$);
-println(i: $i$);
-
 println($-3 +4 *2 / ( 1 - 5)^ 2 ^ 3$);
-println($$);
+println(\$\$ oi oi );
 
 println(Leitura de int);
 scanln(i);
@@ -26,3 +21,11 @@ println($i$);
 println(Leitura de double);
 scan(d);
 println($d$);
+
+println(Leitura de string);
+scan(s);
+println($s$);
+
+println(Leitura de linha);
+scanln(s);
+println($s$);

@@ -126,7 +126,7 @@ b = 1 != 2;
 if (1 < 2) {
 	println(>>> 1);
 
-	if (3 < 0) {
+	if (3 > 0) {
 		println(>>> 2);
 	}
 	elsif (1 + 1 != 2) {
@@ -143,7 +143,7 @@ else {
 	println(>>> 6);
 }
 
-if ("Gabriel" > "Vladimir") {
+if ("Gabriel" < "Vladimir") {
 	println(>>> 7);
 }
 else {
@@ -152,4 +152,6 @@ else {
 
 let x: double;
 x = -3 +4 *2 / ( 1 - 5)^ 2 ^ 3; -- -3 pra int
+println($x$);
 x = -3.0 +4 *2.0 / ( 1.0 - 5)^ 2 ^ 3; -- -2.9998779296875 pra double
+println($x$);

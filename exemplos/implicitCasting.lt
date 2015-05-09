@@ -5,61 +5,71 @@ let d: bool;
 
 a = 7;
 b = 11;
-c = "Gabriel";
+c = "Lotus";
 d = true;
 
+println(-\-\-\-\-\-\-\-\-\-);
 println(Original values:);
 println($a$);
 println($b$);
 println($c$);
 println($d$);
 
-println(----------);
+println(-\-\-\-\-\-\-\-\-\-);
 
+println(\nFrom bool:);
 a = d;
 b = d;
 c = d;
-println($a$);
-println($b$);
-println($c$);
-println($d$);
+println(int: $a$);
+println(double: $b$);
+println(string: $c$);
+println(bool: $d$);
 
-println(----------);
+println(-\-\-\-\-\-\-\-\-\-);
 
+println(\nFrom string:);
 a = 7;
 b = 11;
-c = "Gabriel";
+c = "Lotus";
 d = true;
 
---a = c;
---b = c;
+a = c;
+b = c;
 d = c;
-println($d$);
+println(int: $a$);
+println(double: $b$);
+println(string: $c$);
+println(bool: $d$);
 
-println(----------);
+println(-\-\-\-\-\-\-\-\-\-);
 
+println(\nFrom double:);
 a = 7;
 b = 11;
-c = "Gabriel";
+c = "Lotus";
 d = true;
 
 a = b;
 c = b;
 d = b;
-println($a$);
-println($c$);
-println($d$);
+println(int: $a$);
+println(double: $b$);
+println(string: $c$);
+println(bool: $d$);
 
-println(----------);
+println(-\-\-\-\-\-\-\-\-\-);
 
+println(\nFrom int:);
 a = 7;
 b = 11;
-c = "Gabriel";
+c = "Lotus";
 d = true;
 
 b = a;
 c = a;
 d = a;
-println($b$);
-println($c$);
-println($d$);
+println(int: $a$);
+println(double: $b$);
+println(string: $c$);
+println(bool: $d$);

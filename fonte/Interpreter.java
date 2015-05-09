@@ -824,7 +824,7 @@ class Interpreter {
 			}
 			// content.length - 2 because it's the maximum index in the
 			// string for a variable or expression to exist, for example: $x$
-			else if (i < content.length - 2 && content[i].equals("$")) {
+			else if (content[i].equals("$")) {
 				// i is the index of the first '$'
 				exp = this.getExp(line, i);
 
@@ -842,7 +842,7 @@ class Interpreter {
 					i = line.indexOf("$", i + 1);
 				}
 				else {
-					text += content[i];
+					throw new LotusException("invalidExp", line);
 				}
 			}
 			else {
@@ -853,7 +853,7 @@ class Interpreter {
 		else System.out.print(text);
 	}
 
-	private String getExp (String content, int fromIndex) throws LotusException {
+	private String getExp (String content, int fromIndex) {
 		int offset = content.indexOf("$", fromIndex + 1);
 
 		if (offset > fromIndex) {

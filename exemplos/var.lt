@@ -32,8 +32,8 @@ println({$s$});
 
 print(\\n);
 
-print( $x$dsdsds $y$ kkk $$\n);
-println( $x$dsdsds $y$ kkk $);
+print( $x$dsdsds $y$ kkk \$\$\n);
+println( $x$dsdsds $y$ kkk \$);
 print ( dowi 21 $z$  \n);
 print($s$\\n\n);
 
