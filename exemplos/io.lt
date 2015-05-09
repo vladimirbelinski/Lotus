@@ -1,3 +1,5 @@
+--Examples using input and output functions;
+
 let b: bool;
 let i: int;
 let d: double;

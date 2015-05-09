@@ -1,0 +1,16 @@
+--Exemplo que calcula a média aritmética de n valores;
+
+let a, b, s: double;
+
+println(\nBem-vindo a calculadora de media aritmetica!\n);
+
+print(Por favor, insira a quantidade de elementos a serem calculados: );
+scan($a$);
+
+for (let i=0:int; i<a; i= i + 1){
+  print(\nPor favor, insira o valor ($i+1$): );
+  scan($b$);
+  s = s + b;
+}
+
+println(\nA media dos valores inseridos eh: $s / a$);

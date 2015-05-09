@@ -1,3 +1,5 @@
+--Examples using "for" and "while";
+
 let x = 0, len = 0: int;
 let s = "Lotus": string;
 
