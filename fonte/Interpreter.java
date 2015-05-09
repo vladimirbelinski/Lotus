@@ -580,7 +580,7 @@ class Interpreter {
 			t[i] = answ.toString();
 		}
 
-		System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
+		// System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
 
 		return answ;
 	}
