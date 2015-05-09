@@ -1,3 +1,5 @@
+--Examples converting strings to numbers;
+
 let i, j, len, mult, num: int;
 let d: double;
 let input: string;
