@@ -169,7 +169,7 @@ class Interpreter {
 					forInit = command.substring(forSplitM.start(), forSplitM.end()).replaceFirst("for( )*\\(", "").trim();
 					codeBlock = new ArrayList<Line>();
 					codeBlock.add(new Line(forInit, line.getNumber()));
-					this.execute(codeBlock, this.f, this.w);
+					this.execute(codeBlock, false, false);
 
 					// building the block of code that will be executed
 					codeBlock = buildBlock(code, i);
