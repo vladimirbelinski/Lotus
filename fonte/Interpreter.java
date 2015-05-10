@@ -19,7 +19,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, cutPrintP, cutScanP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -772,21 +772,16 @@ class Interpreter {
 	private void print(String line) throws LotusException {
 		int i, offset;
 		String[] content;
+		Matcher varNameM;
 		Variable v = null;
 		boolean breakLine = false;
-		Matcher cutPrintM, varNameM;
 		String lineEnding, exp, text = "";
 
 		if (line.startsWith("println")) {
 			breakLine = true;
 		}
 
-		lineEnding = line.substring(line.lastIndexOf(")"));
-		line = line.replace(lineEnding, "");
-
-		cutPrintM = cutPrintP.matcher(line);
-		line = cutPrintM.replaceFirst("");
-
+		line = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")"));
 		content = line.split("");
 		for (i = 0; i < content.length; i++) {
 			// \t 	Insert a tab in the text at this point.
@@ -871,16 +866,9 @@ class Interpreter {
 		Variable v, other;
 		String lineEnding, name;
 		Scanner sc = new Scanner(System.in);
-		Matcher cutScanM, scanContentM, varM, intM, fpM, strM;
+		Matcher scanContentM, varM, intM, jfpM, strM;
 
-		lineEnding = line.substring(line.lastIndexOf(")"));
-		line = line.replace(lineEnding, "");
-
-		cutScanM = cutScanP.matcher(line);
-		line = cutScanM.replaceFirst("");
-		// line = line.replaceFirst("(scan)( )*\\(", "");
-
-		line = line.replaceAll(" ", "");
+		line = line.substring(line.indexOf("(") + 1, line.indexOf(")")).replaceAll(" ", "");
 
 		scanContentM = scanContentP.matcher(line);
 		if (!scanContentM.matches()) {
@@ -903,12 +891,12 @@ class Interpreter {
 
 					if ((v = this.getVar(name)) != null) {
 						intM = intP.matcher(input[j]);
-						fpM = jfpP.matcher(input[j]);
+						jfpM = jfpP.matcher(input[j]);
 
 						if (intM.matches()) {
 							other = new IntVar(Integer.parseInt(input[j]));
 						}
-						else if (fpM.matches()) {
+						else if (jfpM.matches()) {
 							other = new DoubleVar(Double.parseDouble(input[j]));
 						}
 						else {
@@ -930,16 +918,10 @@ class Interpreter {
 	private void scanln(String line) throws LotusException {
 		Variable v;
 		String lineEnding, name, input;
+		Matcher scanContentM, varM, strM;
 		Scanner sc = new Scanner(System.in);
-		Matcher cutScanM, scanContentM, varM, strM;
 
-		lineEnding = line.substring(line.lastIndexOf(")"));
-		line = line.replace(lineEnding, "");
-
-		cutScanM = cutScanP.matcher(line);
-		line = cutScanM.replaceFirst("");
-
-		line = line.replaceAll(" ", "");
+		line = line.substring(line.indexOf("(") + 1, line.indexOf(")")).replaceAll(" ", "");
 
 		scanContentM = scanContentP.matcher(line);
 		if (!scanContentM.matches()) {
@@ -1118,8 +1100,6 @@ class Interpreter {
 		wholePrintP = Pattern.compile(wholePrintR);
 		wholeScanP = Pattern.compile(wholeScanR);
 		wholeScanlnP = Pattern.compile(wholeScanlnR);
-		cutPrintP = Pattern.compile(printR + "( )*\\(");
-		cutScanP = Pattern.compile("(scan|scanln)( )*\\(");
 		scanContentP = Pattern.compile(scanContentR);
 
 		ifP = Pattern.compile(ifR);
