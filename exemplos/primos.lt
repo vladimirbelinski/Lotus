@@ -1,6 +1,6 @@
 let n, flag = 0 : int;
 
-println(Digite o número para saber se é primo);
+println(Digite um número para saber se é primo);
 scan(n);
 
 
