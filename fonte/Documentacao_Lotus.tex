@@ -243,21 +243,28 @@ Sendo ``if'', ``elsif'' e ``else'' palavras reservadas para as operações de de
 
 O laço de nome While funciona da seguinte forma: \\
 
-Todos os comandos dentro do bloco While serão executados enquanto a condição (definida entre parênteses) for verdadeira. Exemplo: \\
-
-let x = 0, y = 0: int;\\
-
-let s = "Lotus": string;\\
-
-y = s; -{}- Aqui ocorre conversão de tipo, onde y receberá 5, que é o comprimento de s. \\[0.2cm]
-while(x < s)\{\\
+Todos os comandos dentro do bloco While serão executados enquanto a condição (definida entre parênteses) for verdadeira. Exemplo: \\[0.25cm]
+\texttt{\noindent let x = 0, y = 0: int;\\
+\noindent let s = "Lotus": string;\\
+\noindent y = s; -{}- Aqui ocorre conversão de tipo, onde y receberá 5, que é o comprimento de s. \\[0.2cm]
+\noindent while(x < s)\{\\
 \indent println(\$s \^\ x\$);\\
 \indent x = x + 1;\\
-\}\\
+\}}\\
 
 
 O laço de nome For funciona da seguinte forma: \\
 
 Dividido em três tipos de comandos, o for terá a seguinte sintaxe: \\
 
+\noindent\texttt{for (\emph{-{}-comando executado ao iniciar o for; comando de controle do for; comando executado ao final do for}) \{\\
+\indent\textit{-{}- comandos a serem executados enquanto o controle resultar verdadeiro} \\
+\}}\\
+
+Um exemplo de uso: \\[0.2cm]
+\texttt{
+\noindent for(let i = 1: int; i < 9; i = i + 1) \{\\
+\indent println(\$i\$);\\
+\noindent \}\\
+}
 \end{document}
