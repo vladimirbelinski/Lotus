@@ -881,7 +881,7 @@ class Interpreter {
 		// line = line.replaceFirst("(scan)( )*\\(", "");
 
 		scanContentM = scanContentP.matcher(line);
-		if (!scanContentM.find()) {
+		if (!scanContentM.matches()) {
 			throw new LotusException("syntaxError", line);
 		}
 
@@ -939,7 +939,7 @@ class Interpreter {
 		// line = line.replaceFirst("(scanln)( )*\\(", "");
 
 		scanContentM = scanContentP.matcher(line);
-		if (!scanContentM.find()) {
+		if (!scanContentM.matches()) {
 			throw new LotusException("syntaxError", line);
 		}
 
