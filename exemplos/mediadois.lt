@@ -1,0 +1,8 @@
+let x, y: double;
+
+println(Digite o primeiro número:);
+scan($x$);
+println(Digite o segundo número:);
+scan($y$);
+
+println(A média dos dois números é: $(x+y)/2$);
