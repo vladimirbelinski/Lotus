@@ -96,8 +96,8 @@ Ao declarar variáveis, as mesmas não poderão iniciar com números e o único 
 
 São exemplos de uso errôneo ao declarar variável:\\
 
-\texttt{\noindent let 9var: int; -{}-(não se inicia com números)\\
-\indent let var@: int; -{}-(não é permitido o uso de caracteres especiais)}\\[0.3cm]
+\texttt{\noindent let 9var: int; -{}- não se inicia com números\\
+\indent let var@: int; -{}- não é permitido o uso de caracteres especiais}\\[0.3cm]
 
 \hypertarget{label2}{\Large{\textsc{Atribuições de valor}}}\\
 \normalsize
@@ -115,8 +115,9 @@ As atribuições também podem ser feitas na própria declaração de variável,
 Se por ventura for atribuído um valor diferente do do tipo da variável, então será automaticamente convertido. Exemplo:\\
 
 \texttt{\noindent let b: bool; \\
-\indent b = 861;\\
-\indent b após a conversão automática valerá ``true''.}\\[0.3cm]
+\indent b = 861;}\\
+
+b após a conversão automática valerá ``true''.\\[0.3cm]
 
 \hypertarget{label8}{\Large{\textsc{Conversão de tipos}}}\\
 \normalsize
@@ -140,7 +141,7 @@ Se for atribuído um valor bool:\\[0.15cm]
 
 Se for atribuído um valor de uma string:\\[0.15cm]
 - à uma variável int ou double: a variável receberá o comprimento equivalente da string;\\
-- à uma variável bool: será true se a string é exatamente ``true''. Caso contrário, false;\\[0.3cm]
+- à uma variável bool: será true se a string for exatamente ``true''. Caso contrário, false;\\[0.3cm]
 
 \hypertarget{label3}{\Large{\textsc{Operações aritméticas}}}\\
 \normalsize
@@ -255,7 +256,7 @@ O laço de nome For funciona da seguinte forma: \\
 
 Dividido em três tipos de comandos, o for terá a seguinte sintaxe: \\
 
-\noindent\texttt{for (\emph{-{}-comando executado ao iniciar o for; comando de controle do for; comando executado ao final do for}) \{\\
+\noindent\texttt{for (\emph{comando executado ao iniciar o for; comando de controle do for; comando executado ao final do for}) \{\\
 \indent\textit{-{}- comandos a serem executados enquanto o controle resultar verdadeiro} \\
 \}}\\
 
