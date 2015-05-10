@@ -1,4 +1,3 @@
-package fonte;
 /*******************************************************************************
 Name: Expression.java
 Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
@@ -8,6 +7,7 @@ Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
 Description: Class Expression of Lotus, a programming language based on Java.
              Responsible for treating all expressions supported by Lotus.
 *******************************************************************************/
+package fonte;
 import java.util.*;
 import java.util.regex.*;
 
