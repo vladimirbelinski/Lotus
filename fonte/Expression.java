@@ -265,28 +265,28 @@ class Expression {
 
     private static Map<String, Integer> mapPrecedence() {
         Map<String, Integer> result = new HashMap<String, Integer>();
-        result.put("^", 3);
-		result.put("!", 3);
+        result.put("^", 5);
+		result.put("!", 5);
 
-        result.put("*", 2);
-        result.put("/", 2);
-        result.put("%", 2);
+        result.put("*", 4);
+        result.put("/", 4);
+        result.put("%", 4);
 
-        result.put("+", 1);
-        result.put("-", 1);
+        result.put("+", 3);
+        result.put("-", 3);
 
-        result.put("<", 0);
-        result.put(">", 0);
-        result.put("<=", 0);
-        result.put("==", 0);
-        result.put(">=", 0);
-        result.put("!=", 0);
+        result.put("<", 2);
+        result.put(">", 2);
+        result.put("<=", 2);
+        result.put("==", 2);
+        result.put(">=", 2);
+        result.put("!=", 2);
 
-        result.put("&&", 0);
-        result.put("||", 0);
+        result.put("&&", 1);
+        result.put("||", 1);
 
-        result.put("(", -1);
-        result.put(")", -1);
+        result.put("(", 0);
+        result.put(")", 0);
 
         return Collections.unmodifiableMap(result);
     }

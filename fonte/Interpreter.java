@@ -684,7 +684,7 @@ class Interpreter {
                 answ = v2;
             }
 			else if (op.equals("!")) {
-				answ = new BoolVar(!v2.toBool());
+				answ = v2.toBoolVar().inverted();
 			}
             else if (opM.matches()) {
                 throw new LotusException("invalidExp", v2 + " " + op + " ?");
