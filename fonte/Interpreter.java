@@ -19,7 +19,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, commP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -219,17 +219,15 @@ class Interpreter {
 	}
 
 	private void runIfChain(ArrayList<ArrayList<Line>> chain) throws LotusException {
+		int i, max;
 		boolean done;
 		Matcher elseM;
-		int p, q, i, max;
 		String statement;
 		Expression condition;
 		ArrayList<Line> block = chain.get(0);
 
 		statement = block.get(0).toString();
-		p = statement.indexOf("(");
-		q = statement.lastIndexOf(")");
-		statement = statement.substring(p + 1, q);
+		statement = statement.substring(statement.indexOf("(") + 1, statement.lastIndexOf(")"));
 		condition = new Expression(statement);
 
 		if (this.solve(condition).toBool()) {
@@ -253,9 +251,7 @@ class Interpreter {
 					done = true;
 				}
 				else {
-					p = statement.indexOf("(");
-					q = statement.lastIndexOf(")");
-					statement = statement.substring(p + 1, q);
+					statement = statement.substring(statement.indexOf("(") + 1, statement.lastIndexOf(")"));
 					condition = new Expression(statement);
 					if (this.solve(condition).toBool()) {
 						block.remove(0);
@@ -973,8 +969,6 @@ class Interpreter {
     }
 
 	public static final String semicR = "( )*;";
-	public static final String commR = "( )*--.*";
-
 	public static final String typeR = "int|double|string|bool";
 	public static final String varNameR = "[A-Za-z_][A-Za-z_0-9]*";
 	public static final String wholeDeclR = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+" + semicR;
@@ -996,7 +990,7 @@ class Interpreter {
 	public static final String wholePrintR = printR + fnParentheses;
 	public static final String wholeScanR = "(scan)" + fnParentheses;
 	public static final String wholeScanlnR = "(scanln)" + fnParentheses;
-	public static final String scanContentR = "(" + varNameR + ")(( )*,( )*(" + varNameR + "))*";
+	public static final String scanContentR = "(" + varNameR + ")(,(" + varNameR + "))*";
 
 	public static final String ifR = "(if)( )*\\(( )*";
 	public static final String ifEnding = "( )*\\)( )*\\{";
@@ -1070,7 +1064,6 @@ class Interpreter {
 		varNameP = Pattern.compile(varNameR);
 		typeP = Pattern.compile(typeR);
 		atrP = Pattern.compile(atrR);
-		commP = Pattern.compile(commR);
 
 		wholeOpP = Pattern.compile(wholeOpR);
 		signP = Pattern.compile(signR);
