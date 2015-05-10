@@ -975,7 +975,7 @@ class Interpreter {
         result.put("scan", true);
         result.put("scanln", true);
 
-        result.put("unless", true);
+        // result.put("unless", true);
         result.put("if", true);
         result.put("elsif", true);
         result.put("else", true);
@@ -985,8 +985,8 @@ class Interpreter {
         result.put("break", true);
         result.put("continue", true);
 
-        result.put("fn", true);
-        result.put("main", true);
+        // result.put("fn", true);
+        // result.put("main", true);
         return Collections.unmodifiableMap(result);
     }
 
