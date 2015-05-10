@@ -80,14 +80,12 @@ class StringVar extends Variable<String> {
         return new StringVar(other.toString().replaceAll(this.toString(), ""));
     }
 
-    // cannot do a pow
     public Variable pow(Variable other) {
-        int i;
         if (other instanceof StringVar) {
             return new IntVar(this.value.indexOf(other.toString()));
         }
         else {
-            i = other.toInt() % this.value.length();
+            int i = other.toInt() % this.value.length();
             return new StringVar(this.value.substring(i, i + 1));
         }
     }
@@ -102,7 +100,7 @@ class StringVar extends Variable<String> {
     }
 
     public Variable lessEquals(Variable other) {
-        return ((BoolVar)this.lessThan(other)).or(this.equals(other));
+        return this.lessThan(other).or(this.equals(other));
     }
 
     // checks if this comes lexicographically after other
@@ -111,6 +109,6 @@ class StringVar extends Variable<String> {
     }
 
     public Variable greaterEquals(Variable other) {
-        return ((BoolVar)this.greaterThan(other)).or(this.equals(other));
+        return this.greaterThan(other).or(this.equals(other));
     }
 }

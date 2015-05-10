@@ -21,17 +21,14 @@ class Lotus {
     public static void main(String[] args) throws Exception {
         File f;
         int ind = 0;
-        Matcher extM;
         Interpreter lotus = new Interpreter();
-        Pattern extP = Pattern.compile(".+\\.lt");
         boolean hasParam = true, validParam = true;
         ArrayList<Line> input = new ArrayList<Line>();
         SourceScanner ltSc = new SourceScanner();
 
         if (args.length > 0) {
             for (ind = 0; ind < args.length; ind++) {
-                extM = extP.matcher(args[ind]);
-                if (extM.matches()) {
+                if (args[ind].endsWith(".lt")) {
                     validParam = true;
                     break;
                 }
@@ -45,17 +42,22 @@ class Lotus {
 
         if (hasParam && validParam) {
             f = new File(args[ind]);
-            input = ltSc.scan(f);
-            // System.out.println("------------------------------------------");
-            // ltSc.print(input);
-            // System.out.println("------------------------------------------");
+            if (f.exists() && !f.isDirectory()) {
+                input = ltSc.scan(f);
+                // System.out.println("------------------------------------------");
+                // ltSc.print(input);
+                // System.out.println("------------------------------------------");
 
-            try {
-                lotus.execute(input, false, false);
-            } catch (LotusException e) {
-                System.out.println("\n> " + e.getMessage() + " @ line #" + e.getNumber() + ":");
-                System.out.println(e.getLine());
-                System.exit(1);
+                try {
+                    lotus.execute(input, false, false);
+                } catch (LotusException e) {
+                    System.out.println("\n> " + e.getMessage() + " @ line #" + e.getNumber() + ":");
+                    System.out.println(e.getLine());
+                    System.exit(1);
+                }
+            }
+            else {
+                System.out.println("# File \"" + args[ind] + "\" not found.");
             }
         }
         else if (!validParam) {
