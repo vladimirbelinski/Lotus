@@ -177,7 +177,7 @@ class DoubleVar extends Variable<Double> {
 
     public Variable lessEquals(Variable other) {
         if (other instanceof DoubleVar) {
-            return ((BoolVar)this.lessThan(other)).or(this.equals(other));
+            return this.lessThan(other).or(this.equals(other));
         }
         else if (other instanceof DoubleVar) {
             return this.lessEquals(other.toDoubleVar());
@@ -207,7 +207,7 @@ class DoubleVar extends Variable<Double> {
 
     public Variable greaterEquals(Variable other) {
         if (other instanceof DoubleVar) {
-            return ((BoolVar)this.greaterThan(other)).or(this.equals(other));
+            return this.greaterThan(other).or(this.equals(other));
         }
         else if (other instanceof IntVar) {
             return this.greaterEquals(other.toDoubleVar());

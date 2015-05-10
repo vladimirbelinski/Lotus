@@ -29,7 +29,7 @@ class BoolVar extends Variable<Boolean> {
     }
 
     public Integer toInt() {
-        if (this.toBool().equals(true)) {
+        if (this.value.equals(true)) {
             return new Integer(1);
         }
         else {
@@ -38,7 +38,7 @@ class BoolVar extends Variable<Boolean> {
     }
 
     public Double toDouble() {
-        if (this.toBool().equals(true)) {
+        if (this.value.equals(true)) {
             return new Double(1.0);
         }
         else {
@@ -94,7 +94,7 @@ class BoolVar extends Variable<Boolean> {
     }
 
     public Variable lessEquals(Variable other) {
-        return ((BoolVar)this.lessThan(other)).or(this.equals(other));
+        return this.lessThan(other).or(this.equals(other));
     }
 
     public Variable greaterThan(Variable other) {
@@ -102,6 +102,6 @@ class BoolVar extends Variable<Boolean> {
     }
 
     public Variable greaterEquals(Variable other) {
-        return ((BoolVar)this.greaterThan(other)).or(this.equals(other));
+        return this.greaterThan(other).or(this.equals(other));
     }
 }

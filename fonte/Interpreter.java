@@ -14,6 +14,7 @@ import java.util.regex.*;
 
 class Interpreter {
 	private HashMap<String, Variable> vars;
+	private boolean f, w;
 	// this doesn't make that much sense now, but it's faster to
 	// look up in a hash than an array. And later on we can replace
 	// the boolean value to a Runnable...
@@ -22,7 +23,8 @@ class Interpreter {
 	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
 
 	public Interpreter() {
-		vars = new HashMap<String, Variable>();
+		this.vars = new HashMap<String, Variable>();
+		this.f = this.w = false;
 
 		if (!patternsInitd) {
 			initPatterns();
@@ -58,6 +60,9 @@ class Interpreter {
 		Expression loopCond;
 		boolean endOfChain;
 		Line line = null;
+
+		this.f = f;
+		this.w = w;
 
 		max = code.size();
 		for (i = 0; i < max; i++) {
@@ -164,7 +169,7 @@ class Interpreter {
 					forInit = command.substring(forSplitM.start(), forSplitM.end()).replaceFirst("for( )*\\(", "").trim();
 					codeBlock = new ArrayList<Line>();
 					codeBlock.add(new Line(forInit, line.getNumber()));
-					this.execute(codeBlock, false, false);
+					this.execute(codeBlock, this.f, this.w);
 
 					// building the block of code that will be executed
 					codeBlock = buildBlock(code, i);
@@ -180,14 +185,14 @@ class Interpreter {
 					}
 				}
 				else if (command.equals("break;") || command.equals("continue;")) {
-					if (f || w) {
+					if (this.f || this.w) {
 						// stopping here, breaking the loop
 						if (command.equals("break;")) {
 							return false;
 						}
 						else if (command.equals("continue;")) {
 							// stopping here, but not breaking the while
-							if (w) return true;
+							if (this.w) return true;
 							// or going to the for increment
 							else i = code.size() - 2;
 						}
@@ -233,7 +238,7 @@ class Interpreter {
 		if (this.solve(condition).toBool()) {
 			block.remove(0);
 			block.remove(block.size() - 1);
-			this.execute(block, false, false);
+			this.execute(block, this.f, this.w);
 		}
 		else {
 			done = false;
@@ -247,7 +252,7 @@ class Interpreter {
 				if (elseM.matches()) {
 					block.remove(0);
 					block.remove(block.size() - 1);
-					this.execute(block, false, false);
+					this.execute(block, this.f, this.w);
 					done = true;
 				}
 				else {
@@ -256,7 +261,7 @@ class Interpreter {
 					if (this.solve(condition).toBool()) {
 						block.remove(0);
 						block.remove(block.size() - 1);
-						this.execute(block, false, false);
+						this.execute(block, this.f, this.w);
 						done = true;
 					}
 				}
