@@ -1,3 +1,5 @@
+--Exemplo de programa que verifica se um número é primo ou não utilizando a Linguagem Lotus
+
 let n, flag = 0 : int;
 
 println(Digite um número para saber se é primo);
