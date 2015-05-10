@@ -1,10 +1,9 @@
---Exemplo de programa que verifica se um número é primo ou não utilizando a Linguagem Lotus
+-- Exemplo de programa que verifica se um número é primo ou não utilizando a Linguagem Lotus
 
 let n, flag = 0 : int;
 
 println(Digite um número para saber se é primo);
 scan(n);
-
 
 for(let i = 2: int; i <= n^1/2; i = i + 1){
 	if(n%i == 0){

@@ -1,4 +1,4 @@
---Exemplo de programa que calcula a média aritmética entre dois números utilizando a Linguagem Lotus
+-- Exemplo de programa que calcula a média aritmética entre dois números utilizando a Linguagem Lotus
 
 let x, y: double;
 
