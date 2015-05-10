@@ -1,0 +1,20 @@
+-- Exemplo de programa que diz se o número é um quadrado perfeito.
+
+let n, flag = 0: int;
+
+println (Digite um número para saber se é quadrado perfeito);
+scan(n);
+
+for(let i = 1: int; i < n; i = i + 1){
+	if(i * i == n){
+		flag = 1;
+		break;
+	}
+}
+
+if (flag) {
+	println (O número $n$ é um quadrado perfeito de $i$);
+}
+else {
+	println (O número $n$ não é um quadrado perfeito);
+}
