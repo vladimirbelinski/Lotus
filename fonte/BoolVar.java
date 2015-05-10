@@ -1,3 +1,4 @@
+package fonte;
 /*******************************************************************************
 Name: BoolVar.java
 Authors: Acácia dos Campos da Terra - terra.acacia@gmail.com
@@ -8,7 +9,6 @@ Description: Class BoolVar of Lotus, a programming language based on Java.
              Implements the functionality specified by the Variable class
              for the Boolean type.
 *******************************************************************************/
-package fonte;
 
 class BoolVar extends Variable<Boolean> {
 
