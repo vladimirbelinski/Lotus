@@ -68,53 +68,49 @@ A sintaxe da linguagem Lotus de programação é flexível, ou seja, os comandos
 % print(oi); println(ola); let var = 75: int; \\
 
 Já comandos do tipo if, for e while exigirão `\{' e `\}' como delimitadores de bloco.
-Comentários são marcados com ``-{}-'', assim como o ``//'' do C ou Java. Não há comentários de bloco.\\[0.3cm]
+Comentários são marcados com ``\texttt{-{}-}'', assim como o ``\texttt{//}'' do C ou Java. Não há comentários de bloco.\\[0.3cm]
 
 \hypertarget{label}{\Large{\textsc{Declaração de variáveis}}}\\
 \normalsize
 
 A sintaxe de declaração de variável funciona da seguinte forma:\\
 
-let nome\_variavel: tipo\_variavel;\\
+\texttt{let nome\_variavel: tipo\_variavel;}\\
 
 Sendo obrigatório o uso de ``let '' antes de qualquer declaração e o uso de `;'\ ao final dela. É permitida a criação de várias variáveis do mesmo tipo em apenas uma linha, desde que separadas por vírgulas, exemplo:\\
 
-let x, y, z: int;\\
+\texttt{let x, y, z: int;}\\
 
 Também é permitida a atribuição de valores às variáveis no momento da declaração. Exemplo:\\
 
-let x = ``Oi'': string;\\
+\texttt{\noindent let x = ``Oi'': string;}\\
 
 Ao declarar variáveis, é importante saber: \\
 
 Variáveis não podem iniciar com números e o único caracter permitido em uma variável é `\_'. Exemplo: \\
 
-let \_oi\_var: string;\\
-
-let oi88: double;\\
+\texttt{\noindent let \_oi\_var: string;\\
+\indent let oi88: double;}\\
 
 São exemplos de uso errôneo ao declarar variável:\\
 
-let 9var: int; -{}-(não se inicia com números)\\
-
-let var@: int; -{}-(não é permitido o uso de caracteres especiais)\\[0.3cm]
+\texttt{\noindent let 9var: int; -{}-(não se inicia com números)\\
+\indent let var@: int; -{}-(não é permitido o uso de caracteres especiais)}\\[0.3cm]
 
 \hypertarget{label2}{\Large{\textsc{Atribuições de valor}}}\\
 \normalsize
 
 Para atribuir valores à uma variável, basta fazer: \\
 
-nome\_variavel = valor\_variavel; \\
+\texttt{nome\_variavel = valor\_variavel;}\\
 
 As atribuições também podem ser feitas na própria declaração de variável, como demonstrado. \\
 
 Se por ventura for atribuído um valor diferente do do tipo da variável, então será automaticamente convertido. Exemplo:\\
 
-let b: bool; \\
-
-b = 861;\\
-
-b após a conversão automática valerá ``true''.\\[0.3cm]
+\texttt{\noindent let b: bool; \\
+\indent b = 861;\\
+\indent b após a conversão automática valerá ``true''.}\\[0.3cm]
 
 \hypertarget{label8}{\Large{\textsc{Conversão de tipos}}}\\
 \normalsize
@@ -148,12 +144,10 @@ Matemáticos: $-,\ +,\ /,\ \%,\ *,$ \^\ ;\\
 Comparação: $<,\ <=,\ ==,\ >=,\ >,\ !=$;\\
 Booleanos: $!,\ \&\&,\ ||$;\\[0.6cm]
 Exemplo de uso:\\[0.3cm]
-let x: int;\\
-let y: double;\\
-
-x = $3--4$;\\
-
-y = $+\ 2$ \^\ $\ -\ 4\ +\ -0\ /\ +\ 5$;\\[0.5cm]
+\texttt{\indent let x: int;\\
+\indent let y: double;\\
+\indent x = $3--4$;\\
+\indent y = $+\ 2$ \^\ $\ -\ 4\ +\ -0\ /\ +\ 5$;}\\[0.5cm]
 Onde a resposta será x = 7 e y = 0.0625.\\
 
 
@@ -186,9 +180,8 @@ O comando println() imprimirá o que foi solicitado e também imprimirá uma que
 
 Para imprimir o valor de uma variável, a mesma deve ser expressa entre cifrões. Exemplo: \\
 
-let ex: string;\\
-
-print(var: \$ex\$); \\
+\texttt{\noindent let ex: string;\\
+\indent print(var: \$ex\$);} \\
 
 Onde ``print'' é o comando e o uso de `$($' e `$)$' é obrigatório para delimitar o comando. ``var: '' é uma string a ser posta diretamente na tela e \$ex\$ é o nome da variável, que está delimitada pelos cifrões para poder ser impressa.\\
 
@@ -201,7 +194,7 @@ Os caracteres especiais em um comando de saída são:\\[0.2cm]
 
 Os comandos ``print'' e ``println'' aceitam também expressões em sua forma pura, desde que delimitadas pelos cifrões, como se fosse uma variável e então as expressões são resolvidas. Exemplo: \\
 
-println(\$$\ -3\ +4\ *2\ /\ (\ 1\ - 5)$\^\ 2 \^\ 3\$);\\
+\texttt{println(\$$\ -3\ +4\ *2\ /\ (\ 1\ - 5)$\^\ 2 \^\ 3\$);}\\
 
 O qual a resposta será $-3$.\\
 
@@ -209,9 +202,8 @@ De maneira análoga às funções de saída, o comando scan() é utilizado para 
 
 Exemplo do comando scan(): \\
 
-let i: int;\\
-
-scan(i);\\
+\texttt{\noindent let i: int;\\
+\indent scan(i);}\\
 
 Onde ``scan'' é o comando, `$($' e `$)$' são os caracteres obrigatórios de delimitação e ``i'' é a variável onde será armazenado o valor lido. Neste exemplo, um valor do tipo inteiro.\\[0.3cm]
 
@@ -250,7 +242,7 @@ Todos os comandos dentro do bloco While serão executados enquanto a condição 
 \noindent while(x < s)\{\\
 \indent println(\$s \^\ x\$);\\
 \indent x = x + 1;\\
-\}}\\
+\}}\\[0.6cm]
 
 
 O laço de nome For funciona da seguinte forma: \\
