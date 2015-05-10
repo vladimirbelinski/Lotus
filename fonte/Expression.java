@@ -75,19 +75,19 @@ class Expression {
 				tokens.put(index, tmp);
 				aux = strM.replaceFirst(this.spacenize(tmp));
 			}
-			else if (ufpM.find()) {
-				tmp = ufpM.group();
-				index = ufpM.start();
-
-				tokens.put(index, tmp);
-				aux = ufpM.replaceFirst(this.spacenize(tmp));
-			}
 			else if (varNameM.find()) {
 				tmp = varNameM.group();
 				index = varNameM.start();
 
 				tokens.put(index, tmp);
 				aux = varNameM.replaceFirst(this.spacenize(tmp));
+			}
+			else if (ufpM.find()) {
+				tmp = ufpM.group();
+				index = ufpM.start();
+
+				tokens.put(index, tmp);
+				aux = ufpM.replaceFirst(this.spacenize(tmp));
 			}
 			else {
 				throw new LotusException("invalidExp", this.value);
