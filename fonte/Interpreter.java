@@ -19,7 +19,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, scanContentP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
 
 	public Interpreter() {
 		vars = new HashMap<String, Variable>();
@@ -861,15 +861,10 @@ class Interpreter {
 		String[] input;
 		Variable v, other;
 		String lineEnding, name;
+		Matcher varM, intM, jfpM, strM;
 		Scanner sc = new Scanner(System.in);
-		Matcher scanContentM, varM, intM, jfpM, strM;
 
 		line = line.substring(line.indexOf("(") + 1, line.indexOf(")")).replaceAll(" ", "");
-
-		scanContentM = scanContentP.matcher(line);
-		if (!scanContentM.matches()) {
-			throw new LotusException("syntaxError", line);
-		}
 
 		max = 0;
 		varM = varNameP.matcher(line);
@@ -913,16 +908,11 @@ class Interpreter {
 
 	private void scanln(String line) throws LotusException {
 		Variable v;
+		Matcher varM, strM;
 		String lineEnding, name, input;
-		Matcher scanContentM, varM, strM;
 		Scanner sc = new Scanner(System.in);
 
 		line = line.substring(line.indexOf("(") + 1, line.indexOf(")")).replaceAll(" ", "");
-
-		scanContentM = scanContentP.matcher(line);
-		if (!scanContentM.matches()) {
-			throw new LotusException("syntaxError", line);
-		}
 
 		varM = varNameP.matcher(line);
 		while (varM.find()) {
@@ -988,9 +978,9 @@ class Interpreter {
 	public static final String fnParentheses = "( )*\\(.*\\)" + semicR;
 	public static final String printR = "(print|println)";
 	public static final String wholePrintR = printR + fnParentheses;
-	public static final String wholeScanR = "(scan)" + fnParentheses;
-	public static final String wholeScanlnR = "(scanln)" + fnParentheses;
-	public static final String scanContentR = "(" + varNameR + ")(,(" + varNameR + "))*";
+	public static final String scanContentR = "(" + varNameR + ")(( )*,( )*(" + varNameR + "))*";
+	public static final String wholeScanR = "(scan)( )*\\(( )*" + scanContentR + "( )*\\)" + semicR;
+	public static final String wholeScanlnR = "(scanln)( )*\\(( )*" + scanContentR + "( )*\\)" + semicR;
 
 	public static final String ifR = "(if)( )*\\(( )*";
 	public static final String ifEnding = "( )*\\)( )*\\{";
@@ -1093,7 +1083,6 @@ class Interpreter {
 		wholePrintP = Pattern.compile(wholePrintR);
 		wholeScanP = Pattern.compile(wholeScanR);
 		wholeScanlnP = Pattern.compile(wholeScanlnR);
-		scanContentP = Pattern.compile(scanContentR);
 
 		ifP = Pattern.compile(ifR);
 		wholeIfP = Pattern.compile(ifR + ".+" + ifEnding);
