@@ -1,0 +1,6 @@
+let s = "Lotus, a programming language based on Java.": string;
+
+println(> Antes:\n$s$);
+
+println(\n> Depois:);
+println($s - "\w+"$);
