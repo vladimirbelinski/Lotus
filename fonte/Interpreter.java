@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.regex.*;
 
 class Interpreter {
+	private int rec = -1;
 	private HashMap<String, Variable> vars;
 	private boolean inFor, inWhile, doBr, doCon;
 	// this doesn't make that much sense now, but it's faster to
@@ -60,11 +61,18 @@ class Interpreter {
 		Expression loopCond;
 		boolean endOfChain;
 		Line line = null;
-
+		
+		this.rec++;
+		
 		max = code.size();
 		for (i = 0; i < max; i++) {
-
-			if ((this.doBr || this.doCon) && (this.inFor || this.inWhile)) {
+			
+			if (this.rec > 1 && this.doCon && this.inFor) {
+				this.rec--;
+				return;
+			}
+			else if (this.rec > 1 && ((this.doCon && this.inWhile) || this.doBr)) {
+				this.rec--;
 				return;
 			}
 
@@ -153,7 +161,7 @@ class Interpreter {
 						this.doCon = false;
 						this.execute(codeBlock);
 					}
-					this.doBr = this.inWhile = false;
+					this.doBr = this.doCon = this.inWhile = false;
 				}
 				else if (wholeForM.matches()) {
 					// getting the string: command.substring(0, index of ';' after condition);
@@ -190,23 +198,21 @@ class Interpreter {
 						this.doCon = false;
 						this.execute(codeBlock);
 					}
-					this.doBr = this.inFor = false;
+					this.doBr = this.doCon = this.inFor = false;
 				}
 				else if (command.equals("break;") || command.equals("continue;")) {
 					if (this.inFor || this.inWhile) {
-						// stopping here, breaking the loop
 						if (command.equals("break;")) {
 							this.doBr = true;
-							return;
 						}
-						else if (command.equals("continue;")) {
-							// stopping here, but not breaking the while
-							if (this.inWhile) {
-								this.doCon = true;
-								return;
-							}
-							// or going to the for increment
-							else i = code.size() - 2;
+						else {
+							this.doCon = true;
+							
+						}
+						
+						if (this.rec > 1) {
+							this.rec--;
+							return;
 						}
 					}
 					else {
@@ -220,9 +226,16 @@ class Interpreter {
 				e.setNumber(line.getNumber());
 				throw e;
 			}
+			
+			if (this.doCon && this.inFor && this.rec == 1) {
+				i = code.size() - 2;
+				this.rec--;
+				this.doCon = false;
+				continue;
+			}
 		}
-
-		// return true;
+		
+		this.rec--;
 	}
 
 	private void printBlock(ArrayList<Line> block, boolean sep) {
@@ -242,6 +255,8 @@ class Interpreter {
 		String statement;
 		Expression condition;
 		ArrayList<Line> block = chain.get(0);
+		
+		this.rec++;
 
 		statement = block.get(0).toString();
 		statement = statement.substring(statement.indexOf("(") + 1, statement.lastIndexOf(")"));
@@ -279,6 +294,8 @@ class Interpreter {
 				}
 			}
 		}
+		
+		this.rec--;
 	}
 
 	private ArrayList<Line> buildBlock(ArrayList<Line> code, int index) throws LotusException {
@@ -518,8 +535,8 @@ class Interpreter {
 		Matcher wholeOpM;
 		String op;
 
-		// System.out.println("[INFO_LOG]: SOLVE_EXP = {" + exp + "}");
-		// System.out.println("[INFO_LOG]: SOLVE_TOKENS = {" + tokens + "}");
+		//System.out.println("[INFO_LOG]: SOLVE_EXP = {" + exp + "}");
+		//System.out.println("[INFO_LOG]: SOLVE_TOKENS = {" + tokens + "}");
 
         if (t.length == 1) {
             answ = this.getOperand(t[0]);
@@ -584,13 +601,13 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
-			// System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
+			//System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
 
 			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
 		}
 
-		// System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
+		//System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
 
 		return answ;
 	}
