@@ -22,7 +22,7 @@ class Interpreter {
 	// the boolean value to a Runnable...
 	private static final Map<String, Boolean> reservedWords = mapReservedWords();
 	private static boolean patternsInitd = false;
-	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP;
+	public static Pattern typeP, wholeDeclP, varNameP, atrP, wholeAtrP, semicP, wholePrintP, wholeScanP, wholeScanlnP, wholeOpP, signP, intP, fpP, charP, strP, strAssignP, quotMarkP, strBackP, parenP, numBuildP, boolP, upperCaseP, strNotEmptyP, opGroupP, ufpP, jufpP, jfpP, quotInStrP, invalidFpP, wholeIfP, wholeElsifP, wholeElseP, ifP, elsifP, ifEndingP, wholeWhileP, wholeForP, forSplitP, anyP, fixAtrP, fixAtrTypeP;
 
 	public Interpreter() {
 		this.vars = new HashMap<String, Variable>();
@@ -69,20 +69,14 @@ class Interpreter {
 
 			if (!rec.empty() && (this.doContinue || this.doBreak)) {
 				if (rec.search(FOR) == 1 && this.doContinue) {
-					// System.out.println("for continue;");
 					i = code.size() - 2;
 					this.doContinue = false;
 				}
 				else if (rec.search(WHILE) >= 1 || rec.search(FOR) >= 1) {
-					// System.out.println("while || for");
 					if (rec.search(WHILE) == 1) {
-						// System.out.println("while == 1");
-						// if (this.doBreak) this.doBreak = false;
 						if (this.doContinue) this.doContinue = false;
 					}
 					else if (rec.search(FOR) == 1) {
-						// System.out.println("for == 1");
-						// if (this.doBreak) this.doBreak = false;
 						if (this.doContinue) this.doContinue = false;
 					}
 
@@ -93,8 +87,6 @@ class Interpreter {
 			try {
 				line = code.get(i);
 				command = line.toString();
-
-				// System.out.println("command:\n[" + command + "]\n");
 
 			    if (command.isEmpty()) {
 			        continue;
@@ -421,77 +413,55 @@ class Interpreter {
 		}
 	}
 
-    public String[] fixDecl(String line) throws LotusException {
-        int i;
-		Matcher atrM, charM, typeM;
-        String var = new String("");
-        String[] t = line.replace("let ", "").split("");
-        ArrayList<String> tokens = new ArrayList<String>();
+	public String[] fixDecl(String line) throws LotusException {
+		int i, j;
+		Matcher strM;
+		String tmp = "";
+		String[] aux, output = null;
+		TreeMap<Integer, String> tokens = new TreeMap<Integer, String>();
 
-        for (i = 0; i < t.length && !t[i].equals(":"); i++) {
-			charM = charP.matcher(t[i]);
+		// from right after "let" and until ';', inclusive
+		line = line.substring(3);
+		// type
+		i = line.lastIndexOf(":");
+		tokens.put(i + 1, line.substring(i + 1, line.length() - 1).trim());
+		line = line.substring(0, i);
 
-            if (charM.matches()) {
-                var += t[i];
-            }
-			else if (!var.isEmpty() && t[i].equals("=")) {
-				while (i < t.length && !t[i].equals(",") && !t[i].equals(":")) {
-					var += t[i];
-					i++;
+		aux = line.split(",");
+		for (i = 0; i < aux.length; i++) {
+
+			strM = strP.matcher(aux[i].trim());
+			if (aux[i].contains("\"") && !strM.find()) {
+				tmp = aux[i];
+
+				for (j = i + 1; j < aux.length; j++) {
+					tmp += "," + aux[j];
+
+					strM = strP.matcher(tmp.trim());
+					if (strM.find()) {
+						break;
+					}
 				}
-				i--;
-				atrM = atrP.matcher(var);
-				if (atrM.matches()) {
-					tokens.add(var);
-					var = "";
-				}
-				else {
-					throw new LotusException("syntaxError", line);
-				}
+				i = j;
+				tokens.put(i, tmp.trim());
 			}
-            else if (!var.isEmpty() && t[i].equals(",")) {
-                tokens.add(var);
-                var = "";
-            }
-			else if (!t[i].isEmpty() && !t[i].equals(",") && !t[i].equals(" ")) {
-                throw new LotusException("syntaxError", line);
-            }
-        }
-        // the last var left before ":"
-        if (var != "") {
-            tokens.add(var);
-            var = "";
-        }
+			else {
+				tokens.put(i, aux[i].trim());
+			}
+		}
 
-        // type
-        while (i < t.length) {
-			charM = charP.matcher(t[i]);
-            if (charM.matches()) {
-                var += t[i];
-            }
-            i++;
-        }
+		output = new String[tokens.size()];
+		tokens.values().toArray(output);
 
-		typeM = typeP.matcher(var);
-        if (typeM.matches()) {
-            tokens.add(var);
-        }
-        else {
-			throw new LotusException("invalidType", var + ", from \"" + line + "\"");
-        }
-
-        t = new String[tokens.size()];
-        tokens.toArray(t);
-
-        return t;
-    }
+		return output;
+	}
 
 	public void assign(String line) throws LotusException {
 		int equalsIndex;
         Variable v = null;
         Expression assign = null;
 		String[] atr = new String[2];
-		Matcher quotMarkM, strBackM, semicM, strAssignM, quotInStrM;
+		Matcher quotMarkM, strBackM, strAssignM, quotInStrM;
 
 		equalsIndex = line.indexOf("=");
 		atr[0] = line.substring(0, equalsIndex).trim();
@@ -521,8 +491,7 @@ class Interpreter {
 			}
         }
 		else {
-			semicM = semicP.matcher(atr[1]);
-			atr[1] = semicM.replaceFirst("");
+			atr[1] = atr[1].substring(0, atr[1].lastIndexOf(";")).trim();
 
 			if ((v = this.getVar(atr[0])) != null) {
 				this.setVar(v, this.solve(new Expression(atr[1])));
@@ -1001,8 +970,9 @@ class Interpreter {
 
 	public static final String semicR = "( )*;";
 	public static final String typeR = "int|double|string|bool";
+	public static final String fixAtrTypeR = ":( )*(" + typeR + ")" + semicR;
 	public static final String varNameR = "[A-Za-z_][A-Za-z_0-9]*";
-	public static final String wholeDeclR = "(let)( )+((.+)+((,( )*(.+)+)( )*)*)( )*:( )*(\\w)+" + semicR;
+	public static final String wholeDeclR = "(let)( )+(.+)( )*:( )*(\\w)+" + semicR;
 
 	public static final String parenR = "\\(|\\)";
 	public static final String boolOpR = "\\!|\\&\\&|\\|\\|";
@@ -1014,6 +984,7 @@ class Interpreter {
 
 	public static final String atrR = varNameR + "( )*=( )*.+";
 	public static final String wholeAtrR = atrR + semicR;
+	public static final String fixAtrR = ".+[,:]";
 	public static final String stripAtrR = "( )*=( )*";
 
 	public static final String fnParentheses = "( )*\\(.*\\)" + semicR;
@@ -1094,6 +1065,7 @@ class Interpreter {
 
 		varNameP = Pattern.compile(varNameR);
 		typeP = Pattern.compile(typeR);
+		fixAtrTypeP = Pattern.compile(fixAtrTypeR);
 		atrP = Pattern.compile(atrR);
 
 		wholeOpP = Pattern.compile(wholeOpR);
@@ -1119,6 +1091,7 @@ class Interpreter {
 
 		wholeDeclP = Pattern.compile(wholeDeclR);
 		wholeAtrP = Pattern.compile(wholeAtrR);
+		fixAtrP = Pattern.compile(fixAtrR);
 
 		semicP = Pattern.compile(semicR);
 		wholePrintP = Pattern.compile(wholePrintR);
