@@ -14,7 +14,7 @@ import java.util.regex.*;
 
 class Interpreter {
 	private HashMap<String, Variable> vars;
-	private boolean f, w;
+	private boolean inFor, inWhile, doBr, doCon;
 	// this doesn't make that much sense now, but it's faster to
 	// look up in a hash than an array. And later on we can replace
 	// the boolean value to a Runnable...
@@ -24,7 +24,7 @@ class Interpreter {
 
 	public Interpreter() {
 		this.vars = new HashMap<String, Variable>();
-		this.f = this.w = false;
+	 	this.inFor = this.inWhile = this.doBr = this.doCon = false;
 
 		if (!patternsInitd) {
 			initPatterns();
@@ -51,7 +51,7 @@ class Interpreter {
 		v.setValue(new StringVar(value));
 	}
 
-	public boolean execute(ArrayList<Line> code, boolean f, boolean w) throws LotusException {
+	public void execute(ArrayList<Line> code) throws LotusException {
 		Matcher wholeDeclM, wholeAtrM, wholePrintM, wholeScanM, wholeScanlnM, wholeIfM, elsifM, elseM, wholeWhileM, wholeForM, forSplitM;
 		int i, j, max, semicolon, clBracket;
 		String command = "", forInit, forCond, forInc;
@@ -61,11 +61,13 @@ class Interpreter {
 		boolean endOfChain;
 		Line line = null;
 
-		this.f = f;
-		this.w = w;
-
 		max = code.size();
 		for (i = 0; i < max; i++) {
+
+			if ((this.doBr || this.doCon) && (this.inFor || this.inWhile)) {
+				return;
+			}
+
 			try {
 				line = code.get(i);
 				command = line.toString();
@@ -146,9 +148,12 @@ class Interpreter {
 
 					loopCond = new Expression(command.substring(command.indexOf("(") + 1, command.lastIndexOf(")")));
 
-					while(this.solve(loopCond).toBool()) {
-						if (!this.execute(codeBlock, false, true)) break;
+					this.inWhile = true;
+					while (!this.doBr && this.solve(loopCond).toBool()) {
+						this.doCon = false;
+						this.execute(codeBlock);
 					}
+					this.doBr = this.inWhile = false;
 				}
 				else if (wholeForM.matches()) {
 					// getting the string: command.substring(0, index of ';' after condition);
@@ -169,7 +174,7 @@ class Interpreter {
 					forInit = command.substring(forSplitM.start(), forSplitM.end()).replaceFirst("for( )*\\(", "").trim();
 					codeBlock = new ArrayList<Line>();
 					codeBlock.add(new Line(forInit, line.getNumber()));
-					this.execute(codeBlock, false, false);
+					this.execute(codeBlock);
 
 					// building the block of code that will be executed
 					codeBlock = buildBlock(code, i);
@@ -180,19 +185,26 @@ class Interpreter {
 					// for increment is last line of the block going to be executed
 					codeBlock.add(new Line(forInc, line.getNumber()));
 
-					while (this.solve(loopCond).toBool()) {
-						if (!this.execute(codeBlock, true, false)) break;
+					this.inFor = true;
+					while (!this.doBr && this.solve(loopCond).toBool()) {
+						this.doCon = false;
+						this.execute(codeBlock);
 					}
+					this.doBr = this.inFor = false;
 				}
 				else if (command.equals("break;") || command.equals("continue;")) {
-					if (this.f || this.w) {
+					if (this.inFor || this.inWhile) {
 						// stopping here, breaking the loop
 						if (command.equals("break;")) {
-							return false;
+							this.doBr = true;
+							return;
 						}
 						else if (command.equals("continue;")) {
 							// stopping here, but not breaking the while
-							if (this.w) return true;
+							if (this.inWhile) {
+								this.doCon = true;
+								return;
+							}
 							// or going to the for increment
 							else i = code.size() - 2;
 						}
@@ -210,7 +222,7 @@ class Interpreter {
 			}
 		}
 
-		return true;
+		// return true;
 	}
 
 	private void printBlock(ArrayList<Line> block, boolean sep) {
@@ -238,7 +250,7 @@ class Interpreter {
 		if (this.solve(condition).toBool()) {
 			block.remove(0);
 			block.remove(block.size() - 1);
-			this.execute(block, this.f, this.w);
+			this.execute(block);
 		}
 		else {
 			done = false;
@@ -252,7 +264,7 @@ class Interpreter {
 				if (elseM.matches()) {
 					block.remove(0);
 					block.remove(block.size() - 1);
-					this.execute(block, this.f, this.w);
+					this.execute(block);
 					done = true;
 				}
 				else {
@@ -261,7 +273,7 @@ class Interpreter {
 					if (this.solve(condition).toBool()) {
 						block.remove(0);
 						block.remove(block.size() - 1);
-						this.execute(block, this.f, this.w);
+						this.execute(block);
 						done = true;
 					}
 				}
