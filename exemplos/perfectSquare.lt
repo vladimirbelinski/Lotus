@@ -1,0 +1,17 @@
+let n1: double;
+let n2: int;
+
+println(\n** Verificação de números perfeitos **);
+print(\nDigite um número: );
+scan(n1);
+
+n2 = n1 ^ (1/2.); -- int recebe double, vai truncar.
+
+-- mas se a raiz der exata, n1 == n2 (por exemplo, 2.0 == 2)
+-- uma vez que 2 em double é 2.0 e será feita essa conversão
+if (n1 ^ (1/2.) == n2) {
+	println($n1$ é um quadrado perfeito!);
+}
+else {
+	println($n1$ não é um quadrado perfeito);
+}
