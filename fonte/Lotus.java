@@ -12,11 +12,6 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-/* To execute a test, from inside the folder that contains this file, run:
- * javac *.java
- * java Lotus ../exemplos/<filename>.lt
- * */
-
 class Lotus {
     public static void main(String[] args) throws Exception {
         File f;
@@ -44,12 +39,9 @@ class Lotus {
             f = new File(args[ind]);
             if (f.exists() && !f.isDirectory()) {
                 input = ltSc.scan(f);
-                // System.out.println("------------------------------------------");
-                // ltSc.print(input);
-                // System.out.println("------------------------------------------");
 
                 try {
-                    lotus.execute(input, false, false);
+                    lotus.execute(input);
                 } catch (LotusException e) {
                     System.out.println("\n> " + e.getMessage() + " @ line #" + e.getNumber() + ":");
                     System.out.println(e.getLine());
