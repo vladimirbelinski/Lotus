@@ -5,7 +5,7 @@ let n, flag = 0 : int;
 println(Digite um número para saber se é primo);
 scan(n);
 
-for(let i = 2: int; i <= n^1/2; i = i + 1){
+for(let i = 2: int; i <= n^(1/2.0); i = i + 1){
 	if(n%i == 0){
 		flag = 1;
 		break;
