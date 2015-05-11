@@ -1,17 +1,24 @@
 let n1: double;
 let n2: int;
+let num: string;
 
 println(\n** Verificação de números perfeitos **);
-print(\nDigite um número: );
-scan(n1);
+print(\nDigite um número inteiro: );
+scan(num);
 
-n2 = n1 ^ (1/2.); -- int recebe double, vai truncar.
+-- operações de '-', '/' e '%' recebem expressões regulares como operandos
+-- por causa dos métodos replaceFirst() e replaceAll() do Java. Por isso,
+-- o '.' está escapado, uma vez que '.' significa "qualquer coisa exceto \n"
+-- em expressões regulares
+num = num - "\.\d*";
+n1 = num; -- converte pra double
+n2 = n1 ^ (1/2.); -- sqrt(n1), int recebe double, vai truncar.
 
 -- mas se a raiz der exata, n1 == n2 (por exemplo, 2.0 == 2)
 -- uma vez que 2 em double é 2.0 e será feita essa conversão
 if (n1 ^ (1/2.) == n2) {
-	println($n1$ é um quadrado perfeito!);
+	println($num$ é um quadrado perfeito!);
 }
 else {
-	println($n1$ não é um quadrado perfeito);
+	println($num$ não é um quadrado perfeito);
 }

@@ -542,8 +542,8 @@ class Interpreter {
 		Matcher wholeOpM;
 		String op;
 
-		//System.out.println("[INFO_LOG]: SOLVE_EXP = {" + exp + "}");
-		//System.out.println("[INFO_LOG]: SOLVE_TOKENS = {" + tokens + "}");
+		// System.out.println("[INFO_LOG]: SOLVE_EXP = {" + exp + "}");
+		// System.out.println("[INFO_LOG]: SOLVE_TOKENS = {" + tokens + "}");
 
         if (t.length == 1) {
             answ = this.getOperand(t[0]);
@@ -608,13 +608,13 @@ class Interpreter {
 			if (num1 == null) i -= 1;
 			else i -= 2;
 
-			//System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
+			// System.out.println("[INFO_LOG]: CALCULATE = {" + num1 + ", " + op + ", " + num2 + "}");
 
 			answ = this.calculate(num1, num2, op);
 			t[i] = answ.toString();
 		}
 
-		//System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
+		// System.out.println("[INFO_LOG]: SOLVE_RESULT = {" + answ + "}");
 
 		return answ;
 	}

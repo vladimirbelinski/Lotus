@@ -57,7 +57,14 @@ class Expression {
 
 		while (notEmptyM.find()) {
 
-			if (opGroupM.find()) {
+			if (strM.find()) {
+				tmp = strM.group();
+				index = strM.start();
+
+				tokens.put(index, tmp);
+				aux = strM.replaceFirst(this.spacenize(tmp));
+			}
+			else if (opGroupM.find()) {
 				tmp = opGroupM.group();
 				aux = opGroupM.replaceFirst(this.fixRepSign(tmp));
 			}
@@ -67,13 +74,6 @@ class Expression {
 
 				tokens.put(index, tmp);
 				aux = wholeOpM.replaceFirst(this.spacenize(tmp));
-			}
-			else if (strM.find()) {
-				tmp = strM.group();
-				index = strM.start();
-
-				tokens.put(index, tmp);
-				aux = strM.replaceFirst(this.spacenize(tmp));
 			}
 			else if (varNameM.find()) {
 				tmp = varNameM.group();
