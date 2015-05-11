@@ -13,9 +13,10 @@ import java.util.*;
 import java.util.regex.*;
 
 class Interpreter {
-	private int rec = -1;
+	private static final int IF = 1, FOR = 2, WHILE = 3;
+	private boolean doBreak, doContinue;
+	private Stack<Integer> rec;
 	private HashMap<String, Variable> vars;
-	private boolean inFor, inWhile, doBr, doCon;
 	// this doesn't make that much sense now, but it's faster to
 	// look up in a hash than an array. And later on we can replace
 	// the boolean value to a Runnable...
@@ -25,7 +26,8 @@ class Interpreter {
 
 	public Interpreter() {
 		this.vars = new HashMap<String, Variable>();
-	 	this.inFor = this.inWhile = this.doBr = this.doCon = false;
+		this.rec = new Stack<Integer>();
+		this.doBreak = this.doContinue = false;
 
 		if (!patternsInitd) {
 			initPatterns();
@@ -61,24 +63,38 @@ class Interpreter {
 		Expression loopCond;
 		boolean endOfChain;
 		Line line = null;
-		
-		this.rec++;
-		
+
 		max = code.size();
 		for (i = 0; i < max; i++) {
-			
-			if (this.rec > 1 && this.doCon && this.inFor) {
-				this.rec--;
-				return;
-			}
-			else if (this.rec > 1 && ((this.doCon && this.inWhile) || this.doBr)) {
-				this.rec--;
-				return;
+
+			if (!rec.empty() && (this.doContinue || this.doBreak)) {
+				if (rec.search(FOR) == 1 && this.doContinue) {
+					// System.out.println("for continue;");
+					i = code.size() - 2;
+					this.doContinue = false;
+				}
+				else if (rec.search(WHILE) >= 1 || rec.search(FOR) >= 1) {
+					// System.out.println("while || for");
+					if (rec.search(WHILE) == 1) {
+						// System.out.println("while == 1");
+						// if (this.doBreak) this.doBreak = false;
+						if (this.doContinue) this.doContinue = false;
+					}
+					else if (rec.search(FOR) == 1) {
+						// System.out.println("for == 1");
+						// if (this.doBreak) this.doBreak = false;
+						if (this.doContinue) this.doContinue = false;
+					}
+
+					return;
+				}
 			}
 
 			try {
 				line = code.get(i);
 				command = line.toString();
+
+				// System.out.println("command:\n[" + command + "]\n");
 
 			    if (command.isEmpty()) {
 			        continue;
@@ -146,7 +162,9 @@ class Interpreter {
 						}
 					}
 
+					this.rec.push(IF);
 					this.runIfChain(ifChain);
+					this.rec.pop();
 				}
 				else if (wholeWhileM.matches()) {
 					codeBlock = buildBlock(code, i);
@@ -156,12 +174,12 @@ class Interpreter {
 
 					loopCond = new Expression(command.substring(command.indexOf("(") + 1, command.lastIndexOf(")")));
 
-					this.inWhile = true;
-					while (!this.doBr && this.solve(loopCond).toBool()) {
-						this.doCon = false;
+					this.rec.push(WHILE);
+					while (!this.doBreak && this.solve(loopCond).toBool()) {
 						this.execute(codeBlock);
 					}
-					this.doBr = this.doCon = this.inWhile = false;
+					this.doBreak = false;
+					this.rec.pop();
 				}
 				else if (wholeForM.matches()) {
 					// getting the string: command.substring(0, index of ';' after condition);
@@ -193,26 +211,28 @@ class Interpreter {
 					// for increment is last line of the block going to be executed
 					codeBlock.add(new Line(forInc, line.getNumber()));
 
-					this.inFor = true;
-					while (!this.doBr && this.solve(loopCond).toBool()) {
-						this.doCon = false;
+					this.rec.push(FOR);
+					while (!this.doBreak && this.solve(loopCond).toBool()) {
 						this.execute(codeBlock);
 					}
-					this.doBr = this.doCon = this.inFor = false;
+					this.doBreak = false;
+					this.rec.pop();
 				}
 				else if (command.equals("break;") || command.equals("continue;")) {
-					if (this.inFor || this.inWhile) {
+					if (!rec.empty() && (rec.search(FOR) >= 1 || rec.search(WHILE) >= 1)) {
 						if (command.equals("break;")) {
-							this.doBr = true;
+							this.doBreak = true;
+							return;
 						}
 						else {
-							this.doCon = true;
-							
-						}
-						
-						if (this.rec > 1) {
-							this.rec--;
-							return;
+							if (rec.search(FOR) == 1) {
+								i = code.size() - 2;
+								continue;
+							}
+							else {
+								this.doContinue = true;
+								break;
+							}
 						}
 					}
 					else {
@@ -226,16 +246,7 @@ class Interpreter {
 				e.setNumber(line.getNumber());
 				throw e;
 			}
-			
-			if (this.doCon && this.inFor && this.rec == 1) {
-				i = code.size() - 2;
-				this.rec--;
-				this.doCon = false;
-				continue;
-			}
 		}
-		
-		this.rec--;
 	}
 
 	private void printBlock(ArrayList<Line> block, boolean sep) {
@@ -255,8 +266,6 @@ class Interpreter {
 		String statement;
 		Expression condition;
 		ArrayList<Line> block = chain.get(0);
-		
-		this.rec++;
 
 		statement = block.get(0).toString();
 		statement = statement.substring(statement.indexOf("(") + 1, statement.lastIndexOf(")"));
@@ -294,8 +303,6 @@ class Interpreter {
 				}
 			}
 		}
-		
-		this.rec--;
 	}
 
 	private ArrayList<Line> buildBlock(ArrayList<Line> code, int index) throws LotusException {
