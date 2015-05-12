@@ -1,6 +1,12 @@
-let s = "Lotus, a programming language based on Java.": string;
+let s = "Lotus, a programming language based on Java. 2015": string;
 
 println(> Antes:\n$s$);
 
-println(\n> Depois:);
-println($s - "\w+"$);
+println(\n> Depois:\n);
+s = s - "( )*\d+"; -- removes first int preceded by optional spaces
+println(1) $s$);
+println(2) $s - "\w+"$); -- removes first word
+println(3) $s - ","$); -- removes first ','
+println(4) $s - - - "Java." + + - + - "Assembly."$);
+println(5) $s / "( )*"$); -- removes all spaces
+println(6) $s / "m+"$); -- removes all repeating 'm' chars
