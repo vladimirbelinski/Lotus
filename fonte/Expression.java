@@ -42,15 +42,31 @@ class Expression {
 			throw new LotusException("invalidExp", aux);
 		}
 
+		// if the last token is an operator, but not a ")"
 		inv = aux.substring(aux.length() - 1);
 		wholeOpM = Interpreter.wholeOpP.matcher(inv);
 		if (wholeOpM.find() && !inv.equals(")")) {
 			throw new LotusException("invalidExp", aux);
 		}
 
+		// Fixing signs that aren't a substring
+		// output is just temporary here...
+		output = aux.split(Interpreter.strR);
+		for (String s: output) {
+			opGroupM = Interpreter.opGroupP.matcher(s);
+			if (opGroupM.find()) {
+				tmp = opGroupM.group();
+				// gets aux from start until the repeating signs I found then
+				// appends the result of fixing those signs and then
+				// appends what was left in aux after the repeating signs
+				aux = aux.substring(0, aux.indexOf(tmp)) +
+									this.fixRepSign(tmp) +
+									aux.substring(aux.indexOf(tmp) + tmp.length());
+			}
+		}
+
 		ufpM = Interpreter.jufpP.matcher(aux);
 		strM = Interpreter.strP.matcher(aux);
-		opGroupM = Interpreter.opGroupP.matcher(aux);
 		wholeOpM = Interpreter.wholeOpP.matcher(aux);
 		varNameM = Interpreter.varNameP.matcher(aux);
 		notEmptyM = Interpreter.strNotEmptyP.matcher(aux);
@@ -63,10 +79,6 @@ class Expression {
 
 				tokens.put(index, tmp);
 				aux = strM.replaceFirst(this.spacenize(tmp));
-			}
-			else if (opGroupM.find()) {
-				tmp = opGroupM.group();
-				aux = opGroupM.replaceFirst(this.fixRepSign(tmp));
 			}
 			else if (wholeOpM.find()) {
 				tmp = wholeOpM.group();
@@ -95,7 +107,6 @@ class Expression {
 
 			ufpM = Interpreter.jufpP.matcher(aux);
 			strM = Interpreter.strP.matcher(aux);
-			opGroupM = Interpreter.opGroupP.matcher(aux);
 			wholeOpM = Interpreter.wholeOpP.matcher(aux);
 			varNameM = Interpreter.varNameP.matcher(aux);
 			notEmptyM = Interpreter.strNotEmptyP.matcher(aux);
