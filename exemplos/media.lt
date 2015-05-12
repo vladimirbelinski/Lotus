@@ -5,11 +5,11 @@ let a, b, s: double;
 println(\nBem-vindo a calculadora de media aritmetica!\n);
 
 print(Por favor, insira a quantidade de elementos a serem calculados: );
-scan($a$);
+scan(a);
 
 for (let i=0:int; i<a; i= i + 1){
   print(\nPor favor, insira o valor ($i+1$): );
-  scan($b$);
+  scan(b);
   s = s + b;
 }
 
