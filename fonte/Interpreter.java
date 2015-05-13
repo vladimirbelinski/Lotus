@@ -69,7 +69,7 @@ class Interpreter {
 
 			if (!rec.empty() && (this.doContinue || this.doBreak)) {
 				if (rec.search(FOR) == 1 && this.doContinue) {
-					i = code.size() - 2;
+					i = code.size() - 1;
 					this.doContinue = false;
 				}
 				else if (rec.search(WHILE) >= 1 || rec.search(FOR) >= 1) {
@@ -182,6 +182,9 @@ class Interpreter {
 					// for increment. It's the command.substring starting right after the
 					// previous match until the end, without ") {", with ';' appended
 					forInc = command.substring(forSplitM.end()).replaceFirst("\\)( )*\\{", "").trim() + ";";
+					if (forInc.equals("break;") || forInc.equals("continue;")) {
+						throw new LotusException("invalidLoopComm", command);
+					}
 
 					// for condition
 					forSplitM = forSplitP.matcher(forCond);
@@ -190,6 +193,9 @@ class Interpreter {
 
 					// for init
 					forInit = command.substring(forSplitM.start(), forSplitM.end()).replaceFirst("for( )*\\(", "").trim();
+					if (forInit.equals("break;") || forInit.equals("continue;")) {
+						throw new LotusException("invalidLoopComm", command);
+					}
 					codeBlock = new ArrayList<Line>();
 					codeBlock.add(new Line(forInit, line.getNumber()));
 					this.execute(codeBlock);

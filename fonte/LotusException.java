@@ -43,6 +43,8 @@ class LotusException extends Exception {
             this.setMessage("Missing parenthesis"); break;
         case "notLooping":
             this.setMessage("You're not inside a loop"); break;
+        case "invalidLoopComm":
+            this.setMessage("You cannot use break/continue here"); break;
         }
     }
 
