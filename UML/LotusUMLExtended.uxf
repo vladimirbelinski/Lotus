@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.2">
+  <zoom_level>4</zoom_level>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>500</x>
+      <y>216</y>
+      <w>232</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>/Variable&lt;T&gt;/
+--
++ T value;
+--
++ Variable (T value);
++ Class type();
++ String toString();
++ BoolVar toBoolVar();
++ IntVar toIntVar();
++ DoubleVar toDoubleVar();
++ StringVar toStringVar();
++ Variable and(Variable other);
++ Variable or(Variable other);
++ abstract Integer toInt();
++ abstract Boolean toBool();
++ abstract Double toDouble();
++ abstract Variable inverted();
++ abstract void setValue(Variable other);
++ abstract Variable plus(Variable other);
++ abstract Variable minus(Variable other);
++ abstract Variable times(Variable other);
++ abstract Variable pow(Variable other);
++ abstract Variable divided(Variable other) throws LotusException;
++ abstract Variable mod(Variable other) throws LotusException;
++ abstract Variable equals(Variable other);
++ abstract Variable lessThan(Variable other);
++ abstract Variable lessEquals(Variable other);
++ abstract Variable greaterThan(Variable other);
++ abstract Variable greaterEquals(Variable other);</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>352</x>
+      <y>476</y>
+      <w>124</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>BoolVar extends Variable&lt;Boolean&gt;
+--
+ 
+--
++ BoolVar(Boolean value);</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>480</x>
+      <y>476</y>
+      <w>124</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>IntVar extends Variable&lt;Integer&gt;
+--
+ 
+--
++ IntVar(Integer value);</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>608</x>
+      <y>476</y>
+      <w>124</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>DoubleVar extends Variable&lt;Double&gt;
+--
+ 
+--
++ DoubleVar(Double value);</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>736</x>
+      <y>476</y>
+      <w>124</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>StringVar extends Variable&lt;String&gt;
+--
+ 
+--
++ StringVar(String value);</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>108</x>
+      <y>88</y>
+      <w>292</w>
+      <h>212</h>
+    </coordinates>
+    <panel_attributes>Interpreter
+--
+- static final int IF = 1, FOR = 2, WHILE = 3, FUNCT = 4;
+- boolean doBreak, doContinue, doReturn;
+- Stack&lt;Integer&gt; rec;
+- static final Map&lt;String, Boolean&gt; reservedWords = mapReservedWords();
+- static boolean patternsInitd = false;
+--
++ Interpreter();
+
++ void newStruct(String name, Struct struct);
++ boolean hasStruct(String name);
++ Struct getStruct(String name);
++ void setStruct(Struct struct, Struct other);
++ void setStruct(Struct v, Variable var);
+
++ Struct execute(ArrayList&lt;Line&gt; code) throws LotusException;
+- void printBlock(ArrayList&lt;Line&gt; block, boolean sep);
+- void runIfChain(ArrayList&lt;ArrayList&lt;Line&gt;&gt; chain) throws LotusException;
++ ArrayList&lt;Line&gt; buildBlock(ArrayList&lt;Line&gt; code, int index) throws LotusException;
+- void let(String line) throws LotusException;
++ String[] fixDecl(String line) throws LotusException;
++ void assign(String line) throws LotusException;
++ Struct solve(Expression exp) throws LotusException;
+- Struct getOperand(String t) throws LotusException;
+- Struct checkAndGetVar(String t, boolean neg) throws LotusException;
+- Struct calculate(Variable v1, Variable v2, String op) throws LotusException;
+- String[] merge(String[] front, String[] back);
+- void print(String line) throws LotusException;
+- String getExp (String content, int fromIndex);
+- void scan(String line) throws LotusException;
+- void scanln(String line) throws LotusException;
+- static Map&lt;String, Boolean&gt; mapReservedWords();
+- static void initPatterns();</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Relation</type>
+    <coordinates>
+      <x>404</x>
+      <y>396</y>
+      <w>104</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>96;12;12;80</additional_attributes>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Relation</type>
+    <coordinates>
+      <x>532</x>
+      <y>396</y>
+      <w>20</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>12;12;12;80</additional_attributes>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Relation</type>
+    <coordinates>
+      <x>660</x>
+      <y>396</y>
+      <w>20</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>12;12;12;80</additional_attributes>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Relation</type>
+    <coordinates>
+      <x>720</x>
+      <y>396</y>
+      <w>88</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>12;12;80;80</additional_attributes>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Relation</type>
+    <coordinates>
+      <x>388</x>
+      <y>112</y>
+      <w>164</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+- HashMap&lt;String, Struct&gt; structs</panel_attributes>
+    <additional_attributes>12;20;156;20</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>544</x>
+      <y>88</y>
+      <w>156</w>
+      <h>68</h>
+    </coordinates>
+    <panel_attributes>Struct
+--
+
+--
++ void newVar(String name, Variable var);
++ boolean hasVar(String name);
++ Variable getVar(String name);
++ void setVar(Variable var, Variable other);
++ void setVar(Variable var, String value);
++ String toString();</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>616</x>
+      <y>152</y>
+      <w>108</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+  - HashMap&lt;String, Variable&gt; vars</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>140</x>
+      <y>364</y>
+      <w>212</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>LVM
+--
++ HashMap&lt;String, ArrayList&lt;Line&gt; &gt; code;
+--
++ HashMap&lt;String, ArrayList&lt;Line&gt; &gt; scan(File f) throws Exception;
++ void run(ArrayList&lt;Line&gt;) throws LotusException;
++ static void main(String[] args);</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
